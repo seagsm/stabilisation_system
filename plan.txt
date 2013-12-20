@@ -1,3 +1,3 @@
 1. Make project review. 
 2. Make hardware design description.
-3. Make designe document.
+3. Make designe document for software modules.
