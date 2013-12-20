@@ -1,1 +1,2 @@
-1 Make project review. 
+1. Make project review. 
+2. Make hardware design description.
