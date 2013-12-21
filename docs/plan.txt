@@ -21,3 +21,5 @@ Software should provide:
 8. Sofrware should be devided by two part:  firmware of onboard system and ground control station GUI.
 9. GUI should be connected to onboard part by Bluetooth or serial link. 
 10.GUI should provide realtime data from onboard system during connection. 
+
+Firmware should be checked by MISRA.
