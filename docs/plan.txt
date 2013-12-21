@@ -4,6 +4,40 @@
 4. Create working plan of project.
 5. Checking of working plan.
 
+
+In accordance with DO178 should be created
+System requerement like describing how system should work,what function should be implemented and what parameters
+of system control should be reached explained by human language.
+
+http://profs.etsmtl.ca/cfuhrman/publications/OpenUP_DO-178B.pdf
+
+The intent is such that an overlap is between the HLR and the software design, as 
+shown in Figure 1. In this regard, DO-178B states: 
+“Software development processes produce one or more levels of software requirements. High-level requirements are 
+produced directly through analysis of system requirements and system architecture. Usually, these high-level 
+requirements are further developed during the software design process, thus producing one or more successive, lower 
+levels of requirements. However, if Source Code is generated directly from high-level requirements, then the high-level 
+requirements are also considered low-level requirements, and the guidelines for low-level requirements also apply.” 
+
+in section 5 of DO-178B, it is stated: 
+“The development of a software architecture involves decisions made about the structure of the software. During the 
+software design process, the software architecture is defined and low-level requirements are developed. Low-level 
+requirements are software requirements from which Source Code can be directly implemented without further 
+information.” 
+In its clarification on LLR in DO-178B, DO-248B states: 
+“The aim of the architectural design is to break down the functions of the software requirements so that they can be 
+regrouped into a logical software structure.” 
+
+
+
+The software development process is broken into four sub-processes:
+Software Requirements Process: -> High-level requirements in relation to function, performance, interface and safety.
+Software Design Process:       -> Low-level requirements used to implement the source code.
+Software Coding Process:       -> Production of source-code from the design process.
+Integration Process:           -> Integration of code into a real-time environment.
+
+
+
 System Requirement:
 Developing software and hardware to control flight objects of quadrocopter family.
 
@@ -17,9 +51,9 @@ Software should provide:
 5. Reseive conrtol signals from ground station.
 6. Altitude stabilisation using BARO and/or ULTRASONIC methods.(ULTRASONIC not ready yet.???)
 7. Software should alove to change flight object configuration, like type(tricopter, quadrocopter,octocopter...),set direction of motor rotation,
-	static and dynamic characteristic - cut off voltage, PID control parameters and so on (TODO: should be descrybed all listing.)
+	static and dynamic characteristic of control system - cut off voltage, PID control parameters and so on (TODO: should be descrybed all listing.)
 8. Sofrware should be devided by two part:  firmware of onboard system and ground control station GUI.
 9. GUI should be connected to onboard part by Bluetooth or serial link. 
 10.GUI should provide realtime data from onboard system during connection. 
 
-Firmware should be checked by MISRA.
+Firmware should be developed in accordance with MISRA rules.
