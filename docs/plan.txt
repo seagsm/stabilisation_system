@@ -11,6 +11,13 @@ Hardware based on ARM Cortex M3 STM32F103.
 
 Software should provide:
 1. Position stabilisation during flight.
-2. Flight navigation.
-3. Autopilot.
+2. Collecting flight navigation data using GPS.
+3. Autopilot using GPS.
 4. Control of all additional systems( Battery state, external and internal temperature, air speed, pressure altityde (TODO: add if some else.))
+5. Reseive conrtol signals from ground station.
+6. Altitude stabilisation using BARO and/or ULTRASONIC methods.(ULTRASONIC not ready yet.???)
+7. Software should alove to change flight object configuration, like type(tricopter, quadrocopter,octocopter...),set direction of motor rotation,
+	static and dynamic characteristic - cut off voltage, PID control parameters and so on (TODO: should be descrybed all listing.)
+8. Sofrware should be devided by two part:  firmware of onboard system and ground control station GUI.
+9. GUI should be connected to onboard part by Bluetooth or serial link. 
+10.GUI should provide realtime data from onboard system during connection. 
