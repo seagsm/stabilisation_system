@@ -1,0 +1,16 @@
+1. Make project review. 
+2. Make hardware design description.
+3. Make designe document for software modules and functions.
+4. Create working plan of project.
+5. Checking of working plan.
+
+System Requirement:
+Developing software and hardware to control flight objects of quadrocopter family.
+
+Hardware based on ARM Cortex M3 STM32F103.
+
+Software should provide:
+1. Position stabilisation during flight.
+2. Flight navigation.
+3. Autopilot.
+4. Control of all additional systems( Battery state, external and internal temperature, air speed, pressure altityde (TODO: add if some else.))

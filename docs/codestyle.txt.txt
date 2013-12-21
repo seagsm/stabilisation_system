@@ -1,11 +1,4 @@
-1. Make project review. 
-2. Make hardware design description.
-3. Make designe document for software modules and functions.
-4. Create working plan of project.
-5. Checking of working plan.
-
-
-software standart:
+Name convention:
 name of variable should be started from type :
 uint32 -  u32_xxxx
 int16  -  i16_xxxx
