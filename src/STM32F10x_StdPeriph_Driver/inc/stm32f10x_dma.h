@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V3.5.0
   * @date    11-March-2011
-  * @brief   This file contains all the functions prototypes for the DMA firmware 
+  * @brief   This file contains all the functions prototypes for the DMA firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -43,7 +43,7 @@
   * @{
   */
 
-/** 
+/**
   * @brief  DMA Init structure definition
   */
 
@@ -56,7 +56,7 @@ typedef struct
   uint32_t DMA_DIR;                /*!< Specifies if the peripheral is the source or destination.
                                         This parameter can be a value of @ref DMA_data_transfer_direction */
 
-  uint32_t DMA_BufferSize;         /*!< Specifies the buffer size, in data unit, of the specified Channel. 
+  uint32_t DMA_BufferSize;         /*!< Specifies the buffer size, in data unit, of the specified Channel.
                                         The data unit is equal to the configuration set in DMA_PeripheralDataSize
                                         or DMA_MemoryDataSize members depending in the transfer direction. */
 
@@ -105,7 +105,7 @@ typedef struct
                                    ((PERIPH) == DMA2_Channel4) || \
                                    ((PERIPH) == DMA2_Channel5))
 
-/** @defgroup DMA_data_transfer_direction 
+/** @defgroup DMA_data_transfer_direction
   * @{
   */
 
@@ -117,7 +117,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_peripheral_incremented_mode 
+/** @defgroup DMA_peripheral_incremented_mode
   * @{
   */
 
@@ -129,7 +129,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_incremented_mode 
+/** @defgroup DMA_memory_incremented_mode
   * @{
   */
 
@@ -141,7 +141,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_peripheral_data_size 
+/** @defgroup DMA_peripheral_data_size
   * @{
   */
 
@@ -155,7 +155,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_data_size 
+/** @defgroup DMA_memory_data_size
   * @{
   */
 
@@ -169,7 +169,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_circular_normal_mode 
+/** @defgroup DMA_circular_normal_mode
   * @{
   */
 
@@ -180,7 +180,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_priority_level 
+/** @defgroup DMA_priority_level
   * @{
   */
 
@@ -196,7 +196,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_memory_to_memory 
+/** @defgroup DMA_memory_to_memory
   * @{
   */
 
@@ -208,14 +208,14 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_interrupts_definition 
+/** @defgroup DMA_interrupts_definition
   * @{
   */
 
 #define DMA_IT_TC                          ((uint32_t)0x00000002)
 #define DMA_IT_HT                          ((uint32_t)0x00000004)
 #define DMA_IT_TE                          ((uint32_t)0x00000008)
-#define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1) == 0x00) && ((IT) != 0x00))
+#define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1U) == 0x00U) && ((IT) != 0x00U))
 
 #define DMA1_IT_GL1                        ((uint32_t)0x00000001)
 #define DMA1_IT_TC1                        ((uint32_t)0x00000002)
@@ -267,7 +267,7 @@ typedef struct
 #define DMA2_IT_HT5                        ((uint32_t)0x10040000)
 #define DMA2_IT_TE5                        ((uint32_t)0x10080000)
 
-#define IS_DMA_CLEAR_IT(IT) (((((IT) & 0xF0000000) == 0x00) || (((IT) & 0xEFF00000) == 0x00)) && ((IT) != 0x00))
+#define IS_DMA_CLEAR_IT(IT) (((((IT) & 0xF0000000) == 0x00U) || (((IT) & 0xEFF00000U) == 0x00U)) && ((IT) != 0x00U))
 
 #define IS_DMA_GET_IT(IT) (((IT) == DMA1_IT_GL1) || ((IT) == DMA1_IT_TC1) || \
                            ((IT) == DMA1_IT_HT1) || ((IT) == DMA1_IT_TE1) || \
@@ -298,7 +298,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_flags_definition 
+/** @defgroup DMA_flags_definition
   * @{
   */
 #define DMA1_FLAG_GL1                      ((uint32_t)0x00000001)
@@ -351,7 +351,7 @@ typedef struct
 #define DMA2_FLAG_HT5                      ((uint32_t)0x10040000)
 #define DMA2_FLAG_TE5                      ((uint32_t)0x10080000)
 
-#define IS_DMA_CLEAR_FLAG(FLAG) (((((FLAG) & 0xF0000000) == 0x00) || (((FLAG) & 0xEFF00000) == 0x00)) && ((FLAG) != 0x00))
+#define IS_DMA_CLEAR_FLAG(FLAG) (((((FLAG) & 0xF0000000U) == 0x00U) || (((FLAG) & 0xEFF00000U) == 0x00U)) && ((FLAG) != 0x00U))
 
 #define IS_DMA_GET_FLAG(FLAG) (((FLAG) == DMA1_FLAG_GL1) || ((FLAG) == DMA1_FLAG_TC1) || \
                                ((FLAG) == DMA1_FLAG_HT1) || ((FLAG) == DMA1_FLAG_TE1) || \
@@ -381,11 +381,11 @@ typedef struct
   * @}
   */
 
-/** @defgroup DMA_Buffer_Size 
+/** @defgroup DMA_Buffer_Size
   * @{
   */
 
-#define IS_DMA_BUFFER_SIZE(SIZE) (((SIZE) >= 0x1) && ((SIZE) < 0x10000))
+#define IS_DMA_BUFFER_SIZE(SIZE) (((SIZE) >= 0x1U) && ((SIZE) < 0x10000U))
 
 /**
   * @}
@@ -412,7 +412,7 @@ void DMA_Init(DMA_Channel_TypeDef* DMAy_Channelx, DMA_InitTypeDef* DMA_InitStruc
 void DMA_StructInit(DMA_InitTypeDef* DMA_InitStruct);
 void DMA_Cmd(DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState);
 void DMA_ITConfig(DMA_Channel_TypeDef* DMAy_Channelx, uint32_t DMA_IT, FunctionalState NewState);
-void DMA_SetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx, uint16_t DataNumber); 
+void DMA_SetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx, uint16_t DataNumber);
 uint16_t DMA_GetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx);
 FlagStatus DMA_GetFlagStatus(uint32_t DMAy_FLAG);
 void DMA_ClearFlag(uint32_t DMAy_FLAG);

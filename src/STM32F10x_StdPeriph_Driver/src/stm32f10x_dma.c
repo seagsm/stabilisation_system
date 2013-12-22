@@ -27,14 +27,14 @@
   * @{
   */
 
-/** @defgroup DMA 
+/** @defgroup DMA
   * @brief DMA driver modules
   * @{
-  */ 
+  */
 
 /** @defgroup DMA_Private_TypesDefinitions
   * @{
-  */ 
+  */
 /**
   * @}
   */
@@ -109,22 +109,22 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
 {
   /* Check the parameters */
   assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
-  
+
   /* Disable the selected DMAy Channelx */
   DMAy_Channelx->CCR &= (uint16_t)(~DMA_CCR1_EN);
-  
+
   /* Reset DMAy Channelx control register */
-  DMAy_Channelx->CCR  = 0;
-  
+  DMAy_Channelx->CCR  = 0U;
+
   /* Reset DMAy Channelx remaining bytes register */
-  DMAy_Channelx->CNDTR = 0;
-  
+  DMAy_Channelx->CNDTR = 0U;
+
   /* Reset DMAy Channelx peripheral address register */
-  DMAy_Channelx->CPAR  = 0;
-  
+  DMAy_Channelx->CPAR  = 0U;
+
   /* Reset DMAy Channelx memory address register */
-  DMAy_Channelx->CMAR = 0;
-  
+  DMAy_Channelx->CMAR = 0U;
+
   if (DMAy_Channelx == DMA1_Channel1)
   {
     /* Reset interrupt pending bits for DMA1 Channel1 */
@@ -181,7 +181,7 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
     DMA2->IFCR |= DMA2_Channel4_IT_Mask;
   }
   else
-  { 
+  {
     if (DMAy_Channelx == DMA2_Channel5)
     {
       /* Reset interrupt pending bits for DMA2 Channel5 */
@@ -193,7 +193,7 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
 /**
   * @brief  Initializes the DMAy Channelx according to the specified
   *         parameters in the DMA_InitStruct.
-  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and
   *   x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
   * @param  DMA_InitStruct: pointer to a DMA_InitTypeDef structure that
   *         contains the configuration information for the specified DMA Channel.
@@ -201,14 +201,14 @@ void DMA_DeInit(DMA_Channel_TypeDef* DMAy_Channelx)
   */
 void DMA_Init(DMA_Channel_TypeDef* DMAy_Channelx, DMA_InitTypeDef* DMA_InitStruct)
 {
-  uint32_t tmpreg = 0;
+  uint32_t tmpreg = 0U;
 
   /* Check the parameters */
   assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
   assert_param(IS_DMA_DIR(DMA_InitStruct->DMA_DIR));
   assert_param(IS_DMA_BUFFER_SIZE(DMA_InitStruct->DMA_BufferSize));
   assert_param(IS_DMA_PERIPHERAL_INC_STATE(DMA_InitStruct->DMA_PeripheralInc));
-  assert_param(IS_DMA_MEMORY_INC_STATE(DMA_InitStruct->DMA_MemoryInc));   
+  assert_param(IS_DMA_MEMORY_INC_STATE(DMA_InitStruct->DMA_MemoryInc));
   assert_param(IS_DMA_PERIPHERAL_DATA_SIZE(DMA_InitStruct->DMA_PeripheralDataSize));
   assert_param(IS_DMA_MEMORY_DATA_SIZE(DMA_InitStruct->DMA_MemoryDataSize));
   assert_param(IS_DMA_MODE(DMA_InitStruct->DMA_Mode));
@@ -260,13 +260,13 @@ void DMA_StructInit(DMA_InitTypeDef* DMA_InitStruct)
 {
 /*-------------- Reset DMA init structure parameters values ------------------*/
   /* Initialize the DMA_PeripheralBaseAddr member */
-  DMA_InitStruct->DMA_PeripheralBaseAddr = 0;
+  DMA_InitStruct->DMA_PeripheralBaseAddr = 0U;
   /* Initialize the DMA_MemoryBaseAddr member */
-  DMA_InitStruct->DMA_MemoryBaseAddr = 0;
+  DMA_InitStruct->DMA_MemoryBaseAddr = 0U;
   /* Initialize the DMA_DIR member */
   DMA_InitStruct->DMA_DIR = DMA_DIR_PeripheralSRC;
   /* Initialize the DMA_BufferSize member */
-  DMA_InitStruct->DMA_BufferSize = 0;
+  DMA_InitStruct->DMA_BufferSize = 0U;
   /* Initialize the DMA_PeripheralInc member */
   DMA_InitStruct->DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   /* Initialize the DMA_MemoryInc member */
@@ -285,9 +285,9 @@ void DMA_StructInit(DMA_InitTypeDef* DMA_InitStruct)
 
 /**
   * @brief  Enables or disables the specified DMAy Channelx.
-  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and
   *   x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
-  * @param  NewState: new state of the DMAy Channelx. 
+  * @param  NewState: new state of the DMAy Channelx.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -311,10 +311,10 @@ void DMA_Cmd(DMA_Channel_TypeDef* DMAy_Channelx, FunctionalState NewState)
 
 /**
   * @brief  Enables or disables the specified DMAy Channelx interrupts.
-  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and
   *   x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
   * @param  DMA_IT: specifies the DMA interrupts sources to be enabled
-  *   or disabled. 
+  *   or disabled.
   *   This parameter can be any combination of the following values:
   *     @arg DMA_IT_TC:  Transfer complete interrupt mask
   *     @arg DMA_IT_HT:  Half transfer interrupt mask
@@ -343,27 +343,27 @@ void DMA_ITConfig(DMA_Channel_TypeDef* DMAy_Channelx, uint32_t DMA_IT, Functiona
 
 /**
   * @brief  Sets the number of data units in the current DMAy Channelx transfer.
-  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and
   *         x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
   * @param  DataNumber: The number of data units in the current DMAy Channelx
-  *         transfer.   
-  * @note   This function can only be used when the DMAy_Channelx is disabled.                 
+  *         transfer.
+  * @note   This function can only be used when the DMAy_Channelx is disabled.
   * @retval None.
   */
 void DMA_SetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx, uint16_t DataNumber)
 {
   /* Check the parameters */
   assert_param(IS_DMA_ALL_PERIPH(DMAy_Channelx));
-  
+
 /*--------------------------- DMAy Channelx CNDTR Configuration ---------------*/
   /* Write to DMAy Channelx CNDTR */
-  DMAy_Channelx->CNDTR = DataNumber;  
+  DMAy_Channelx->CNDTR = DataNumber;
 }
 
 /**
   * @brief  Returns the number of remaining data units in the current
   *         DMAy Channelx transfer.
-  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and 
+  * @param  DMAy_Channelx: where y can be 1 or 2 to select the DMA and
   *   x can be 1 to 7 for DMA1 and 1 to 5 for DMA2 to select the DMA Channel.
   * @retval The number of remaining data units in the current DMAy Channelx
   *         transfer.
@@ -433,8 +433,8 @@ uint16_t DMA_GetCurrDataCounter(DMA_Channel_TypeDef* DMAy_Channelx)
 FlagStatus DMA_GetFlagStatus(uint32_t DMAy_FLAG)
 {
   FlagStatus bitstatus = RESET;
-  uint32_t tmpreg = 0;
-  
+  uint32_t tmpreg = 0U;
+
   /* Check the parameters */
   assert_param(IS_DMA_GET_FLAG(DMAy_FLAG));
 
@@ -461,7 +461,7 @@ FlagStatus DMA_GetFlagStatus(uint32_t DMAy_FLAG)
     /* DMAy_FLAG is reset */
     bitstatus = RESET;
   }
-  
+
   /* Return the DMAy_FLAG status */
   return  bitstatus;
 }
@@ -540,7 +540,7 @@ void DMA_ClearFlag(uint32_t DMAy_FLAG)
 
 /**
   * @brief  Checks whether the specified DMAy Channelx interrupt has occurred or not.
-  * @param  DMAy_IT: specifies the DMAy interrupt source to check. 
+  * @param  DMAy_IT: specifies the DMAy interrupt source to check.
   *   This parameter can be one of the following values:
   *     @arg DMA1_IT_GL1: DMA1 Channel1 global interrupt.
   *     @arg DMA1_IT_TC1: DMA1 Channel1 transfer complete interrupt.
@@ -595,7 +595,7 @@ void DMA_ClearFlag(uint32_t DMAy_FLAG)
 ITStatus DMA_GetITStatus(uint32_t DMAy_IT)
 {
   ITStatus bitstatus = RESET;
-  uint32_t tmpreg = 0;
+  uint32_t tmpreg = 0U;
 
   /* Check the parameters */
   assert_param(IS_DMA_GET_IT(DMAy_IT));

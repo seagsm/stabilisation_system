@@ -210,7 +210,7 @@ typedef struct
 #define I2C_IT_BUF                      ((uint16_t)0x0400)
 #define I2C_IT_EVT                      ((uint16_t)0x0200)
 #define I2C_IT_ERR                      ((uint16_t)0x0100)
-#define IS_I2C_CONFIG_IT(IT) ((((IT) & (uint16_t)0xF8FF) == 0x00) && ((IT) != 0x00))
+#define IS_I2C_CONFIG_IT(IT) ((((IT) & (uint16_t)0xF8FF) == 0x00U) && ((IT) != 0x00U))
 /**
   * @}
   */
@@ -234,7 +234,7 @@ typedef struct
 #define I2C_IT_ADDR                     ((uint32_t)0x02000002)
 #define I2C_IT_SB                       ((uint32_t)0x02000001)
 
-#define IS_I2C_CLEAR_IT(IT) ((((IT) & (uint16_t)0x20FF) == 0x00) && ((IT) != (uint16_t)0x00))
+#define IS_I2C_CLEAR_IT(IT) ((((IT) & (uint16_t)0x20FF) == 0x00U) && ((IT) != (uint16_t)0x00))
 
 #define IS_I2C_GET_IT(IT) (((IT) == I2C_IT_SMBALERT) || ((IT) == I2C_IT_TIMEOUT) || \
                            ((IT) == I2C_IT_PECERR) || ((IT) == I2C_IT_OVR) || \
@@ -282,7 +282,7 @@ typedef struct
 #define I2C_FLAG_ADDR                   ((uint32_t)0x10000002)
 #define I2C_FLAG_SB                     ((uint32_t)0x10000001)
 
-#define IS_I2C_CLEAR_FLAG(FLAG) ((((FLAG) & (uint16_t)0x20FF) == 0x00) && ((FLAG) != (uint16_t)0x00))
+#define IS_I2C_CLEAR_FLAG(FLAG) ((((FLAG) & (uint16_t)0x20FF) == 0x00U) && ((FLAG) != (uint16_t)0x00))
 
 #define IS_I2C_GET_FLAG(FLAG) (((FLAG) == I2C_FLAG_DUALF) || ((FLAG) == I2C_FLAG_SMBHOST) || \
                                ((FLAG) == I2C_FLAG_SMBDEFAULT) || ((FLAG) == I2C_FLAG_GENCALL) || \
@@ -501,7 +501,7 @@ typedef struct
   * @{
   */
 
-#define IS_I2C_OWN_ADDRESS1(ADDRESS1) ((ADDRESS1) <= 0x3FF)
+#define IS_I2C_OWN_ADDRESS1(ADDRESS1) ((ADDRESS1) <= 0x3FFU)
 /**
   * @}
   */
@@ -510,7 +510,7 @@ typedef struct
   * @{
   */
 
-#define IS_I2C_CLOCK_SPEED(SPEED) (((SPEED) >= 0x1) && ((SPEED) <= 400000))
+#define IS_I2C_CLOCK_SPEED(SPEED) (((SPEED) >= 0x1U) && ((SPEED) <= 400000U))
 /**
   * @}
   */
