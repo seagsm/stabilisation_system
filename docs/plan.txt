@@ -41,7 +41,8 @@ Integration Process:           -> Integration of code into a real-time environme
 System Requirement:
 Developing software and hardware to control flight objects of quadrocopter family.
 
-Hardware based on ARM Cortex M3 STM32F103.
+Hardware based on ARM Cortex M3 STM32F103CBT6, medium-density performance line ARM-based 32-bit MCU with 128 KB Flash, 20KB SRAM,
+72 MHz, 1.25 DMIPS/MHz,(93 DMIPS),Single-cycle multiplication and hardware division.
 
 Software should provide:
 1. Position stabilisation during flight.
