@@ -1,0 +1,62 @@
+[Stack]
+FillEnabled=0
+OverflowWarningsEnabled=1
+WarningThreshold=90
+SpWarningsEnabled=1
+WarnLogOnly=1
+UseTrigger=1
+TriggerName=main
+LimitSize=0
+ByteLimit=50
+[DebugChecksum]
+Checksum=-1591680661
+[Exceptions]
+StopOnUncaught=_ 0
+StopOnThrow=_ 0
+[CallStack]
+ShowArgs=0
+[Disassembly]
+MixedMode=1
+[struct_types]
+Fmt0=control_pid_est_t-PID_Pitch_Kd	4	0
+Fmt1=control_pid_est_t-PID_Pitch_Ki	4	0
+Fmt2=control_pid_est_t-PID_Pitch_Kp	4	0
+Fmt3=control_pid_est_t-PID_Roll_Kd	4	0
+Fmt4=control_pid_est_t-PID_Roll_Ki	4	0
+Fmt5=control_pid_est_t-PID_Roll_Kp	4	0
+Fmt6=control_pid_est_t-PID_Yaw_Kp	4	0
+Fmt7=sensor_raw_data_t-BoardSystemTime	3	0
+Fmt8=sensor_raw_data_t-Magnetometer_raw_X	3	0
+Fmt9=sensor_raw_data_t-Magnetometer_raw_Y	4	0
+Fmt10=sensor_raw_data_t-Magnetometer_raw_Z	4	0
+[watch_formats]
+Fmt0={W}0:current_CRC	4	0
+Fmt1={W}0:input_value	4	0
+Fmt2={W}0:msg	4	0
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[DriverProfiling]
+Enabled=0
+Mode=0
+Graph=0
+Symbiont=0
+Exclusions=
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_DATA" "system_time_interrupt_init" 0 0 0 0 4294967295
+Bp1=_ 0 "EMUL_DATA" "TIMER1_period_interupt_init" 0 0 0 0 4294967295
+Bp2=_ 0 "EMUL_DATA" "TERMINAL_OUTPUT" 0 0 0 0 4294967295
+Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\src\board_drivers\I2CRoutines.c}.655.6" 0 0 1 "" 0 "" 0
+Bp4=_ 1 "EMUL_DATA" "start_main_interupt_function_sensor" 0 0 0 0 4294967295
+Count=5
+[Aliases]
+Count=0
+SuppressDialog=0
