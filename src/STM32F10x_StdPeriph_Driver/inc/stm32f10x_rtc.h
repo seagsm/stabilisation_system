@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V3.5.0
   * @date    11-March-2011
-  * @brief   This file contains all the functions prototypes for the RTC firmware 
+  * @brief   This file contains all the functions prototypes for the RTC firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -37,35 +37,35 @@
 
 /** @addtogroup RTC
   * @{
-  */ 
+  */
 
 /** @defgroup RTC_Exported_Types
   * @{
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup RTC_Exported_Constants
   * @{
   */
 
-/** @defgroup RTC_interrupts_define 
+/** @defgroup RTC_interrupts_define
   * @{
   */
 
 #define RTC_IT_OW            ((uint16_t)0x0004)  /*!< Overflow interrupt */
 #define RTC_IT_ALR           ((uint16_t)0x0002)  /*!< Alarm interrupt */
 #define RTC_IT_SEC           ((uint16_t)0x0001)  /*!< Second interrupt */
-#define IS_RTC_IT(IT) ((((IT) & (uint16_t)0xFFF8) == 0x00) && ((IT) != 0x00))
+#define IS_RTC_IT(IT) ((((IT) & (uint16_t)0xFFF8) == 0x00U) && ((IT) != 0x00U))
 #define IS_RTC_GET_IT(IT) (((IT) == RTC_IT_OW) || ((IT) == RTC_IT_ALR) || \
                            ((IT) == RTC_IT_SEC))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_interrupts_flags 
+/** @defgroup RTC_interrupts_flags
   * @{
   */
 
@@ -74,11 +74,11 @@
 #define RTC_FLAG_OW          ((uint16_t)0x0004)  /*!< Overflow flag */
 #define RTC_FLAG_ALR         ((uint16_t)0x0002)  /*!< Alarm flag */
 #define RTC_FLAG_SEC         ((uint16_t)0x0001)  /*!< Second flag */
-#define IS_RTC_CLEAR_FLAG(FLAG) ((((FLAG) & (uint16_t)0xFFF0) == 0x00) && ((FLAG) != 0x00))
+#define IS_RTC_CLEAR_FLAG(FLAG) ((((FLAG) & (uint16_t)0xFFF0) == 0x00U) && ((FLAG) != 0x00U))
 #define IS_RTC_GET_FLAG(FLAG) (((FLAG) == RTC_FLAG_RTOFF) || ((FLAG) == RTC_FLAG_RSF) || \
                                ((FLAG) == RTC_FLAG_OW) || ((FLAG) == RTC_FLAG_ALR) || \
                                ((FLAG) == RTC_FLAG_SEC))
-#define IS_RTC_PRESCALER(PRESCALER) ((PRESCALER) <= 0xFFFFF)
+#define IS_RTC_PRESCALER(PRESCALER) ((PRESCALER) <= 0xFFFFFU)
 
 /**
   * @}

@@ -27,7 +27,7 @@
   * @{
   */
 
-/** @defgroup WWDG 
+/** @defgroup WWDG
   * @brief WWDG driver modules
   * @{
   */
@@ -48,9 +48,9 @@
 #define WWDG_OFFSET       (WWDG_BASE - PERIPH_BASE)
 
 /* Alias word address of EWI bit */
-#define CFR_OFFSET        (WWDG_OFFSET + 0x04)
-#define EWI_BitNumber     0x09
-#define CFR_EWI_BB        (PERIPH_BB_BASE + (CFR_OFFSET * 32) + (EWI_BitNumber * 4))
+#define CFR_OFFSET        (WWDG_OFFSET + 0x04U)
+#define EWI_BitNumber     0x09U
+#define CFR_EWI_BB        (PERIPH_BB_BASE + (CFR_OFFSET * 32U) + (EWI_BitNumber * 4U))
 
 /* --------------------- WWDG registers bit mask ------------------------ */
 
@@ -117,7 +117,7 @@ void WWDG_DeInit(void)
   */
 void WWDG_SetPrescaler(uint32_t WWDG_Prescaler)
 {
-  uint32_t tmpreg = 0;
+  uint32_t tmpreg = 0U;
   /* Check the parameters */
   assert_param(IS_WWDG_PRESCALER(WWDG_Prescaler));
   /* Clear WDGTB[1:0] bits */
@@ -136,7 +136,7 @@ void WWDG_SetPrescaler(uint32_t WWDG_Prescaler)
   */
 void WWDG_SetWindowValue(uint8_t WindowValue)
 {
-  __IO uint32_t tmpreg = 0;
+  __IO uint32_t tmpreg = 0U;
 
   /* Check the parameters */
   assert_param(IS_WWDG_WINDOW_VALUE(WindowValue));
@@ -145,7 +145,8 @@ void WWDG_SetWindowValue(uint8_t WindowValue)
   tmpreg = WWDG->CFR & CFR_W_Mask;
 
   /* Set W[6:0] bits according to WindowValue value */
-  tmpreg |= WindowValue & (uint32_t) BIT_Mask;
+  /* tmpreg |= WindowValue & (uint32_t) BIT_Mask; */
+  tmpreg |= (uint32_t)WindowValue & (uint32_t) BIT_Mask;
 
   /* Store the new value */
   WWDG->CFR = tmpreg;
@@ -173,11 +174,11 @@ void WWDG_SetCounter(uint8_t Counter)
   assert_param(IS_WWDG_COUNTER(Counter));
   /* Write to T[6:0] bits to configure the counter value, no need to do
      a read-modify-write; writing a 0 to WDGA bit does nothing */
-  WWDG->CR = Counter & BIT_Mask;
+  WWDG->CR = (uint32_t)Counter & (uint32_t)BIT_Mask;
 }
 
 /**
-  * @brief  Enables WWDG and load the counter value.                  
+  * @brief  Enables WWDG and load the counter value.
   * @param  Counter: specifies the watchdog counter value.
   *   This parameter must be a number between 0x40 and 0x7F.
   * @retval None
@@ -186,7 +187,7 @@ void WWDG_Enable(uint8_t Counter)
 {
   /* Check the parameters */
   assert_param(IS_WWDG_COUNTER(Counter));
-  WWDG->CR = CR_WDGA_Set | Counter;
+  WWDG->CR = CR_WDGA_Set | (uint32_t)Counter;
 }
 
 /**
@@ -196,7 +197,13 @@ void WWDG_Enable(uint8_t Counter)
   */
 FlagStatus WWDG_GetFlagStatus(void)
 {
-  return (FlagStatus)(WWDG->SR);
+  FlagStatus fs_status = SET;
+  if(WWDG->SR == 0U)
+  {
+    fs_status = RESET;
+  }
+  return (fs_status);
+ /* return (FlagStatus)(WWDG->SR); */
 }
 
 /**

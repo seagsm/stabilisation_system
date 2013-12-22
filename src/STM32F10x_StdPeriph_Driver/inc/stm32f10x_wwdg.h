@@ -37,24 +37,24 @@
 
 /** @addtogroup WWDG
   * @{
-  */ 
+  */
 
 /** @defgroup WWDG_Exported_Types
   * @{
-  */ 
-  
+  */
+
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup WWDG_Exported_Constants
   * @{
-  */ 
-  
-/** @defgroup WWDG_Prescaler 
+  */
+
+/** @defgroup WWDG_Prescaler
   * @{
-  */ 
-  
+  */
+
 #define WWDG_Prescaler_1    ((uint32_t)0x00000000)
 #define WWDG_Prescaler_2    ((uint32_t)0x00000080)
 #define WWDG_Prescaler_4    ((uint32_t)0x00000100)
@@ -63,28 +63,28 @@
                                       ((PRESCALER) == WWDG_Prescaler_2) || \
                                       ((PRESCALER) == WWDG_Prescaler_4) || \
                                       ((PRESCALER) == WWDG_Prescaler_8))
-#define IS_WWDG_WINDOW_VALUE(VALUE) ((VALUE) <= 0x7F)
-#define IS_WWDG_COUNTER(COUNTER) (((COUNTER) >= 0x40) && ((COUNTER) <= 0x7F))
+#define IS_WWDG_WINDOW_VALUE(VALUE) ((VALUE) <= 0x7FU)
+#define IS_WWDG_COUNTER(COUNTER) (((COUNTER) >= 0x40U) && ((COUNTER) <= 0x7FU))
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup WWDG_Exported_Macros
   * @{
-  */ 
+  */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup WWDG_Exported_Functions
   * @{
-  */ 
-  
+  */
+
 void WWDG_DeInit(void);
 void WWDG_SetPrescaler(uint32_t WWDG_Prescaler);
 void WWDG_SetWindowValue(uint8_t WindowValue);
@@ -102,14 +102,14 @@ void WWDG_ClearFlag(void);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
