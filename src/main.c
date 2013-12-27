@@ -8,10 +8,34 @@
 #include <stm32f10x_tim.h>
 #include <misc.h>
 
+/*board_system_state   bss_current_state; */
+
 int main( void)
 {
+  static board_system_state   bss_current_state;
+  bss_current_state = BOARD_SYSTEM_INIT;
+
+   /* main_init(); */
+
+  while(1U)
+  {
+    switch (bss_current_state)
+    {
+      case BOARD_SYSTEM_INIT:
+      break;
+
+      case BOARD_SYSTEM_RUN:
+      break;
+
+      default:
+      break;
+  }
+
+
+  }
 
 }
+
 
 
 #ifdef  USE_FULL_ASSERT
