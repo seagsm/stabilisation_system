@@ -1843,6 +1843,18 @@
     <group>
       <name>board</name>
       <file>
+        <name>$PROJ_DIR$\src\board\board_init.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_init.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_state.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_state.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_system_type.h</name>
       </file>
     </group>
