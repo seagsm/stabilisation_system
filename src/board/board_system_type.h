@@ -7,8 +7,11 @@
 
 typedef enum
 {
-  BOARD_SYSTEM_INIT = 0U,
-  BOARD_SYSTEM_RUN  = 1U
-} board_system_state;
+  BOARD_ERR_OK    = 0U,
+  BOARD_ERR_ERROR = 1U,
+} BOARD_ERRORS; /* variable tag be_xxx */
+
+
+
 
 #endif

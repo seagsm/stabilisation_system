@@ -8,18 +8,18 @@
 #include <stm32f10x_tim.h>
 #include <misc.h>
 
-/*board_system_state   bss_current_state; */
+
 
 int main( void)
 {
-  static board_system_state   bss_current_state;
-  bss_current_state = BOARD_SYSTEM_INIT;
+  BOARD_SYSTEM_STATE   bss_state;
 
-   /* main_init(); */
+  board_init_main_init();
 
   while(1U)
   {
-    switch (bss_current_state)
+    bss_state = board_state_get_required_state();
+    switch (bss_state)
     {
       case BOARD_SYSTEM_INIT:
       break;
@@ -29,12 +29,19 @@ int main( void)
 
       default:
       break;
-  }
-
-
+    }
   }
 
 }
+
+
+
+
+
+
+
+
+
 
 
 
