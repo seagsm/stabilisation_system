@@ -18,13 +18,21 @@ int main( void)
 
   while(1U)
   {
-    bss_state = board_state_get_required_state();
+    bss_state = bss_board_state_get_required_state();
     switch (bss_state)
     {
       case BOARD_SYSTEM_INIT:
+        v_board_state_set_state(BOARD_SYSTEM_READY_TO_RUN);
+      break;
+
+      case BOARD_SYSTEM_READY_TO_RUN:
+        v_board_state_set_state(BOARD_SYSTEM_RUN);
       break;
 
       case BOARD_SYSTEM_RUN:
+      break;
+
+      case BOARD_SYSTEM_FAULT:
       break;
 
       default:

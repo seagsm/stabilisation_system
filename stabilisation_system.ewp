@@ -1843,6 +1843,12 @@
     <group>
       <name>board</name>
       <file>
+        <name>$PROJ_DIR$\src\board\board_gpio.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_gpio.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_init.c</name>
       </file>
       <file>
@@ -1856,6 +1862,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_system_type.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_uart.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_uart.h</name>
       </file>
     </group>
     <group>
