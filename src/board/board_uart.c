@@ -20,23 +20,15 @@ const uint32_t COM_RX_PORT_CLK[COMn] = {BOARD_COM1_RX_GPIO_CLK,  BOARD_COM2_RX_G
 const uint16_t COM_TX_PIN[COMn]      = {BOARD_COM1_TX_PIN,       BOARD_COM2_TX_PIN,       BOARD_COM3_TX_PIN};
 const uint16_t COM_RX_PIN[COMn]      = {BOARD_COM1_RX_PIN,       BOARD_COM2_RX_PIN,       BOARD_COM3_RX_PIN};
 
-
-
-
-
-
+/* This function should initialise all uart devices. */
 BOARD_ERROR be_board_uart_init(void)
 {
   BOARD_ERROR be_result = BOARD_ERR_OK;
 
-
-
   return(be_result);
 }
 
-
-
-
+/* This function do initialisation of UART1 module. */
 BOARD_ERROR be_board_uart_uart1_init(void)
 {
   BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -64,7 +56,7 @@ BOARD_ERROR be_board_uart_uart1_init(void)
 
 
 /*
-  Configures COM port.
+  This function configurate communication port.
   COM:  Specifies the COM port to be configured.
         This parameter can be one of following parameters:
         COM1, COM2, COM3.
