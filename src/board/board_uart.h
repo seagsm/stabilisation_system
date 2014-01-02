@@ -48,11 +48,12 @@
 
 /* Amount of enabled ports. */
 #define COMn                             3U
- typedef enum
+
+typedef enum
 {
-  COM1 = 0U,
-  COM2 = 1U,
-  COM3 = 2U
+    COM1 = 0U,
+    COM2 = 1U,
+    COM3 = 2U
 } COM_TypeDef;
 
 /* Before use printf a suitable com port should be initialised. */
@@ -65,8 +66,8 @@
 
 
 BOARD_ERROR be_board_uart_init(void);
-BOARD_ERROR be_board_uart_module_init(COM_TypeDef com_com, USART_InitTypeDef* p_usart_init_struct);
-BOARD_ERROR be_board_uart_uart1_init(void);
+static BOARD_ERROR be_board_uart_module_init(COM_TypeDef com_com, USART_InitTypeDef* p_usart_init_struct);
+static BOARD_ERROR be_board_uart_uart1_init(void);
 
 
 #endif

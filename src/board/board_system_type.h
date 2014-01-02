@@ -7,9 +7,9 @@
 
 typedef enum
 {
-  BOARD_ERR_OK    = 0U,
-  BOARD_ERR_ERROR = 1U,
-} BOARD_ERROR; /* variable tag be_xxx */
+    BOARD_ERR_OK    = 0U,
+    BOARD_ERR_ERROR = 1U,
+}   BOARD_ERROR; /* variable tag be_xxx */
 
 
 
