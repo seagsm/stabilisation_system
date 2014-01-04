@@ -52,7 +52,7 @@
           
           
           
-        <item>text</item><item>DMA_InitStructure.DMA_PeripheralBaseAddr</item><item/></expressions>
+        <item>text</item><item>DMA_InitStructure.DMA_PeripheralBaseAddr</item><item>u8_test_value</item><item>rb_USART1_TX</item><item></item></expressions>
         <col-names>
           
           
@@ -85,7 +85,7 @@
       
       
       
-    <Wnd2>
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-4747-21290</Identity>
@@ -97,7 +97,7 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd2><Wnd4>
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
         <Tabs>
           <Tab>
             <Identity>TabID-4022-26403</Identity>
@@ -106,20 +106,20 @@
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd4><Wnd5><Tabs><Tab><Identity>TabID-4267-25248</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab><Tab><Identity>TabID-5380-24786</Identity><TabName>Find All Declarations</TabName><Factory>Find-All-Declarations</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd5></Windows>
+      <SelectedTab>0</SelectedTab></Wnd1><Wnd3><Tabs><Tab><Identity>TabID-4267-25248</Identity><TabName>Debug Log</TabName><Factory>Debug-Log</Factory><Session/></Tab><Tab><Identity>TabID-5380-24786</Identity><TabName>Find All Declarations</TabName><Factory>Find-All-Declarations</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd3></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_uart.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>6</YPos2><SelStart2>167</SelStart2><SelEnd2>167</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_dma.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>35</YPos2><SelStart2>2040</SelStart2><SelEnd2>2040</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>546</SelStart2><SelEnd2>546</SelEnd2></Tab><ActiveTab>2</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_uart.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>36</YPos2><SelStart2>265</SelStart2><SelEnd2>265</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_dma.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>30</YPos2><SelStart2>1947</SelStart2><SelEnd2>1947</SelEnd2></Tab><ActiveTab>1</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_dma.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>311</SelStart2><SelEnd2>311</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>7</YPos2><SelStart2>453</SelStart2><SelEnd2>453</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\src\board\board_r_buff.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>32</YPos2><SelStart2>1714</SelStart2><SelEnd2>1728</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-0223dd18><key>iaridepm.enu1</key></Toolbar-0223dd18></Sizes></Row0><Row1><Sizes><Toolbar-0ce8e138><key>debuggergui.enu1</key></Toolbar-0ce8e138></Sizes></Row1></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>624</Bottom><Right>222</Right><x>-2</x><y>-2</y><xscreen>198</xscreen><yscreen>139</yscreen><sizeHorzCX>137500</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>155556</sizeVertCX><sizeVertCY>754217</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes><Wnd4><Rect><Top>-2</Top><Left>-2</Left><Bottom>624</Bottom><Right>349</Right><x>-2</x><y>-2</y><xscreen>198</xscreen><yscreen>139</yscreen><sizeHorzCX>137500</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>243750</sizeVertCX><sizeVertCY>754217</sizeVertCY></Rect></Wnd4></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd5><Rect><Top>-2</Top><Left>-2</Left><Bottom>137</Bottom><Right>1442</Right><x>-2</x><y>-2</y><xscreen>1444</xscreen><yscreen>139</yscreen><sizeHorzCX>1002778</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>137500</sizeVertCX><sizeVertCY>167470</sizeVertCY></Rect></Wnd5></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-01660cc8><key>iaridepm.enu1</key></Toolbar-01660cc8></Sizes></Row0><Row1><Sizes><Toolbar-0fce33a0><key>debuggergui.enu1</key></Toolbar-0fce33a0></Sizes></Row1></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>624</Bottom><Right>222</Right><x>-2</x><y>-2</y><xscreen>198</xscreen><yscreen>139</yscreen><sizeHorzCX>137500</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>155556</sizeVertCX><sizeVertCY>754217</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>624</Bottom><Right>349</Right><x>-2</x><y>-2</y><xscreen>198</xscreen><yscreen>139</yscreen><sizeHorzCX>137500</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>243750</sizeVertCX><sizeVertCY>754217</sizeVertCY></Rect></Wnd1></Sizes></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>137</Bottom><Right>1442</Right><x>-2</x><y>-2</y><xscreen>1444</xscreen><yscreen>139</yscreen><sizeHorzCX>1002778</sizeHorzCX><sizeHorzCY>167470</sizeHorzCY><sizeVertCX>137500</sizeVertCX><sizeVertCY>167470</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Project>
 
