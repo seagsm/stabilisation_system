@@ -1864,6 +1864,12 @@
         <name>$PROJ_DIR$\src\board\board_NVIC.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_ppm.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_ppm.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_r_buff.c</name>
       </file>
       <file>

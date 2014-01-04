@@ -8,7 +8,9 @@
 #include "board_state.h"
 #include "board_gpio.h"
 #include "board_uart.h"
+#include "board_ppm.h"
 #include "board_sys_tick.h"
+
 
 #define BOARD_INIT_TOTAL_STEPS 3U
 

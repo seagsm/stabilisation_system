@@ -10,8 +10,10 @@ BOARD_ERROR board_init_main_init(void)
 
     gv_board_sys_tick_init();
 
+
     /*TODO: It should be removed to suitable place. */
     __enable_irq();
+
 
     while (u16_step < BOARD_INIT_TOTAL_STEPS)
     {
@@ -23,7 +25,10 @@ BOARD_ERROR board_init_main_init(void)
             case (1U):
                 be_result = be_board_uart_init(); /* Init UART modules. */
                 break;
-            default:
+            case (2U):
+                be_result = be_board_ppm_init(); /* Init PPM input capture. */
+                break;
+          default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

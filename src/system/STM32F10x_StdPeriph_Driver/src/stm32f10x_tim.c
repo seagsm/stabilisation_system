@@ -2366,7 +2366,7 @@ void TIM_SetCompare4(TIM_TypeDef* TIMx, uint16_t Compare4)
   *     @arg TIM_ICPSC_DIV8: capture is done once every 8 events
   * @retval None
   */
-void TIM_SetIC1Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
+static void TIM_SetIC1Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
 {
   /* Check the parameters */
   assert_param(IS_TIM_LIST8_PERIPH(TIMx));
@@ -2388,7 +2388,7 @@ void TIM_SetIC1Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
   *     @arg TIM_ICPSC_DIV8: capture is done once every 8 events
   * @retval None
   */
-void TIM_SetIC2Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
+static void TIM_SetIC2Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
 {
   /* Check the parameters */
   assert_param(IS_TIM_LIST6_PERIPH(TIMx));
@@ -2410,7 +2410,7 @@ void TIM_SetIC2Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
   *     @arg TIM_ICPSC_DIV8: capture is done once every 8 events
   * @retval None
   */
-void TIM_SetIC3Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
+static void TIM_SetIC3Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
 {
   /* Check the parameters */
   assert_param(IS_TIM_LIST3_PERIPH(TIMx));
@@ -2432,7 +2432,7 @@ void TIM_SetIC3Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
   *     @arg TIM_ICPSC_DIV8: capture is done once every 8 events
   * @retval None
   */
-void TIM_SetIC4Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
+static void TIM_SetIC4Prescaler(TIM_TypeDef* TIMx, uint16_t TIM_ICPSC)
 {
   /* Check the parameters */
   assert_param(IS_TIM_LIST3_PERIPH(TIMx));
