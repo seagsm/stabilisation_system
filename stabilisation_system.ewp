@@ -1861,6 +1861,9 @@
         <name>$PROJ_DIR$\src\board\board_init.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_NVIC.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_r_buff.c</name>
       </file>
       <file>
@@ -1871,6 +1874,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_state.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_sys_tick.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_sys_tick.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_system_type.h</name>

@@ -38,7 +38,7 @@ BOARD_ERROR be_board_dma1_init(void)
 
     /*********************************************/
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-    __enable_irq();
+  /*  __enable_irq(); */
     /*********************************************/
     NVIC_SetPriority(DMA1_Channel4_IRQn, 0x00U);
    /* NVIC_EnableIRQ(DMA1_Channel4_IRQn); */

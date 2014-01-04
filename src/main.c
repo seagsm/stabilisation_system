@@ -14,6 +14,7 @@ int main( void)
 {
   BOARD_SYSTEM_STATE   bss_state;
 
+
   board_init_main_init();
 
   while(1U)

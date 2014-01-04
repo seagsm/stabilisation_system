@@ -8,6 +8,11 @@ BOARD_ERROR board_init_main_init(void)
     uint16_t u16_step = 0U;
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
+    gv_board_sys_tick_init();
+
+    /*TODO: It should be removed to suitable place. */
+    __enable_irq();
+
     while (u16_step < BOARD_INIT_TOTAL_STEPS)
     {
         switch (u16_step)
