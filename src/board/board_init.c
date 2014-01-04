@@ -28,7 +28,10 @@ BOARD_ERROR board_init_main_init(void)
             case (2U):
                 be_result = be_board_ppm_init(); /* Init PPM input capture. */
                 break;
-          default:
+            case (3U):
+                be_result = be_board_pwm_init(); /* Init PWM chanels. */
+                break;
+            default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

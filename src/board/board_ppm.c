@@ -1,11 +1,7 @@
 
-
-
 #include "board_ppm.h"
 
 static volatile uint16_t IC4ReadValue = 0U;
-
-
 
 /* This function initialise PPM capture module. */
 BOARD_ERROR be_board_ppm_init(void)
@@ -19,14 +15,16 @@ BOARD_ERROR be_board_ppm_init(void)
 
 
 static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
-                                            uint16_t ch_number,
-                                            uint16_t TIM_TIxExternalCLKSource,
-                                            uint16_t TIM_ICPolarity,
-                                            uint16_t TIM_ICPSC_divider,
-                                            uint16_t ICFilter
-                                          )
+                                                    uint16_t u16_ch_number,
+                                                    uint16_t TIM_TIxExternalCLKSource,
+                                                    uint16_t TIM_ICPolarity,
+                                                    uint16_t TIM_ICPSC_divider,
+                                                    uint16_t ICFilter
+                                                 )
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    /*TODO: Extra initialization should be removed. (Extra chanel and GPIO.)*/
 
     GPIO_InitTypeDef   GPIO_InitStructure;
     NVIC_InitTypeDef   NVIC_InitStructure;
@@ -38,22 +36,22 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     /* Connect clock to port B for ch1 (PB6),ch2 (PB7),ch3 (PB8), ch4(PB9). */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-    if(ch_number==1U)
+    if(u16_ch_number==1U)
     {
         /* TIM4 channel 1 pin (PB.06) configuration */
         GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6;
     }
-    else if(ch_number==2U)
+    else if(u16_ch_number==2U)
     {
         /* TIM4 channel 2 pin (PB.07) configuration */
         GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_7;
     }
-    else if(ch_number==3U)
+    else if(u16_ch_number==3U)
     {
         /* TIM4 channel 3 pin (PB.08) configuration */
         GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
     }
-    else if(ch_number==4U)
+    else if(u16_ch_number==4U)
     {
         /* TIM4 channel 4 pin (PB.09) configuration */
         GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_9;
@@ -81,19 +79,19 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
     /* TIM4 configuration: Input Capture mode. */
-    if(ch_number==1U)
+    if(u16_ch_number==1U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
     }
-    else if(ch_number==2U)
+    else if(u16_ch_number==2U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
     }
-    else if(ch_number==3U)
+    else if(u16_ch_number==3U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
     }
-    else if(ch_number==4U)
+    else if(u16_ch_number==4U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
     }
@@ -105,19 +103,19 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     /* TIM enable counter */
     TIM_Cmd(TIM4, ENABLE);
     /* Enable the CCx Interrupt Request */
-    if(ch_number==1U)
+    if(u16_ch_number==1U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC1|TIM_IT_Update, ENABLE);
     }
-    else if(ch_number==2U)
+    else if(u16_ch_number==2U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC2|TIM_IT_Update, ENABLE);
     }
-    else if(ch_number==3U)
+    else if(u16_ch_number==3U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC3|TIM_IT_Update, ENABLE);
     }
-    else if(ch_number==4U)
+    else if(u16_ch_number==4U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC4|TIM_IT_Update, ENABLE);
     }

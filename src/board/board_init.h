@@ -9,10 +9,11 @@
 #include "board_gpio.h"
 #include "board_uart.h"
 #include "board_ppm.h"
+#include "board_pwm.h"
 #include "board_sys_tick.h"
 
 
-#define BOARD_INIT_TOTAL_STEPS 3U
+#define BOARD_INIT_TOTAL_STEPS 4U
 
 BOARD_ERROR board_init_main_init(void);
 
