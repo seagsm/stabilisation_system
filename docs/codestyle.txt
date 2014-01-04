@@ -32,7 +32,7 @@ code stile:
 ******
     
     /* This is example. */
-    #define MAIN_COUNTER 100u	
+    #define MAIN_COUNTER 100U	
     
     UINT32 u32_i; 
     UINT32 u32_a;

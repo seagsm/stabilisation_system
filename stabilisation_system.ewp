@@ -294,7 +294,7 @@
         </option>
         <option>
           <name>CompilerMisraOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCIncludePath2</name>
@@ -321,7 +321,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -330,7 +330,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -340,7 +340,7 @@
         <option>
           <name>CompilerMisraRules04</name>
           <version>0</version>
-          <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+          <state>011101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
         <option>
           <name>CCPosIndRopi</name>
@@ -1843,6 +1843,12 @@
     <group>
       <name>board</name>
       <file>
+        <name>$PROJ_DIR$\src\board\board_dma.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_dma.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_gpio.c</name>
       </file>
       <file>
@@ -1853,6 +1859,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_init.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_r_buff.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_r_buff.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_state.c</name>
