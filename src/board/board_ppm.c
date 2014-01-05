@@ -2,7 +2,6 @@
 #include "board_ppm.h"
 
 BOARD_CHANNEL_VALUE bc_channel_value_structure;
-static volatile uint16_t IC4ReadValue = 0U;
 
 /* This function initialise PPM capture module. */
 BOARD_ERROR be_board_ppm_init(void)
@@ -13,7 +12,6 @@ BOARD_ERROR be_board_ppm_init(void)
 
     return(be_result);
 }
-
 
 static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
                                                     uint16_t u16_ch_number,
@@ -86,23 +84,23 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
 
 
     /* TIM4 configuration: Input Capture mode. */
-    if(u16_ch_number==1U)
+    if(u16_ch_number == 1U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;
     }
-    else if(u16_ch_number==2U)
+    else if(u16_ch_number == 2U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;
     }
-    else if(u16_ch_number==3U)
+    else if(u16_ch_number == 3U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
     }
-    else if(u16_ch_number==4U)
+    else if(u16_ch_number == 4U)
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
     }
-
+    /* Timer input capture configuretion. */
     TIM_ICInitStructure.TIM_ICPolarity  = TIM_ICPolarity;
     TIM_ICInitStructure.TIM_ICSelection = TIM_TIxExternalCLKSource;
     TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_divider;
@@ -114,23 +112,22 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     TIM_Cmd(TIM4, ENABLE);
 
     /* Enable the CCx Interrupt Request */
-    if(u16_ch_number==1U)
+    if(u16_ch_number == 1U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC1|TIM_IT_Update, ENABLE);
     }
-    else if(u16_ch_number==2U)
+    else if(u16_ch_number == 2U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC2|TIM_IT_Update, ENABLE);
     }
-    else if(u16_ch_number==3U)
+    else if(u16_ch_number == 3U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC3|TIM_IT_Update, ENABLE);
     }
-    else if(u16_ch_number==4U)
+    else if(u16_ch_number == 4U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC4|TIM_IT_Update, ENABLE);
     }
-
     return(be_result);
 }
 
@@ -138,17 +135,19 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
 
 void TIM4_IRQHandler(void)
 {
-    volatile static uint32_t c_overflow = 0U;
-    volatile static uint32_t over_flag  = 0U;
+    static uint32_t u32_overflow = 0U;
+    static uint32_t u32_over_flag  = 0U;
+    static uint32_t u32_channel_number  = 1U;
+           uint16_t u16_current_period;
 
     if(TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
     {
         /* Clear TIM4 Capture compare interrupt pending bit */
         TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
         /* OverfloW counter. */
-        c_overflow++;
+        u32_overflow++;
         /* Set flag if overflow. */
-        over_flag=1U;
+        u32_over_flag=1U;
     }
 
     if(TIM_GetITStatus(TIM4, TIM_IT_CC1) == SET)
@@ -166,21 +165,61 @@ void TIM4_IRQHandler(void)
         TIM_ClearITPendingBit(TIM4, TIM_IT_CC3);
         /* PPM input connected to CH3 .*/
         /* Get capture value. */
-        IC4ReadValue = TIM_GetCapture3(TIM4);
-        bc_channel_value_structure.u16_channel_1_value = IC4ReadValue;
-        bc_channel_value_structure.u16_channel_2_value = (uint16_t)(c_overflow&0xFFFFU);
-        bc_channel_value_structure.u16_channel_3_value = (uint16_t)((c_overflow>>16)&0xFFFFU);
+        u16_current_period = TIM_GetCapture3(TIM4);
+        if((u32_over_flag != 0U)||(u16_current_period > 5000U))
+        {
+            u32_channel_number  = 1U;
+        }
+        else
+        {
+            switch(u32_channel_number)
+            {
+              case 1U:
+                    bc_channel_value_structure.u16_channel_1_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 2U:
+                    bc_channel_value_structure.u16_channel_2_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 3U:
+                    bc_channel_value_structure.u16_channel_3_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 4U:
+                    bc_channel_value_structure.u16_channel_4_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 5U:
+                    bc_channel_value_structure.u16_channel_5_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 6U:
+                    bc_channel_value_structure.u16_channel_6_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 7U:
+                    bc_channel_value_structure.u16_channel_7_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              case 8U:
+                    bc_channel_value_structure.u16_channel_8_value = u16_current_period;
+                    u32_channel_number++;
+                break;
+              default:
+               break;
+            }
+        }
 
-        /* IC4ReadValue = TIM4->CNT;*/
-        TIM4->CNT = 0U;
-        c_overflow = 0U;
+        TIM4->CNT     = 0U;
+        u32_overflow  = 0U;
+        u32_over_flag = 0U;
     }
 
     if(TIM_GetITStatus(TIM4, TIM_IT_CC4) == SET)
     {
         TIM_ClearITPendingBit(TIM4, TIM_IT_CC4);
     }
-    over_flag=0U;
 }
 
 

@@ -31,8 +31,11 @@ int main( void)
       break;
 
       case BOARD_SYSTEM_RUN:
-        gv_board_sys_tick_delay(500U);
+        gv_board_sys_tick_delay(10U);
+        timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);
+
         gv_board_dma_send_packet();
+
 
 
       break;
