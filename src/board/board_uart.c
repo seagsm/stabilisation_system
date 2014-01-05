@@ -16,7 +16,7 @@ BOARD_ERROR be_board_uart_init(void)
 
     /* Initialisation of UART1, communication interface. */
     be_result |= be_board_uart_uart1_init();
-
+    be_result |= be_board_r_buff_USART1_init();
     be_result |= be_board_dma1_init();
 
     /* Initialisation of UART3, GPS interface. */

@@ -9,6 +9,7 @@
 
 #define PPM_TIM4_CH3    3U
 
+extern BOARD_CHANNEL_VALUE bc_channel_value_structure;
 BOARD_ERROR be_board_ppm_init(void);
 void TIM4_IRQHandler(void);
 

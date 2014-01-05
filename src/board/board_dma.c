@@ -62,7 +62,7 @@ BOARD_ERROR be_board_dma1_init(void)
     return(be_result);
 }
 
-static void gv_board_dma_send_packet(void)
+void gv_board_dma_send_packet(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -70,6 +70,17 @@ static void gv_board_dma_send_packet(void)
 
     uint16_t u16_byte_counter;
 
+    test[0] = (uint8_t)(bc_channel_value_structure.u16_channel_1_value & 0xFFU);
+    test[1] = (uint8_t)((bc_channel_value_structure.u16_channel_1_value>>8) & 0xFFU);
+
+    test[2] = (uint8_t)(bc_channel_value_structure.u16_channel_2_value & 0xFFU);
+    test[3] = (uint8_t)((bc_channel_value_structure.u16_channel_2_value>>8) & 0xFFU);
+    test[4] = (uint8_t)(bc_channel_value_structure.u16_channel_3_value & 0xFFU);
+    test[5] = (uint8_t)((bc_channel_value_structure.u16_channel_3_value>>8) & 0xFFU);
+
+    test[6] = 0x0AU;
+    test[7] = 0x0DU;
+    /*
     test[0] = 'h';
     test[1] = 'e';
     test[2] = 'l';
@@ -83,14 +94,14 @@ static void gv_board_dma_send_packet(void)
     test[10] = 0x0AU;
     test[11] = 0x0DU;
     test[12] = 0x00U;
-
+*/
     u16_byte_counter = 0U;
 
     /* Disable DMA interrupt to avoid problem with dual access to round buffer. */
     NVIC_DisableIRQ(DMA1_Channel4_IRQn);
 
     /* Copy data to USART1 TX round buffer. */
-    while(test[u16_byte_counter] != 0U)
+    while(u16_byte_counter < 0x08U)
     {
         be_result = be_board_r_buff_USART1_TX_Put_byte(test[u16_byte_counter]);
         if(be_result == BOARD_ERR_FULL)

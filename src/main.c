@@ -31,6 +31,10 @@ int main( void)
       break;
 
       case BOARD_SYSTEM_RUN:
+        gv_board_sys_tick_delay(500U);
+        gv_board_dma_send_packet();
+
+
       break;
 
       case BOARD_SYSTEM_FAULT:

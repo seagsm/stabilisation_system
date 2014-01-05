@@ -1,6 +1,7 @@
 
 #include "board_ppm.h"
 
+BOARD_CHANNEL_VALUE bc_channel_value_structure;
 static volatile uint16_t IC4ReadValue = 0U;
 
 /* This function initialise PPM capture module. */
@@ -29,7 +30,7 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     GPIO_InitTypeDef   GPIO_InitStructure;
     NVIC_InitTypeDef   NVIC_InitStructure;
     TIM_ICInitTypeDef  TIM_ICInitStructure;
-
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 
     /*  GPIO  */
     /* GPIOB clock enable (for timer3) */
@@ -78,6 +79,12 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     /* TIM4 clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 
+    /* Init TIMER4 base counter. */
+    TIM_TimeBaseStructInit(&TIM_TimeBaseInitStructure);
+    TIM_TimeBaseInitStructure.TIM_Prescaler = 72U;/* 72 -> 1MHz counter frequence. */
+    TIM_TimeBaseInit(TIM4, &TIM_TimeBaseInitStructure);
+
+
     /* TIM4 configuration: Input Capture mode. */
     if(u16_ch_number==1U)
     {
@@ -95,13 +102,17 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
     }
+
     TIM_ICInitStructure.TIM_ICPolarity  = TIM_ICPolarity;
     TIM_ICInitStructure.TIM_ICSelection = TIM_TIxExternalCLKSource;
     TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_divider;
     TIM_ICInitStructure.TIM_ICFilter    = ICFilter;
+
     TIM_ICInit(TIM4, &TIM_ICInitStructure);
+
     /* TIM enable counter */
     TIM_Cmd(TIM4, ENABLE);
+
     /* Enable the CCx Interrupt Request */
     if(u16_ch_number==1U)
     {
@@ -127,12 +138,12 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
 
 void TIM4_IRQHandler(void)
 {
-    volatile static  int32_t c_overflow = 0U;
+    volatile static uint32_t c_overflow = 0U;
     volatile static uint32_t over_flag  = 0U;
 
     if(TIM_GetITStatus(TIM4, TIM_IT_Update) == SET)
     {
-        /* Clear TIM3 Capture compare interrupt pending bit */
+        /* Clear TIM4 Capture compare interrupt pending bit */
         TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
         /* OverfloW counter. */
         c_overflow++;
@@ -155,7 +166,14 @@ void TIM4_IRQHandler(void)
         TIM_ClearITPendingBit(TIM4, TIM_IT_CC3);
         /* PPM input connected to CH3 .*/
         /* Get capture value. */
-        IC4ReadValue = TIM_GetCapture2(TIM4);
+        IC4ReadValue = TIM_GetCapture3(TIM4);
+        bc_channel_value_structure.u16_channel_1_value = IC4ReadValue;
+        bc_channel_value_structure.u16_channel_2_value = (uint16_t)(c_overflow&0xFFFFU);
+        bc_channel_value_structure.u16_channel_3_value = (uint16_t)((c_overflow>>16)&0xFFFFU);
+
+        /* IC4ReadValue = TIM4->CNT;*/
+        TIM4->CNT = 0U;
+        c_overflow = 0U;
     }
 
     if(TIM_GetITStatus(TIM4, TIM_IT_CC4) == SET)

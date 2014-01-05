@@ -23,7 +23,18 @@ typedef enum
 
 }   BOARD_ERROR; /* variable tag be_xxx */
 
-
+typedef struct
+{
+    uint16_t u16_channel_1_value;
+    uint16_t u16_channel_2_value;
+    uint16_t u16_channel_3_value;
+    uint16_t u16_channel_4_value;
+    uint16_t u16_channel_5_value;
+    uint16_t u16_channel_6_value;
+    uint16_t u16_channel_7_value;
+    uint16_t u16_channel_8_value;
+    uint16_t u16_channel_9_value;
+} BOARD_CHANNEL_VALUE;
 
 
 #endif
