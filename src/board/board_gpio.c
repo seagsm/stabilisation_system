@@ -13,7 +13,7 @@ BOARD_ERROR be_board_gpio_init(void)
         GPIO_ResetBits( GPIOB, GPIO_Pin_1);
     */
     /* Turn LED ON.(Just for test.)*/
-    GPIO_SetBits( GPIOB, GPIO_Pin_1);
+    GPIO_ResetBits( GPIOB, GPIO_Pin_1);
     return(be_result);
 }
 

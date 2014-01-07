@@ -1841,6 +1841,9 @@
   <group>
     <name>src</name>
     <group>
+      <name>api</name>
+    </group>
+    <group>
       <name>board</name>
       <file>
         <name>$PROJ_DIR$\src\board\board_dma.c</name>
@@ -1892,6 +1895,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_sys_tick.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_system_init.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_system_init.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_system_type.h</name>

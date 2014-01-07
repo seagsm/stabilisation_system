@@ -15,7 +15,7 @@
 
 #define BOARD_INIT_TOTAL_STEPS 4U
 
-BOARD_ERROR board_init_main_init(void);
+BOARD_ERROR be_board_init_main_init(void);
 
 
 

@@ -3,13 +3,12 @@
 /*
   Board init function.
 */
-BOARD_ERROR board_init_main_init(void)
+BOARD_ERROR be_board_init_main_init(void)
 {
     uint16_t u16_step = 0U;
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     gv_board_sys_tick_init();
-
 
     /*TODO: It should be removed to suitable place. */
     __enable_irq();
@@ -52,10 +51,13 @@ BOARD_ERROR board_init_main_init(void)
     /* Init I2C. */
     /* board_i2c_init();*/
 
-    /* If no error lets switch system to init state. */
     if(be_result == BOARD_ERR_OK)
     {
-        v_board_state_set_state(BOARD_SYSTEM_INIT);
+        v_board_state_set_state(BOARD_SYSTEM_READY_TO_RUN);
+    }
+    else
+    {
+        v_board_state_set_state(BOARD_SYSTEM_FAULT);
     }
     return(be_result);
 }
