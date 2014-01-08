@@ -45,3 +45,18 @@ void gv_board_sys_tick_delay(uint64_t u64_delay_time)
   while(gu64_read_system_time() < u64_temp )
   {}
 }
+
+/**
+  * fast delay .
+  */
+void gv_board_sys_tick_fast_delay( uint32_t u32_val)
+{
+    while(u32_val > 0U)
+    {
+        u32_val--;
+    }
+}
+
+
+
+

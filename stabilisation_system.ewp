@@ -1858,6 +1858,12 @@
         <name>$PROJ_DIR$\src\board\board_gpio.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_i2c.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_i2c.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_init.c</name>
       </file>
       <file>
