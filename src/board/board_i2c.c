@@ -25,14 +25,14 @@
 
 #define DMA_ENABLE 1U
 
-DMA_InitTypeDef  I2CDMA_InitStructure;
+static DMA_InitTypeDef  I2CDMA_InitStructure;
 volatile uint32_t I2CDirection = I2C_DIRECTION_TX;
 volatile uint32_t NumbOfBytes1;
 volatile uint32_t NumbOfBytes2;
 volatile uint8_t Address;
 
 
-void i2c_init(void)
+void board_i2c_init(void)
 {
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
    /* Set I2C2 EV interrupt preemption priority. */
@@ -44,9 +44,9 @@ void i2c_init(void)
                                                 I2C1_EV_SUB_PRIORITY_GROUP
                                            )
                    );
-    NVIC_EnableIRQ(I2C2_EV_IRQn);
+    NVIC_EnableIRQ(I2C1_EV_IRQn);
 
-    /* Set I2C2 EV interrupt preemption priority. */
+    /* Set I2C1 EV interrupt preemption priority. */
     NVIC_SetPriority(
                         I2C1_ER_IRQn,
                         NVIC_EncodePriority(
@@ -55,56 +55,96 @@ void i2c_init(void)
                                                 I2C1_ER_SUB_PRIORITY_GROUP
                                            )
                    );
-    NVIC_EnableIRQ(I2C2_ER_IRQn);
+    NVIC_EnableIRQ(I2C1_ER_IRQn);
 
     /* Restart stress for I2C2 slave device. */
-    i2c_unstick();
-    I2C_LowLevel_Init(I2C1);
+    board_i2c_unstick();
+    board_i2c_lowlevel_init(I2C1);
+
+
+
+    /* test only. */
+
+
+
+
 
 }
 
-/* This function unstick I2C2 device. */
-void i2c_unstick(void)
+/* This function unstick I2C1 device. */
+static void board_i2c_unstick(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
-    uint8_t i;
+    uint8_t u8_i;
 
     /*
-        SCL  PB10
-        SDA  PB11
+        SCL  PB6(I2C1), PB10(I2C2)
+        SDA  PB7(I2C1), PB11(I2C2)
      */
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
+    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB , ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+    /* GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD; */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    GPIO_SetBits(GPIOB, GPIO_Pin_10 | GPIO_Pin_11);
-    for (i = 0U; i < 8U; i++)
+    GPIO_SetBits(GPIOB, GPIO_Pin_6 | GPIO_Pin_7);
+
+    for (u8_i = 0U; u8_i < 8U; u8_i++)
     {
-        while (!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_10))      /* Wait for any clock stretching to finish*/
+        while (!GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_6))      /* Wait for any clock stretching to finish*/
         {
             gv_board_sys_tick_fast_delay(3U);
         }
-
-        GPIO_ResetBits(GPIOB, GPIO_Pin_10);     /*Set bus low*/
+        GPIO_ResetBits(GPIOB, GPIO_Pin_6);     /*Set bus low*/
         gv_board_sys_tick_fast_delay(3U);
-
-        GPIO_SetBits(GPIOB, GPIO_Pin_10);       /*Set bus high */
+        GPIO_SetBits(GPIOB, GPIO_Pin_6);       /*Set bus high */
         gv_board_sys_tick_fast_delay(3U);
     }
 
     /* Generate a start then stop condition. */
-    GPIO_ResetBits(GPIOB, GPIO_Pin_11); /*Set bus data low */
+    GPIO_ResetBits(GPIOB, GPIO_Pin_7); /*Set bus data low */
     gv_board_sys_tick_fast_delay(3U);
-    GPIO_ResetBits(GPIOB, GPIO_Pin_10); /*Set bus scl low */
+    GPIO_ResetBits(GPIOB, GPIO_Pin_6); /*Set bus scl low */
     gv_board_sys_tick_fast_delay(3U);
-    GPIO_SetBits(GPIOB, GPIO_Pin_10);   /*Set bus scl high */
+    GPIO_SetBits(GPIOB, GPIO_Pin_6);   /*Set bus scl high */
     gv_board_sys_tick_fast_delay(3U);
-    GPIO_SetBits(GPIOB, GPIO_Pin_11);   /*Set bus sda high */
+    GPIO_SetBits(GPIOB, GPIO_Pin_7);   /*Set bus sda high */
     gv_board_sys_tick_fast_delay(3U);
 }
 
+
+/* This function write to I2C device. */
+BOARD_ERROR board_i2c_write(
+                                uint8_t u8_device_address,
+                                uint8_t u8_write_address,
+                                uint8_t u8_write_data
+                            )
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint8_t u8_write_buffer[2U]= { 0U, 0U};
+
+    u8_write_buffer[0U] = u8_write_address;
+    u8_write_buffer[1U] = u8_write_data;
+    be_result = I2C_Master_BufferWrite(I2C1, u8_write_buffer,2U,I2C_MODULE_MODE, u8_device_address);
+    return(be_result);
+}
+
+BOARD_ERROR board_i2c_read(
+                            uint8_t  u8_device_address,
+                            uint8_t  u8_start_read_address,
+                            uint32_t u32_number_byte_to_read,
+                            uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
+                          )
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    /* Write read address for reading datas. */
+    be_result  = I2C_Master_BufferWrite(I2C1, &u8_start_read_address,1U,I2C_MODULE_MODE, u8_device_address);
+    /* Read MSB and LSB from address 0xF6. */
+    be_result |= I2C_Master_BufferRead (I2C1, pu8_pointer_to_buffer, u32_number_byte_to_read,I2C_MODULE_MODE, u8_device_address);
+    return(be_result);
+}
 
 
 /**
@@ -119,8 +159,8 @@ BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t
 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    __IO uint32_t temp = 0U;
-    __IO uint32_t Timeout = 0U;
+    volatile uint32_t temp = 0U;
+    volatile uint32_t Timeout = 0U;
 
     /* Enable I2C errors interrupts (used in all modes: Polling, DMA and Interrupts */
     I2Cx->CR2 |= I2C_IT_ERR;
@@ -703,7 +743,7 @@ void I2C_Slave_BufferReadWrite(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode)
   * @param  None
   * @retval None
   */
-void I2C_LowLevel_Init(I2C_TypeDef* I2Cx)
+static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
 {
     GPIO_InitTypeDef  GPIO_InitStructure;
     I2C_InitTypeDef  I2C_InitStructure;

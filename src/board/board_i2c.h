@@ -95,6 +95,8 @@
 #define I2C1_DR_Address              0x40005410U
 #define I2C2_DR_Address              0x40005810U
 
+#define I2C_MODULE_MODE   DMA
+
 typedef enum
 {
     Polling = 0x00U,
@@ -109,14 +111,24 @@ typedef enum
 }Status;
 
 
-void i2c_init(void);
-void i2c_unstick(void);
+       void board_i2c_init(void);
+static void board_i2c_unstick(void);
+static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx);
+
+BOARD_ERROR board_i2c_read(
+                            uint8_t  u8_device_address,
+                            uint8_t  u8_start_read_address,
+                            uint32_t u32_number_byte_to_read,
+                            uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
+                          );
+BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
 BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
 BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
 void I2C_Slave_BufferReadWrite(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode);
-void I2C_LowLevel_Init(I2C_TypeDef* I2Cx);
 void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
+
+
 
 
 #endif

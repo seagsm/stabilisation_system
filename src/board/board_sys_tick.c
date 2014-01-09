@@ -53,6 +53,7 @@ void gv_board_sys_tick_fast_delay( uint32_t u32_val)
 {
     while(u32_val > 0U)
     {
+        __NOP();
         u32_val--;
     }
 }
