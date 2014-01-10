@@ -61,13 +61,8 @@ void board_i2c_init(void)
     board_i2c_unstick();
     board_i2c_lowlevel_init(I2C1);
 
-
-
     /* test only. */
     be_board_drv_l3g4200d_detect();
-
-
-
 
 }
 
@@ -126,7 +121,7 @@ BOARD_ERROR board_i2c_write(
 
     u8_write_buffer[0U] = u8_write_address;
     u8_write_buffer[1U] = u8_write_data;
-    be_result = I2C_Master_BufferWrite(I2C1, u8_write_buffer,2U,I2C_MODULE_MODE, u8_device_address);
+    be_result = be_board_i2c_master_buffer_write(I2C1, u8_write_buffer,2U,I2C_MODULE_MODE, u8_device_address);
     return(be_result);
 }
 
@@ -140,9 +135,9 @@ BOARD_ERROR board_i2c_read(
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     /* Write read address for reading datas. */
-    be_result  = I2C_Master_BufferWrite(I2C1, &u8_start_read_address,1U,I2C_MODULE_MODE, u8_device_address);
+    be_result  = be_board_i2c_master_buffer_write(I2C1, &u8_start_read_address,1U,I2C_MODULE_MODE, u8_device_address);
     /* Read MSB and LSB from address 0xF6. */
-    be_result |= I2C_Master_BufferRead (I2C1, pu8_pointer_to_buffer, u32_number_byte_to_read,I2C_MODULE_MODE, u8_device_address);
+    be_result |= be_board_i2c_master_buffer_read (I2C1, pu8_pointer_to_buffer, u32_number_byte_to_read,I2C_MODULE_MODE, u8_device_address);
     return(be_result);
 }
 
@@ -155,7 +150,7 @@ BOARD_ERROR board_i2c_read(
   * @param SlaveAddress: The address of the slave to be addressed by the Master.
   * @retval : None.
   */
-static BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress)
+static BOARD_ERROR be_board_i2c_master_buffer_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress)
 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -168,7 +163,7 @@ static BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  u
     if (Mode == DMA) /* I2Cx Master Reception using DMA */
     {
         /* Configure I2Cx DMA channel */
-        I2C_DMAConfig(I2Cx, pBuffer, NumByteToRead, I2C_DIRECTION_RX);
+        board_i2c_dma_config(I2Cx, pBuffer, NumByteToRead, I2C_DIRECTION_RX);
         /* Set Last bit to have a NACK on the last received byte */
         I2Cx->CR2 |= CR2_LAST_Set;
         /* Enable I2C DMA requests */
@@ -520,7 +515,7 @@ static BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  u
   * @param SlaveAddress: The address of the slave to be addressed by the Master.
   * @retval : None.
   */
-static BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress )
+static BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress )
 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -533,7 +528,7 @@ static BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  
     {
         Timeout = 0xFFFFU;
         /* Configure the DMA channel for I2Cx transmission */
-        I2C_DMAConfig (I2Cx, pBuffer, NumByteToWrite, I2C_DIRECTION_TX);
+        board_i2c_dma_config (I2Cx, pBuffer, NumByteToWrite, I2C_DIRECTION_TX);
         /* Enable the I2Cx DMA requests */
         I2Cx->CR2 |= CR2_DMAEN_Set;
         /* Send START condition */
@@ -714,9 +709,7 @@ static BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  
   * @param Mode: DMA or Interrupt having the highest priority in the application.
   * @retval : None.
   */
-
-void I2C_Slave_BufferReadWrite(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode)
-
+void board_i2c_slave_buffer_read_write(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode)
 {
     /* Enable Event IT needed for ADDR and STOPF events ITs */
     I2Cx->CR2 |= I2C_IT_EVT ;
@@ -735,7 +728,6 @@ void I2C_Slave_BufferReadWrite(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode)
         I2Cx->CR2 |= I2C_IT_BUF;
 
     }
-
 }
 
 /**
@@ -773,11 +765,8 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
         /* Release I2C1 from reset state */
         RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C1, DISABLE);
     }
-
     else /* I2Cx = I2C2 */
-
     {
-
         /* I2C2 clock enable */
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
         /* I2C1 SDA and SCL configuration */
@@ -794,7 +783,6 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
         /* Release I2C2 from reset state */
         RCC_APB1PeriphResetCmd(RCC_APB1Periph_I2C2, DISABLE);
     }
-
     /* I2C1 and I2C2 configuration */
     I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
     I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
@@ -807,7 +795,6 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
     I2C_Init(I2C2, &I2C_InitStructure);
 
     if (I2Cx == I2C1)
-
     {   /* I2C1 TX DMA Channel configuration */
 #if DMA_ENABLE
         DMA_DeInit(I2C1_DMA_CHANNEL_TX);
@@ -829,9 +816,7 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
         DMA_Init(I2C1_DMA_CHANNEL_RX, &I2CDMA_InitStructure);
 #endif
     }
-
     else /* I2Cx = I2C2 */
-
     {
         /* I2C2 TX DMA Channel configuration */
 #if DMA_ENABLE
@@ -861,7 +846,7 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
   * @param  None.
   * @retval None.
   */
-static void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction)
+static void board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction)
 {
     /* Initialize the DMA with the new parameters */
     if (Direction == I2C_DIRECTION_TX)
@@ -900,7 +885,6 @@ static void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSi
             DMA_Init(I2C1_DMA_CHANNEL_RX, &I2CDMA_InitStructure);
             DMA_Cmd(I2C1_DMA_CHANNEL_RX, ENABLE);
         }
-
         else
         {
             I2CDMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)I2C2_DR_Address;
@@ -908,7 +892,6 @@ static void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSi
             DMA_Init(I2C2_DMA_CHANNEL_RX, &I2CDMA_InitStructure);
             DMA_Cmd(I2C2_DMA_CHANNEL_RX, ENABLE);
         }
-
     }
 }
 
