@@ -26,10 +26,10 @@
 #define DMA_ENABLE 1U
 
 static DMA_InitTypeDef  I2CDMA_InitStructure;
-volatile uint32_t I2CDirection = I2C_DIRECTION_TX;
-volatile uint32_t NumbOfBytes1;
-volatile uint32_t NumbOfBytes2;
-volatile uint8_t Address;
+static volatile uint32_t I2CDirection = I2C_DIRECTION_TX;
+static volatile uint32_t NumbOfBytes1;
+static volatile uint32_t NumbOfBytes2;
+static volatile uint8_t Address;
 
 
 void board_i2c_init(void)
@@ -64,7 +64,7 @@ void board_i2c_init(void)
 
 
     /* test only. */
-
+    be_board_drv_l3g4200d_detect();
 
 
 
@@ -155,7 +155,7 @@ BOARD_ERROR board_i2c_read(
   * @param SlaveAddress: The address of the slave to be addressed by the Master.
   * @retval : None.
   */
-BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress)
+static BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress)
 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -520,7 +520,7 @@ BOARD_ERROR I2C_Master_BufferRead(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t
   * @param SlaveAddress: The address of the slave to be addressed by the Master.
   * @retval : None.
   */
-BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress )
+static BOARD_ERROR I2C_Master_BufferWrite(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress )
 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -861,7 +861,7 @@ static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx)
   * @param  None.
   * @retval None.
   */
-void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction)
+static void I2C_DMAConfig(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction)
 {
     /* Initialize the DMA with the new parameters */
     if (Direction == I2C_DIRECTION_TX)

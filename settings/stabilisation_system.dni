@@ -47,7 +47,7 @@ Bp2=_ 0 "EMUL_DATA" "TERMINAL_OUTPUT" 0 0 0 0 4294967295
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\src\board_drivers\I2CRoutines.c}.655.6" 0 0 1 "" 0 "" 0
 Bp4=_ 0 "EMUL_DATA" "start_main_interupt_function_sensor" 0 0 0 0 4294967295
 Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\src\system\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c}.2502.3" 0 0 1 "" 0 "" 0
-Bp6=_ 1 "EMUL_CODE" "{$PROJ_DIR$\src\board\board_i2c.c}.752.6" 0 0 1 "" 0 "" 0
+Bp6=_ 1 "EMUL_CODE" "{$PROJ_DIR$\src\board\board_i2c.c}.752.7" 0 0 1 "" 0 "" 0
 Count=7
 [Aliases]
 Count=0
