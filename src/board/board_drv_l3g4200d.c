@@ -70,7 +70,7 @@ BOARD_ERROR be_board_drv_l3g4200d_align(void)
 
 
 /* Read 3 gyro values into buffer. */
-BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_GYRO_DATA *p_board_drv_gyro_data)
+BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_3X_DATA *p_board_drv_gyro_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t buf[6];

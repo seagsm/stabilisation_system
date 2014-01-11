@@ -11,7 +11,14 @@ typedef struct
     uint16_t u16_X;
     uint16_t u16_Y;
     uint16_t u16_Z;
-} BOARD_GYRO_DATA;
+} BOARD_3X_DATA;
+
+typedef struct
+{
+    float fl_X;
+    float fl_Y;
+    float fl_Z;
+} BOARD_FLOAT_3X_DATA;
 
 
 typedef enum

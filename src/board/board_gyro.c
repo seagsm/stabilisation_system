@@ -1,7 +1,7 @@
 
 #include "board_gyro.h"
 
-BOARD_GYRO_DATA board_gyro_data;
+BOARD_3X_DATA board_gyro_data;
 
 /* Detecting gyro module. */
 BOARD_ERROR be_board_gyro_detect(void)
@@ -24,7 +24,7 @@ BOARD_ERROR be_board_gyro_init(void)
 }
 
 /* Read data from gyro module. */
-BOARD_ERROR be_board_gyro_read(BOARD_GYRO_DATA *p_board_gyro_data)
+BOARD_ERROR be_board_gyro_read(BOARD_3X_DATA *p_board_gyro_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
