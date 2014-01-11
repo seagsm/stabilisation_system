@@ -12,9 +12,10 @@
 #include "board_ppm.h"
 #include "board_pwm.h"
 #include "board_sys_tick.h"
+#include "board_gyro.h"
 
 
-#define BOARD_INIT_TOTAL_STEPS 5U
+#define BOARD_INIT_TOTAL_STEPS 6U
 
 BOARD_ERROR be_board_init_main_init(void);
 

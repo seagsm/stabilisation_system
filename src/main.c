@@ -34,14 +34,38 @@ int main( void)
                  v_board_state_set_current_state(BOARD_SYSTEM_INIT);
             break;
             case BOARD_SYSTEM_READY_TO_RUN:/* init all board system .*/
+              /* Temporary disabled:
                 be_result = be_board_system_init_unlock();
+               */
+                /* Should be removed. */
+                v_board_state_set_state(BOARD_SYSTEM_RUN);
+
                 v_board_state_set_current_state(BOARD_SYSTEM_READY_TO_RUN);
             break;
             case BOARD_SYSTEM_RUN:/* Run of control loop(interrupt?).*/
                 v_board_state_set_current_state(BOARD_SYSTEM_RUN);
                 gv_board_sys_tick_delay(100U);
                 timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);
+/*
+                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                gv_board_sys_tick_fast_delay(50U);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+*/
+                be_board_gyro_read(&board_gyro_data);/* It take around 800microSec. */
+/*
+                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                gv_board_sys_tick_fast_delay(50U);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+*/
+                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                gv_board_sys_tick_fast_delay(50U);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+
                 gv_board_dma_send_packet();
+
+                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                gv_board_sys_tick_fast_delay(50U);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
             break;
             case BOARD_SYSTEM_MOTOR_CALIBRATION:/* Calibration of motor ESD controller.*/
                 v_board_state_set_current_state(BOARD_SYSTEM_MOTOR_CALIBRATION);

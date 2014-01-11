@@ -1864,6 +1864,12 @@
         <name>$PROJ_DIR$\src\board\board_gpio.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_gyro.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_gyro.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_i2c.c</name>
       </file>
       <file>

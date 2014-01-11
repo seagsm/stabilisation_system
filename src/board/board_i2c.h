@@ -5,7 +5,7 @@
 #include "board_system_type.h"
 #include "board_NVIC.h"
 #include "board_sys_tick.h"
-#include "board_drv_l3g4200d.h"
+#include "board_gyro.h"
 
 
 /* I2C SPE mask */
@@ -112,7 +112,7 @@ typedef enum
 }Status;
 
 
-       void board_i2c_init(void);
+BOARD_ERROR be_board_i2c_init(void);
 static void board_i2c_unstick(void);
 static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx);
 
@@ -129,7 +129,7 @@ static BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* 
 void                  board_i2c_slave_buffer_read_write(I2C_TypeDef* I2Cx,I2C_ProgrammingModel Mode);
 static void           board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
 
-
+void DMA1_Channel6_IRQHandler(void);
 
 
 #endif

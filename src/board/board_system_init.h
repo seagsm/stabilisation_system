@@ -30,7 +30,7 @@ typedef enum
 }   BOARD_SYSTEM_INIT_UNLOCK_STATE; /* variable tag bl_xxx */
 
 
-BOARD_ERROR be_board_system_init_unlock(void);
+static BOARD_ERROR be_board_system_init_unlock(void);
 BOARD_ERROR be_board_system_init_motor_calibration(void);
 
 

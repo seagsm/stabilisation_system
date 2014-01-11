@@ -5,6 +5,15 @@
 
 #include "stm32f10x.h"
 
+
+typedef struct
+{
+    uint16_t u16_X;
+    uint16_t u16_Y;
+    uint16_t u16_Z;
+} BOARD_GYRO_DATA;
+
+
 typedef enum
 {
     CHANEL_0 = 0U,

@@ -32,8 +32,10 @@ static volatile uint32_t NumbOfBytes2;
 static volatile uint8_t Address;
 
 
-void board_i2c_init(void)
+BOARD_ERROR be_board_i2c_init(void)
 {
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
    /* Set I2C2 EV interrupt preemption priority. */
     NVIC_SetPriority(
@@ -61,9 +63,9 @@ void board_i2c_init(void)
     board_i2c_unstick();
     board_i2c_lowlevel_init(I2C1);
 
-    /* test only. */
-    be_board_drv_l3g4200d_detect();
-
+    /* It using for I2C test. */
+    be_result = be_board_gyro_detect();
+    return(be_result);
 }
 
 /* This function unstick I2C1 device. */
@@ -537,12 +539,12 @@ static BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* 
         while ((I2Cx->SR1&0x0001U) != 0x0001U)
         {
             if (Timeout-- == 0U)
-                {
-                    /* return Error; */
-                    be_result = BOARD_ERR_ERROR;
-                    /* return (be_result); */
-                    break;
-                }
+            {
+                /* return Error; */
+                be_result = BOARD_ERR_ERROR;
+                /* return (be_result); */
+                break;
+            }
 
         }
         Timeout = 0xFFFFU;
@@ -895,3 +897,26 @@ static void board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t B
     }
 }
 
+/*DMA_CHANNEL_TX */
+/*#define  DMA_ISR_TCIF6                       ((uint32_t)0x00200000) */       /*!< Channel 6 Transfer Complete flag */
+
+void DMA1_Channel6_IRQHandler(void)
+{
+    /* Restart DMA chanel for new transaction. */
+    DMA1_Channel6->CCR  &= (uint16_t)(~DMA_CCR1_EN);
+    DMA1_Channel6->CNDTR = 0x01U; /* u16_counter; */
+    DMA1_Channel6->CCR  |= DMA_CCR1_EN;
+
+    /* clear flag "end_of_TX through DMA channel". */
+    /* DMA_ClearFlag(DMA1_FLAG_TC6); */
+    DMA1->IFCR |= DMA_ISR_TCIF6;
+}
+
+
+/*DMA_CHANNEL_RX */
+/*
+void DMA1_Channel7_IRQHandler(void)
+{
+
+}
+*/

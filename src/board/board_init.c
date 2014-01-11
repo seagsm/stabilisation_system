@@ -31,9 +31,13 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result = be_board_pwm_init(); /* Init PWM chanels. */
                 break;
             case (4U):
-                board_i2c_init();                     /* Init I2C1 chanels. */
+                be_result = be_board_i2c_init(); /* Init I2C1 chanels. */
                 break;
-            default:
+            case (5U):
+                be_result = be_board_gyro_init(); /* Init gyro module. */
+                break;
+
+          default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

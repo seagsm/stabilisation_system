@@ -88,8 +88,18 @@ void gv_board_dma_send_packet(void)
     test[10] = (uint8_t)(bc_channel_value_structure.u16_channel_6_value & 0xFFU);
     test[11] = (uint8_t)((bc_channel_value_structure.u16_channel_6_value>>8) & 0xFFU);
 
-    test[12] = 0x0AU;
-    test[13] = 0x0DU;
+    test[12] = (uint8_t)(board_gyro_data.u16_X & 0xFFU);
+    test[13] = (uint8_t)((board_gyro_data.u16_X >> 8) & 0xFFU);
+
+    test[14] = (uint8_t)(board_gyro_data.u16_Y & 0xFFU);
+    test[15] = (uint8_t)((board_gyro_data.u16_Y >> 8) & 0xFFU);
+
+    test[16] = (uint8_t)(board_gyro_data.u16_Z & 0xFFU);
+    test[17] = (uint8_t)((board_gyro_data.u16_Z >> 8) & 0xFFU);
+
+
+    test[18] = 0x0AU;
+    test[19] = 0x0DU;
     /*
     test[0] = 'h';
     test[1] = 'e';
@@ -111,7 +121,7 @@ void gv_board_dma_send_packet(void)
     NVIC_DisableIRQ(DMA1_Channel4_IRQn);
 
     /* Copy data to USART1 TX round buffer. */
-    while(u16_byte_counter < 14U)
+    while(u16_byte_counter < 20U)
     {
         be_result = be_board_r_buff_USART1_TX_Put_byte(test[u16_byte_counter]);
         if(be_result == BOARD_ERR_FULL)

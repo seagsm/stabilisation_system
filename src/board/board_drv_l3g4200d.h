@@ -39,16 +39,9 @@
 #define BOARD_DRV_GYRO_RATE               L3G4200D_FS_SEL_250DPS
 #define BOARD_DRV_LOWPASS_FILTER_RATE     L3G4200D_DLPF_32HZ
 
-typedef struct
-{
-    uint16_t u16_X;
-    uint16_t u16_Y;
-    uint16_t u16_Z;
-} BOARD_DRV_GYRO_DATA;
-
 BOARD_ERROR be_board_drv_l3g4200d_init(void);
 BOARD_ERROR be_board_drv_l3g4200d_align(void);
-BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_DRV_GYRO_DATA *p_board_drv_gyro_data);
+BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_GYRO_DATA *p_board_drv_gyro_data);
 BOARD_ERROR be_board_drv_l3g4200d_detect(void);
 BOARD_ERROR be_board_drv_l3g4200d_config(uint16_t u16_lpf);
 

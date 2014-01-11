@@ -5,7 +5,7 @@
 
 
 /* This function should wait unlock sequence from transmitter. */
-BOARD_ERROR be_board_system_init_unlock(void)
+static BOARD_ERROR be_board_system_init_unlock(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     BOARD_SYSTEM_INIT_UNLOCK_STATE bl_unlock_state = BOARD_SYSTEM_INIT_LOCKED;
