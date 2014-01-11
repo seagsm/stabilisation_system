@@ -1852,6 +1852,12 @@
         <name>$PROJ_DIR$\src\board\board_dma.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_drv_hmc5883.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_drv_hmc5883.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_drv_l3g4200d.c</name>
       </file>
       <file>
