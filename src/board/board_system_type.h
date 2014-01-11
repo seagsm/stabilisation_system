@@ -15,6 +15,20 @@ typedef struct
 
 typedef struct
 {
+    int16_t i16_X;
+    int16_t i16_Y;
+    int16_t i16_Z;
+} BOARD_I16_3X_DATA;
+
+typedef struct
+{
+    int32_t i32_X;
+    int32_t i32_Y;
+    int32_t i32_Z;
+} BOARD_I32_3X_DATA;
+
+typedef struct
+{
     float fl_X;
     float fl_Y;
     float fl_Z;

@@ -1852,6 +1852,12 @@
         <name>$PROJ_DIR$\src\board\board_dma.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_drv_adxl345.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_drv_adxl345.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_drv_hmc5883.c</name>
       </file>
       <file>

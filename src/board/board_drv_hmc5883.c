@@ -30,6 +30,5 @@ void v_board_drv_hmc5883_init(void)
     gv_board_sys_tick_fast_delay(20U);
 
     v_board_drv_hmc5883_read();
-
     gv_board_sys_tick_fast_delay(20U);
 }
