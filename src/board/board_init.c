@@ -25,18 +25,20 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result = be_board_uart_init(); /* Init UART modules. */
                 break;
             case (2U):
-                be_result = be_board_ppm_init(); /* Init PPM input capture. */
+                be_result = be_board_adc_init();  /* Init ADC module. */
                 break;
             case (3U):
-                be_result = be_board_pwm_init(); /* Init PWM chanels. */
+                be_result = be_board_ppm_init();  /* Init PPM input capture. */
                 break;
             case (4U):
-                be_result = be_board_i2c_init(); /* Init I2C1 chanels. */
+                be_result = be_board_pwm_init();  /* Init PWM chanels. */
                 break;
             case (5U):
+                be_result = be_board_i2c_init();  /* Init I2C1 chanels. */
+                break;
+            case (6U):
                 be_result = be_board_gyro_init(); /* Init gyro module. */
                 break;
-
           default:
                 be_result = BOARD_ERR_ERROR;
                 break;
@@ -49,14 +51,6 @@ BOARD_ERROR be_board_init_main_init(void)
         }
         u16_step++;
     }
-    /* Init priority group. */
-    /* board_nvic_init();*/
-    /* Init TIMER modules. */
-    /* board_timer_init();*/
-    /* Init ADC. */
-    /*  adc_init();*/
-    /* Init I2C. */
-    /* board_i2c_init();*/
 
     if(be_result == BOARD_ERR_OK)
     {

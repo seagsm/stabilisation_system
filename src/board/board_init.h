@@ -8,6 +8,7 @@
 #include "board_state.h"
 #include "board_gpio.h"
 #include "board_uart.h"
+#include "board_adc.h"
 #include "board_i2c.h"
 #include "board_ppm.h"
 #include "board_pwm.h"
@@ -15,7 +16,7 @@
 #include "board_gyro.h"
 
 
-#define BOARD_INIT_TOTAL_STEPS 6U
+#define BOARD_INIT_TOTAL_STEPS 7U
 
 BOARD_ERROR be_board_init_main_init(void);
 

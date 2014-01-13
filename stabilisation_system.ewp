@@ -1846,6 +1846,12 @@
     <group>
       <name>board</name>
       <file>
+        <name>$PROJ_DIR$\src\board\board_adc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_adc.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_dma.c</name>
       </file>
       <file>
