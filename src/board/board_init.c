@@ -8,6 +8,7 @@ BOARD_ERROR be_board_init_main_init(void)
     uint16_t u16_step = 0U;
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
+    u16_board_adc_result[0] = 0U;/* It is temporery solution. */
     gv_board_sys_tick_init();
 
     /*TODO: It should be removed to suitable place. */

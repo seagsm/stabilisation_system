@@ -7,7 +7,7 @@
 #include "board_system_type.h"
 
 BOARD_ERROR be_board_gpio_init(void);
-static BOARD_ERROR be_board_pin_init(
+BOARD_ERROR be_board_pin_init(
                                 GPIO_TypeDef* gpio_board_port,
                                 uint16_t u16_port_pin,
                                 GPIOSpeed_TypeDef gpio_speed_pin_speed,

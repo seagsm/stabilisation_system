@@ -1,4 +1,8 @@
+
+
 #include "board_gpio.h"
+
+
 
 /* This function should set direction and mode for all pin working like GPIO. */
 BOARD_ERROR be_board_gpio_init(void)
@@ -28,8 +32,8 @@ BOARD_ERROR be_board_gpio_init(void)
     GPIO_Mode_AF_OD           - alternate function open-drain;
     GPIO_Mode_AF_PP           - alternate function push-pull;
 */
-static BOARD_ERROR be_board_pin_init(
-                                GPIO_TypeDef* gpio_board_port,
+BOARD_ERROR be_board_pin_init(
+                                GPIO_TypeDef *gpio_board_port,
                                 uint16_t u16_port_pin,
                                 GPIOSpeed_TypeDef gpio_speed_pin_speed,
                                 GPIOMode_TypeDef gpio_mode_pin_mode
