@@ -15,6 +15,8 @@ int main( void)
     BOARD_SYSTEM_STATE  bss_state;
     BOARD_ERROR         be_result = BOARD_ERR_OK;
 
+
+
     v_board_state_set_state(BOARD_SYSTEM_INIT);
     /*TODO:
                     Should be done calibration of PPM input for current minimum

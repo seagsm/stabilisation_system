@@ -5,6 +5,7 @@
 
 #include "stm32f10x.h"
 #include "board_system_type.h"
+#include "board_sys_tick.h"
 #include "board_NVIC.h"
 
 #define PPM_TIM4_CH3    3U

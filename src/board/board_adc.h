@@ -6,6 +6,7 @@
 #include "stm32f10x.h"
 #include "board_system_type.h"
 #include "board_gpio.h"
+#include "board_sys_tick.h"
 
 #define AIN_BARO_SENSOR_PORT    GPIOA
 #define AIN_BARO_SENSOR_PIN     GPIO_Pin_4

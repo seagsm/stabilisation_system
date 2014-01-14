@@ -10,7 +10,8 @@ BOARD_ERROR be_board_init_main_init(void)
 
     u16_board_adc_result[0] = 0U;/* It is temporery solution. */
     gv_board_sys_tick_init();
-
+    /* Init interrupt priority group. */
+    NVIC_init();
     /*TODO: It should be removed to suitable place. */
     __enable_irq();
 

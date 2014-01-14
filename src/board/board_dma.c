@@ -8,13 +8,15 @@ static uint8_t u8_board_dma_buff_DMA1_CH4_TX[DMA1_CH4_TX_SIZE];
 BOARD_ERROR be_board_dma1_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-
+    NVIC_InitTypeDef  NVIC_InitStructure;
     DMA_InitTypeDef DMA_InitStructure;
 
     /* DMA module clk ON. */
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
     /* DMA reset. */
     DMA_DeInit(DMA1_Channel4);
+
     /* Fill DMA init structure before initialisation. */
     DMA_InitStructure.DMA_PeripheralBaseAddr    = (uint32_t)(&USART1->DR);
     DMA_InitStructure.DMA_MemoryBaseAddr        = (uint32_t)u8_board_dma_buff_DMA1_CH4_TX;
@@ -27,36 +29,30 @@ BOARD_ERROR be_board_dma1_init(void)
     DMA_InitStructure.DMA_Mode                  = DMA_Mode_Normal;
     DMA_InitStructure.DMA_Priority              = DMA_Priority_Low;
     DMA_InitStructure.DMA_M2M                   = DMA_M2M_Disable;
+
     /* Initialisation of DMA UART TX. */
     DMA_Init(DMA1_Channel4, &DMA_InitStructure);
 
-    /* UART -> DMA enable. */
+    /* UART1 TX  <-  DMA enable. */
     USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-    /* End of Tx interrupt. */
+
+    /* Setup DMA TX end of transfer interrupt. */
+    NVIC_InitStructure.NVIC_IRQChannel = (unsigned char)DMA1_Channel4_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = DMA1_Channel4_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = DMA1_Channel4_SUB_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
     DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, ENABLE);
-
-
-    /*********************************************/
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
-  /*  __enable_irq(); */
-    /*********************************************/
-    NVIC_SetPriority(DMA1_Channel4_IRQn, 0x00U);
-   /* NVIC_EnableIRQ(DMA1_Channel4_IRQn); */
 
     /* TODO: it is example of code. */
 
     /* Start DMA transmitting. */
-    DMA1_Channel4->CCR |= DMA_CCR1_EN;
-
-
-
+    DMA_Cmd(DMA1_Channel4, ENABLE);
 
     /*Test for round buffer. */
     {
         gv_board_dma_send_packet();
     }
-
-
     /*********************************/
 
     return(be_result);
@@ -143,7 +139,7 @@ void DMA1_Channel4_IRQHandler(void)
     uint16_t u16_counter;
 
     u16_counter = 0U;
-    /* Copy from UASRT1 round buffer to DMA1_CH4 buffer. */
+    /* Copy from UASRT1 user round buffer to DMA1_CH4 buffer. */
     while((be_result == BOARD_ERR_OK)&&(u16_counter < DMA1_CH4_TX_SIZE))
     {
         be_result = be_board_r_buff_USART1_TX_Get_byte(&u8_byte);

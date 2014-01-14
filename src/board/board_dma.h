@@ -8,6 +8,7 @@
 #include "board_r_buff.h"
 #include "board_ppm.h"
 #include "board_gyro.h"
+#include "board_sys_tick.h"
 #include "stdio.h"
 
 #define DMA1_CH4_TX_SIZE 16U

@@ -1900,6 +1900,9 @@
         <name>$PROJ_DIR$\src\board\board_init.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_NVIC.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_NVIC.h</name>
       </file>
       <file>

@@ -38,7 +38,7 @@ BOARD_ERROR be_board_i2c_init(void)
 
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
    /* Set I2C2 EV interrupt preemption priority. */
-    NVIC_SetPriority(
+   /* NVIC_SetPriority(
                         I2C1_EV_IRQn,
                         NVIC_EncodePriority(
                                                 NVIC_GetPriorityGrouping(),
@@ -47,8 +47,9 @@ BOARD_ERROR be_board_i2c_init(void)
                                            )
                    );
     NVIC_EnableIRQ(I2C1_EV_IRQn);
-
+    */
     /* Set I2C1 EV interrupt preemption priority. */
+    /*
     NVIC_SetPriority(
                         I2C1_ER_IRQn,
                         NVIC_EncodePriority(
@@ -58,7 +59,7 @@ BOARD_ERROR be_board_i2c_init(void)
                                            )
                    );
     NVIC_EnableIRQ(I2C1_ER_IRQn);
-
+*/
     /* Restart stress for I2C2 slave device. */
     board_i2c_unstick();
     board_i2c_lowlevel_init(I2C1);
