@@ -56,11 +56,11 @@ BOARD_ERROR be_board_init_main_init(void)
 
     if(be_result == BOARD_ERR_OK)
     {
-        v_board_state_set_state(BOARD_SYSTEM_READY_TO_RUN);
+        v_board_state_set_required_state(BOARD_SYSTEM_READY_TO_RUN);
     }
     else
     {
-        v_board_state_set_state(BOARD_SYSTEM_FAULT);
+        v_board_state_set_required_state(BOARD_SYSTEM_FAULT);
     }
     return(be_result);
 }

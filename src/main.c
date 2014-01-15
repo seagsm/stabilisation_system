@@ -17,48 +17,47 @@ int main( void)
 
 
 
-    v_board_state_set_state(BOARD_SYSTEM_INIT);
+    v_board_state_set_required_state(BOARD_SYSTEM_INIT);
     /*TODO:
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
     while(1U)
     {
-        bss_state = bss_board_state_get_required_state();
         if(be_result == BOARD_ERR_ERROR)
         {
-            v_board_state_set_state(BOARD_SYSTEM_FAULT);
+            v_board_state_set_required_state(BOARD_SYSTEM_FAULT);
         }
+        bss_state = bss_board_state_get_required_state();
         switch (bss_state)
         {
             case BOARD_SYSTEM_INIT:
-                 be_result = be_board_init_main_init();/* init main hardware moduls.*/
-                 v_board_state_set_current_state(BOARD_SYSTEM_INIT);
-            break;
-            case BOARD_SYSTEM_READY_TO_RUN:/* init all board system .*/
-              /* Temporary disabled:
-                be_result = be_board_system_init_unlock();
-               */
-                /* Should be removed. */
-                v_board_state_set_state(BOARD_SYSTEM_RUN);
-
-                v_board_state_set_current_state(BOARD_SYSTEM_READY_TO_RUN);
-            break;
-            case BOARD_SYSTEM_RUN:/* Run of control loop(interrupt?).*/
-                v_board_state_set_current_state(BOARD_SYSTEM_RUN);
+                v_board_state_update_current_state(BOARD_SYSTEM_INIT);
+                be_result = be_board_init_main_init();      /* init main hardware moduls.*/
+                break;
+            case BOARD_SYSTEM_READY_TO_RUN:
+                v_board_state_update_current_state(BOARD_SYSTEM_READY_TO_RUN);
+#if 0
+                be_result = be_board_system_init_unlock();  /* init all board system .*/
+#endif
+                /* Should be removed. Real setup inside  be_board_system_init_unlock() */
+                v_board_state_set_required_state(BOARD_SYSTEM_RUN);
+                break;
+            case BOARD_SYSTEM_RUN:                          /* Run of control loop(interrupt?).*/
+                v_board_state_update_current_state(BOARD_SYSTEM_RUN);
                 gv_board_sys_tick_delay(100U);
                 timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);
 /*
-                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                GPIO_SetBits( GPIOB, GPIO_Pin_12);
                 gv_board_sys_tick_fast_delay(50U);
-                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);
 */
-                be_board_gyro_read(&board_gyro_data);/* It take around 800microSec. */
-/*
-                GPIO_SetBits( GPIOB, GPIO_Pin_1);
+                be_board_gyro_read(&board_gyro_data);       /* It take around 800microSec. */
+
+                GPIO_SetBits( GPIOA, GPIO_Pin_12);
                 gv_board_sys_tick_fast_delay(50U);
-                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
-*/
+                GPIO_ResetBits( GPIOA, GPIO_Pin_12);
+
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
@@ -68,21 +67,20 @@ int main( void)
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
-            break;
+                break;
             case BOARD_SYSTEM_MOTOR_CALIBRATION:/* Calibration of motor ESD controller.*/
-                v_board_state_set_current_state(BOARD_SYSTEM_MOTOR_CALIBRATION);
+                v_board_state_update_current_state(BOARD_SYSTEM_MOTOR_CALIBRATION);
                 be_result = be_board_system_init_motor_calibration();
-            break;
+                break;
             case BOARD_SYSTEM_FAULT:
-                v_board_state_set_current_state(BOARD_SYSTEM_FAULT);
+                v_board_state_update_current_state(BOARD_SYSTEM_FAULT);
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_delay(400U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_delay(400U);
-            break;
-
+                break;
             default:
-            break;
+                break;
         }
     }
 }

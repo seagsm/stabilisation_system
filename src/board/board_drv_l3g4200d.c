@@ -8,6 +8,7 @@ BOARD_ERROR be_board_drv_l3g4200d_detect(void)
 
     gv_board_sys_tick_fast_delay(25U);
     board_i2c_read(L3G4200D_ADDRESS, L3G4200D_WHO_AM_I, 1U, &u8_device_id);
+    gv_board_sys_tick_delay(1U);
     if (u8_device_id != L3G4200D_ID)
     {
       be_result = BOARD_ERR_ERROR;

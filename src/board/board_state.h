@@ -17,9 +17,11 @@ typedef enum
 }   BOARD_SYSTEM_STATE; /* variable tag bss_xxx */
 
 BOARD_SYSTEM_STATE bss_board_state_get_current_state(void);
+void v_board_state_update_current_state(BOARD_SYSTEM_STATE bss_set_state);
+
 BOARD_SYSTEM_STATE bss_board_state_get_required_state(void);
-void v_board_state_set_current_state(BOARD_SYSTEM_STATE bss_set_state);
-void v_board_state_set_state(BOARD_SYSTEM_STATE  bss_set_state);
+void v_board_state_set_required_state(BOARD_SYSTEM_STATE  bss_set_state);
+
 
 
 

@@ -98,6 +98,7 @@
 
 #define I2C_MODULE_MODE   DMA
 
+
 typedef enum
 {
     Polling = 0x00U,
@@ -130,6 +131,6 @@ void                  board_i2c_slave_buffer_read_write(I2C_TypeDef* I2Cx,I2C_Pr
 static void           board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
 
 void DMA1_Channel6_IRQHandler(void);
-
+void DMA1_Channel7_IRQHandler(void);
 
 #endif

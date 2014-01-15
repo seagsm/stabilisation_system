@@ -31,7 +31,7 @@ static BOARD_ERROR be_board_system_init_unlock(void)
 
     if(bl_unlock_state == BOARD_SYSTEM_INIT_UNLOCK_RUN)
     {
-        v_board_state_set_state(BOARD_SYSTEM_RUN);
+        v_board_state_set_required_state(BOARD_SYSTEM_RUN);
         /* Turn LED ON-OFF-ON-OFF-ON.*/
         GPIO_SetBits( GPIOB, GPIO_Pin_1);
         gv_board_sys_tick_delay(500U);
@@ -45,7 +45,7 @@ static BOARD_ERROR be_board_system_init_unlock(void)
     }
     else if(bl_unlock_state == BOARD_SYSTEM_INIT_UNLOCK_CALIBRATION)
     {
-        v_board_state_set_state(BOARD_SYSTEM_MOTOR_CALIBRATION);
+        v_board_state_set_required_state(BOARD_SYSTEM_MOTOR_CALIBRATION);
         /* Turn LED ON-OFF.*/
         GPIO_SetBits( GPIOB, GPIO_Pin_1);
         gv_board_sys_tick_delay(1000U);
