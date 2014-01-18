@@ -51,8 +51,11 @@ int main( void)
                 GPIO_SetBits( GPIOB, GPIO_Pin_12);
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_12);
-*/
+*/GPIO_SetBits( GPIOB, GPIO_Pin_12);
                 be_board_gyro_read(&board_gyro_data);       /* It take around 800microSec. */
+/*GPIO_ResetBits( GPIOB, GPIO_Pin_12);*/
+
+
 
                 GPIO_SetBits( GPIOA, GPIO_Pin_12);
                 gv_board_sys_tick_fast_delay(50U);

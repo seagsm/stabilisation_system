@@ -113,6 +113,51 @@ typedef enum
 }Status;
 
 
+
+
+/* Exported types ------------------------------------------------------------*/
+typedef enum i2c_result
+{
+	NO_ERR 					= 0U,
+	TIMEOUT 				= 1U,
+	BUS_BUSY 				= 2U,
+	SEND_START_ERR 			= 3U,
+	ADDR_MATCH_ERR 			= 4U,
+	ADDR_HEADER_MATCH_ERR 	= 5U,
+	DATA_TIMEOUT 			= 6U,
+	WAIT_COMM 				= 7U,
+	STOP_TIMEOUT 			= 8U
+}I2C_Result;
+
+typedef enum i2c_state
+{
+	COMM_DONE 			= 0U, /* done successfully*/
+	COMM_PRE 			= 1U,
+	COMM_IN_PROCESS 	= 2U,
+	CHECK_IN_PROCESS 	= 3U,
+	COMM_EXIT 			= 4U /* exit since failure*/
+}I2C_STATE;
+
+#define Transmitter 0x00U
+#define Receiver 0x01U
+#define FALSE 0U
+#define TRUE  1U
+#define u8	uint8_t
+#define u16	uint16_t
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 BOARD_ERROR be_board_i2c_init(void);
 static void board_i2c_unstick(void);
 static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx);
@@ -123,11 +168,20 @@ BOARD_ERROR board_i2c_read(
                             uint32_t u32_number_byte_to_read,
                             uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
                           );
+BOARD_ERROR board_i2c_DMA_read(
+                            uint8_t  u8_device_address,
+                            uint8_t  u8_start_read_address,
+                            uint32_t u32_number_byte_to_read,
+                            uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
+                          );
 BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
 static      BOARD_ERROR be_board_i2c_master_buffer_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
 static      BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
 static void                board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
+
+static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
+
 
 void DMA1_Channel6_IRQHandler(void);
 void DMA1_Channel7_IRQHandler(void);
