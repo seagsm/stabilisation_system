@@ -10,6 +10,14 @@
 /*  #define NVIC_PRIORITY_GPOUP NVIC_PriorityGroup_2 */
 /*  #define NVIC_PRIORITY_GPOUP NVIC_PriorityGroup_3 */  /* preemption 0-7 , sub 0-1 */
   #define NVIC_PRIORITY_GPOUP NVIC_PriorityGroup_4       /* just priority 0-15*/
+ /* It means that priority group can be 0-15, but subpriority only 0. */
+
+/* I2C1 ***********************/
+#define I2C1_EV_PRIORITY_GROUP      3U
+#define I2C1_EV_SUB_PRIORITY_GROUP  0U
+
+#define I2C1_ER_PRIORITY_GROUP      2U
+#define I2C1_ER_SUB_PRIORITY_GROUP  0U
 
 /* USART1 *********************/
 #define USART1_PRIORITY_GROUP 6U

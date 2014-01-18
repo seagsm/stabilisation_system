@@ -1950,6 +1950,18 @@
       <file>
         <name>$PROJ_DIR$\src\board\board_uart.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\i2c_ee_dma.c</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\i2c_ee_dma.h</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
+      </file>
     </group>
     <group>
       <name>common</name>
