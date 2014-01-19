@@ -78,7 +78,7 @@
 #define I2C_IT_ERR                      ((uint16_t)0x0100)
 
 
-#define  ClockSpeed            100000U
+#define  ClockSpeed            200000U
 
 #define I2C_DIRECTION_TX 0U
 #define I2C_DIRECTION_RX 1U
@@ -146,12 +146,9 @@ typedef enum i2c_state
 #define u16	uint16_t
 
 
+extern uint8_t MasterReceptionComplete;
 
-
-
-
-
-
+extern uint8_t u8_GyroId;
 
 
 
@@ -174,14 +171,19 @@ BOARD_ERROR board_i2c_DMA_read(
                             uint32_t u32_number_byte_to_read,
                             uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
                           );
+
 BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
 static      BOARD_ERROR be_board_i2c_master_buffer_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
 static      BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
-static void                board_i2c_dma_config(I2C_TypeDef* I2Cx, uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
+static void                board_i2c_dma_config(uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
 
-static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
-
+static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
+static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(
+                                                            uint8_t* pBuffer,
+                                                            uint32_t NumByteToWrite,
+                                                            uint8_t SlaveAddress
+                                                       );
 
 void DMA1_Channel6_IRQHandler(void);
 void DMA1_Channel7_IRQHandler(void);

@@ -1,6 +1,6 @@
 [BREAKPOINTS]
 ShowInfoWin = 1
-EnableFlashBP = 2
+EnableFlashBP = 0
 BPDuringExecution = 0
 [CFI]
 CFISize = 0x00

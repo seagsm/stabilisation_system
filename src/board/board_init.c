@@ -12,7 +12,7 @@ BOARD_ERROR be_board_init_main_init(void)
     gv_board_sys_tick_init();
     /* Init interrupt priority group. */
     NVIC_init();
-    /*TODO: It should be removed to suitable place. */
+    /*TODO: It should be moved to suitable place. */
     __enable_irq();
 
 

@@ -100,7 +100,7 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
     }
-    /* Timer input capture configuretion. */
+    /* Timer input capture configuration. */
     TIM_ICInitStructure.TIM_ICPolarity  = TIM_ICPolarity;
     TIM_ICInitStructure.TIM_ICSelection = TIM_TIxExternalCLKSource;
     TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_divider;
