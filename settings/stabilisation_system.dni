@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=2053939598
+Checksum=626010447
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -19,13 +19,20 @@ ShowArgs=0
 MixedMode=1
 [struct_types]
 Fmt0=BOARD_3X_DATA-u16_X	4	0
+[array_types]
+Fmt0=uint32_t[100]	4	0
 [watch_formats]
 Fmt0={W}0:DMA_InitStructure.DMA_PeripheralBaseAddr	4	0
-Fmt1={W}0:current_CRC	4	0
-Fmt2={W}0:input_value	4	0
-Fmt3={W}0:lastevent	4	0
-Fmt4={W}0:msg	4	0
-Fmt5={W}0:u8_test_value	3	0
+Fmt1={W}0:SlaveADDR	4	0
+Fmt2={W}0:current_CRC	4	0
+Fmt3={W}0:input_value	4	0
+Fmt4={W}0:lastevent	4	0
+Fmt5={W}0:msg	4	0
+Fmt6={W}0:u8_test_value	3	0
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -33,6 +40,9 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[Aliases]
+Count=0
+SuppressDialog=0
 [CallStackLog]
 Enabled=0
 [DriverProfiling]
@@ -41,10 +51,3 @@ Mode=0
 Graph=0
 Symbiont=0
 Exclusions=
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Count=0
-[Aliases]
-Count=0
-SuppressDialog=0

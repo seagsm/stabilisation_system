@@ -41,6 +41,9 @@ BOARD_ERROR be_board_init_main_init(void)
             case (6U):
                 be_result = be_board_gyro_init(); /* Init gyro module. */
                 break;
+            case (7U):
+                /*be_result = be_board_acc_init();*/  /* Init accelerometer module. */
+                break;
           default:
                 be_result = BOARD_ERR_ERROR;
                 break;

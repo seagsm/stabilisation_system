@@ -146,10 +146,10 @@ typedef enum i2c_state
 #define u16	uint16_t
 
 
-extern uint8_t MasterReceptionComplete;
+extern volatile uint8_t MasterReceptionComplete;
 
 extern uint8_t u8_GyroId;
-
+extern BOARD_3X_DATA u16_3DX_DMA_data;
 
 
 
@@ -157,7 +157,7 @@ extern uint8_t u8_GyroId;
 
 BOARD_ERROR be_board_i2c_init(void);
 static void board_i2c_unstick(void);
-static void board_i2c_lowlevel_init(I2C_TypeDef* I2Cx);
+static void board_i2c_lowlevel_init(void);
 
 BOARD_ERROR board_i2c_read(
                             uint8_t  u8_device_address,
@@ -174,11 +174,7 @@ BOARD_ERROR board_i2c_DMA_read(
 
 BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
-static      BOARD_ERROR be_board_i2c_master_buffer_read(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
-static      BOARD_ERROR be_board_i2c_master_buffer_write(I2C_TypeDef* I2Cx, uint8_t* pBuffer,  uint32_t NumByteToWrite, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
-static void                board_i2c_dma_config(uint8_t* pBuffer, uint32_t BufferSize, uint32_t Direction);
-
-static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint32_t NumByteToRead, I2C_ProgrammingModel Mode, uint8_t SlaveAddress);
+static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint32_t NumByteToRead, uint8_t SlaveAddress);
 static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(
                                                             uint8_t* pBuffer,
                                                             uint32_t NumByteToWrite,
@@ -189,5 +185,9 @@ void DMA1_Channel6_IRQHandler(void);
 void DMA1_Channel7_IRQHandler(void);
 void I2C1_EV_IRQHandler(void);
 void I2C1_ER_IRQHandler(void);
+
+
+static void v_data_add(uint32_t u32_data);
+
 
 #endif

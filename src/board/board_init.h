@@ -14,9 +14,9 @@
 #include "board_pwm.h"
 #include "board_sys_tick.h"
 #include "board_gyro.h"
+#include "board_acc.h"
 
-
-#define BOARD_INIT_TOTAL_STEPS 7U
+#define BOARD_INIT_TOTAL_STEPS 8U
 
 BOARD_ERROR be_board_init_main_init(void);
 

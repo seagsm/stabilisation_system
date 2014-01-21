@@ -7,7 +7,7 @@
 
 
 BOARD_ERROR be_board_acc_init(void);
-
+BOARD_ERROR be_board_acc_read(void);
 
 
 #endif

@@ -4,7 +4,7 @@
 
 
 /* Address */
-#define USE_ACCEL_RT_BIAS
+#define USE_ACCEL_RT_BIAS   1
 /* #define ADXL345_ADDRESS 0x53 */
 #define ADXL345_ADDRESS 0xA7U
 /* Registers */
@@ -26,9 +26,9 @@
 
 #define DATA_RATE_1600      0x0EU
 
-uint8_t accelCalibrating = 0U;
+static volatile uint8_t u8_accelCalibrating = 0U;
 
-BOARD_FLOAT_3X_DATA accelRTBias = { 0.0f, 0.0f, 0.0f };
+static BOARD_FLOAT_3X_DATA accelRTBias = { 0.0f, 0.0f, 0.0f };
 
 BOARD_I32_3X_DATA accelSum100Hz = { 0, 0, 0 };
 
@@ -38,22 +38,22 @@ BOARD_I32_3X_DATA accelSummedSamples100Hz;
 
 BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
-BOARD_I16_3X_DATA rawAccel;
+static BOARD_I16_3X_DATA rawAccel;
 
-BOARD_FLOAT_3X_DATA accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f};
+static BOARD_FLOAT_3X_DATA accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f};
 
 
 /* Compute Accel Runtime Bias */
-void computeAccelRTBias(void)
+static void computeAccelRTBias(void)
 {
     uint16_t samples;
     BOARD_FLOAT_3X_DATA accelSum = { 0.0f, 0.0f, 0.0f};
 
-    accelCalibrating = 1U;
+    u8_accelCalibrating = 1U;
 
     for (samples = 0U; samples < 2000U; samples++)
     {
-        readAccel();
+        board_drv_adxl345_read();
 
         accelSum.fl_X += (float)rawAccel.i16_X;
         accelSum.fl_Y += (float)rawAccel.i16_Y;
@@ -66,17 +66,20 @@ void computeAccelRTBias(void)
     accelRTBias.fl_Y =  accelSum.fl_Y / 2000.0f;
     accelRTBias.fl_Z = (accelSum.fl_Z / 2000.0f) - (9.8056f / (float)fabs((double)accelScaleFactor.fl_Z));
 
-    accelCalibrating = 0U;
+    u8_accelCalibrating = 0U;
 }
 
-/* Read Accel */
-void readAccel(void)
+/* Read Accelerometer. */
+BOARD_ERROR  board_drv_adxl345_read(void)
 {
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
     uint8_t u8_buffer[6];
     uint16_t u16_i;
 
-    board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
-
+                    /*board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);*/
+    be_result = board_i2c_DMA_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
+/*
     u16_i = (((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);
     rawAccel.i16_Y = (int16_t)u16_i;
 
@@ -85,29 +88,35 @@ void readAccel(void)
 
     u16_i = (((uint16_t)u8_buffer[5]) << 8U) + ((uint16_t)u8_buffer[4]);
     rawAccel.i16_Z = (int16_t)u16_i;
+*/
+    return (be_result);
 }
 
 /* Accel Initialization */
-void initAccel(void)
+BOARD_ERROR  board_drv_adxl345_init(void)
 {
-    board_i2c_write(ADXL345_ADDRESS, ADXL345_POWER_CTL, MEASURE);
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_POWER_CTL, MEASURE);
 
     gv_board_sys_tick_fast_delay(10U);
 
-    board_i2c_write(ADXL345_ADDRESS, ADXL345_DATA_FORMAT, FULL_RES | RANGE_4_G);
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_DATA_FORMAT, FULL_RES | RANGE_4_G);
 
     gv_board_sys_tick_fast_delay(10U);
 
-    board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_1600);
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_1600);
 
     gv_board_sys_tick_fast_delay(100U);
 
-#ifdef USE_ACCEL_RT_BIAS
-    computeAccelRTBias();
+#if USE_ACCEL_RT_BIAS
+    /* computeAccelRTBias(); */
 #else
     accelRTBias.fl_X = 0.0f;
     accelRTBias.fl_Y = 0.0f;
     accelRTBias.fl_Z = 0.0f;
 #endif
+
+    return (be_result);
 }
 

@@ -10,11 +10,11 @@ BOARD_ERROR be_board_drv_l3g4200d_detect(void)
     volatile uint32_t u32_i = 0xFFFFFFU;
 
     gv_board_sys_tick_fast_delay(25U);
-    board_i2c_DMA_read(L3G4200D_ADDRESS, L3G4200D_WHO_AM_I, 1U, &u8_device_id);
+    board_i2c_DMA_read(L3G4200D_ADDRESS, L3G4200D_WHO_AM_I, 2U, &u8_device_id);
 
     while(MasterReceptionComplete == 0U)
     {}
-     u8_device_id =   u8_GyroId;
+     u8_device_id =   (uint8_t)u16_3DX_DMA_data.u16_X;
     if (u8_device_id != L3G4200D_ID)
     {
       be_result = BOARD_ERR_ERROR;

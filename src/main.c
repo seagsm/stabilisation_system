@@ -53,6 +53,7 @@ int main( void)
                 GPIO_ResetBits( GPIOB, GPIO_Pin_12);
 */GPIO_SetBits( GPIOB, GPIO_Pin_12);
                 be_board_gyro_read(&board_gyro_data);       /* It take around 800microSec. */
+                /*be_board_acc_read();*/
 /*GPIO_ResetBits( GPIOB, GPIO_Pin_12);*/
 
 

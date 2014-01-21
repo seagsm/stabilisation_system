@@ -8,6 +8,7 @@
 #include "board_i2c.h"
 
 
+/*
 extern uint8_t accelCalibrating;
 
 extern BOARD_FLOAT_3X_DATA accelRTBias;
@@ -21,12 +22,14 @@ extern BOARD_I32_3X_DATA accelSummedSamples100Hz;
 extern BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
 extern BOARD_I16_3X_DATA rawAccel;
+*/
 
 
-void readAccel(void);
 
-void computeAccelRTBias(void);
+BOARD_ERROR  board_drv_adxl345_read(void);
 
-void initAccel(void);
+static void computeAccelRTBias(void);
+
+BOARD_ERROR board_drv_adxl345_init(void);
 
 #endif
