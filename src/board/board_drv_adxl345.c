@@ -5,7 +5,7 @@
 
 /* Address */
 #define USE_ACCEL_RT_BIAS   1
-/* #define ADXL345_ADDRESS 0x53 */
+/* #define ADXL345_ADDRESS 0x53U*/
 #define ADXL345_ADDRESS 0xA7U
 /* Registers */
 

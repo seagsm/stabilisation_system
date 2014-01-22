@@ -21,30 +21,33 @@ BOARD_ERROR be_board_init_main_init(void)
         switch (u16_step)
 		{
             case (0U):
-                be_result = be_board_gpio_init(); /* Init GPIO. */
+                be_result = be_board_gpio_init();   /* Init GPIO. */
                 break;
             case (1U):
-                be_result = be_board_uart_init(); /* Init UART modules. */
+                be_result = be_board_uart_init();   /* Init UART modules. */
                 break;
             case (2U):
-                be_result = be_board_adc_init();  /* Init ADC module. */
+                be_result = be_board_adc_init();    /* Init ADC module. */
                 break;
             case (3U):
-                be_result = be_board_ppm_init();  /* Init PPM input capture. */
+                be_result = be_board_ppm_init();    /* Init PPM input capture. */
                 break;
             case (4U):
-                be_result = be_board_pwm_init();  /* Init PWM chanels. */
+                be_result = be_board_pwm_init();    /* Init PWM chanels. */
                 break;
             case (5U):
-                be_result = be_board_i2c_init();  /* Init I2C1 chanels. */
+                be_result = be_board_i2c_init();    /* Init I2C1 chanels. */
                 break;
             case (6U):
-                be_result = be_board_gyro_init(); /* Init gyro module. */
+                be_result = be_board_gyro_init();   /* Init gyro module. */
                 break;
             case (7U):
-                /*be_result = be_board_acc_init();*/  /* Init accelerometer module. */
+                be_result = be_board_acc_init();    /* Init accelerometer module. */
                 break;
-          default:
+            case (8U):
+                be_result = be_board_mag_init();    /* Init magnetometer module. */
+                break;
+            default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

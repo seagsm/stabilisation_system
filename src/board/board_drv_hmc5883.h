@@ -52,7 +52,7 @@ extern int16_t magSum[3];
 extern uint8_t newMagData;
 
 
-void v_board_drv_hmc5883_init(void);
-void v_board_drv_hmc5883_read(void);
+BOARD_ERROR be_board_drv_hmc5883_init(void);
+BOARD_ERROR be_board_drv_hmc5883_read(void);
 
 #endif

@@ -25,8 +25,8 @@ static volatile uint8_t tmp_del = 1U;
 
 volatile uint8_t MasterReceptionComplete = 0U;
 
-static volatile uint8_t MasterTransitionComplete = 0U; /* to indicat master's send process */
-volatile uint8_t WriteComplete = 0U; /* to indicat target's internal write process */
+static volatile uint8_t MasterTransitionComplete    = 0U; /* to indicate master's send process */
+volatile uint8_t WriteComplete                      = 0U; /* to indicate target's internal write process */
 
 int I2C_NumByteToWrite = 0U;
 u8 I2C_NumByteWritingNow = 0U;
@@ -40,37 +40,15 @@ static volatile I2C_STATE i2c_comm_state;
 /* DMA use buffer to storage data from slave device. */
 static uint8_t u8_rc_dma_buffer[6];
 
-/** Log */
-static uint32_t u32_buf[100];
-static uint32_t u32_buf_counter = 0U;
-static uint32_t overflow = 0U;
-/****/
-
 
 BOARD_3X_DATA u16_3DX_DMA_data;
-
 
 /* Initialization of I2C1 module. */
 BOARD_ERROR be_board_i2c_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    /************** I2C NVIC configuration *************************/
-	/* NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1); */
-    /* Init I2C1 EV interrupt. */
-	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =  I2C1_EV_PRIORITY_GROUP ;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority =         I2C1_EV_SUB_PRIORITY_GROUP;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-    /* Init I2C1 ER interrupt. */
-	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_ER_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =  I2C1_ER_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority =         I2C1_ER_SUB_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-    /* Restart stress for I2C2 slave device. */
+    /* Restart stress for I2C1 slave device. */
     board_i2c_unstick();
     board_i2c_lowlevel_init();
 
@@ -160,8 +138,8 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
         DMA_ITConfig(DMA1_Channel7, DMA_IT_TC, ENABLE);
 
         NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel7_IRQn;
-        NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0U;
-        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0U;
+        NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = DMA1_Channel7_PRIORITY_GROUP;
+        NVIC_InitStructure.NVIC_IRQChannelSubPriority = DMA1_Channel7_SUB_PRIORITY_GROUP;
         NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
@@ -222,9 +200,9 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint32
 	    DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
 
 		NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel6_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0U;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0U;
-		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority           = DMA1_Channel6_SUB_PRIORITY_GROUP;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = DMA1_Channel6_PRIORITY_GROUP;
+		NVIC_InitStructure.NVIC_IRQChannelCmd                   = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);
 
         /*initialize static parameter*/
@@ -269,7 +247,7 @@ static void board_i2c_lowlevel_init(void)
 	I2C_DeInit(I2C1);
 
     GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_OD;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     /* I2C1 and I2C2 configuration */
@@ -286,13 +264,13 @@ static void board_i2c_lowlevel_init(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
 	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0U;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1U;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_EV_SUB_PRIORITY_GROUP;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_EV_SUB_PRIORITY_GROUP;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_ER_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0U;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0U;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_ER_PRIORITY_GROUP;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_ER_SUB_PRIORITY_GROUP;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
@@ -318,17 +296,6 @@ void DMA1_Channel6_IRQHandler(void)
 			while (I2C1->SR2 & 0x02U)
 			{}
 			MasterTransitionComplete = 1U;
-			/**????*/
-#if 0
-            i2c_comm_state = COMM_IN_PROCESS;
-			I2C_ITConfig(I2C1, I2C_IT_EVT, ENABLE); /* use interrupt to handle check process */
-			check_begin = TRUE;
-			if(I2C1->CR1 & 0x200U)
-			{
-				I2C1->CR1 &= 0xFDFFU;
-			}
-			I2C_GenerateSTART(I2C1, ENABLE);
-#endif
 		}
 		else /* slave send DMA finish */
 		{
@@ -386,8 +353,6 @@ void I2C1_EV_IRQHandler(void)
 {
     uint32_t lastevent = I2C_GetLastEvent(I2C1);
 
-    v_data_add(lastevent);
-
     switch (lastevent)
     {
         /* Master send start condition and now should send slave address. */
@@ -409,7 +374,7 @@ void I2C1_EV_IRQHandler(void)
             /* I2C_IT_BUF Buffer interrupt mask, allow us to have an EV7,byte received. */
             /* I2C_IT_EVT Event interrupt enabled */
             break;
-        /********************** Master Receiver events ********************************/
+        /* Master Receiver events */
         case I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED: /* EV6 */
             /*Disable I2C interrupt and enable DMA module. */
             I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF, DISABLE);
@@ -424,7 +389,7 @@ void I2C1_EV_IRQHandler(void)
 			/* MSL BUSY RXNE 0x30040 */
 			break;
 
-        /************************* Master Transmitter events **************************/
+        /* Master Transmitter events */
 		case I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED: /* EV8 just after EV6 */
             /* BUSY, MSL, ADDR, TXE and TRA 0x70082 */
             I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF, DISABLE);
@@ -518,20 +483,4 @@ static void board_i2c_unstick(void)
     GPIO_SetBits(GPIOB, GPIO_Pin_7);   /*Set bus sda high */
     gv_board_sys_tick_fast_delay(3U);
 }
-
-
-static void v_data_add(uint32_t u32_data)
-{
-
-
-    u32_buf[u32_buf_counter] = u32_data ;
-
-    u32_buf_counter++;
-    if(u32_buf_counter>=100U)
-    {
-        u32_buf_counter=0U;
-        overflow++;
-    }
-}
-
 

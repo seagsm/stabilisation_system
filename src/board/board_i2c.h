@@ -78,12 +78,12 @@
 #define I2C_IT_ERR                      ((uint16_t)0x0100)
 
 
-#define  ClockSpeed            200000U
+#define  ClockSpeed            400000U
 
 #define I2C_DIRECTION_TX 0U
 #define I2C_DIRECTION_RX 1U
 
-#define OwnAddress1 0x28U
+#define OwnAddress1 0x30U
 #define OwnAddress2 0x30U
 
 

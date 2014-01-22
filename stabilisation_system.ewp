@@ -1906,6 +1906,12 @@
         <name>$PROJ_DIR$\src\board\board_init.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_mag.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_mag.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_NVIC.c</name>
       </file>
       <file>
