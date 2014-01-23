@@ -40,7 +40,7 @@ BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
 static BOARD_I16_3X_DATA rawAccel;
 
-static BOARD_FLOAT_3X_DATA accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f};
+static BOARD_FLOAT_3X_DATA bf3x_accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f};
 
 
 /* Compute Accel Runtime Bias */
@@ -64,7 +64,7 @@ static void computeAccelRTBias(void)
 
     accelRTBias.fl_X =  accelSum.fl_X / 2000.0f;
     accelRTBias.fl_Y =  accelSum.fl_Y / 2000.0f;
-    accelRTBias.fl_Z = (accelSum.fl_Z / 2000.0f) - (9.8056f / (float)fabs((double)accelScaleFactor.fl_Z));
+    accelRTBias.fl_Z = (accelSum.fl_Z / 2000.0f) - (9.8056f / (float)fabs((double)bf3x_accelScaleFactor.fl_Z));
 
     u8_accelCalibrating = 0U;
 }

@@ -52,7 +52,7 @@
           
           
           
-        <item>text</item><item>DMA_InitStructure.DMA_PeripheralBaseAddr</item><item>u8_test_value</item><item>rb_USART1_TX</item><item>TIMx</item><item>test</item><item>u16_board_adc_result</item><item>tmpreg</item><item>pBuffer</item><item>SlaveADDR</item><item>lastevent</item><item>u32_buf</item><item></item></expressions>
+        <item>text</item><item>DMA_InitStructure.DMA_PeripheralBaseAddr</item><item>u8_test_value</item><item>rb_USART1_TX</item><item>TIMx</item><item>test</item><item>u16_board_adc_result</item><item>tmpreg</item><item>pBuffer</item><item>SlaveADDR</item><item>lastevent</item><item>u32_buf</item><item/></expressions>
         <col-names>
           
           
