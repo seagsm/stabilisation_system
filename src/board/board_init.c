@@ -47,7 +47,11 @@ BOARD_ERROR be_board_init_main_init(void)
             case (8U):
                 be_result = be_board_mag_init();    /* Init magnetometer module. */
                 break;
-            default:
+            case (9U):
+                be_result = be_api_i2c_acquisition_init(); /* Init data acquisition process. */
+                break;
+
+          default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

@@ -3,28 +3,7 @@
 
 
 
-/* Address */
-#define USE_ACCEL_RT_BIAS   1
-/* #define ADXL345_ADDRESS 0x53U*/
-#define ADXL345_ADDRESS 0xA7U
-/* Registers */
 
-#define ADXL345_OFSX        0x1EU
-#define ADXL345_OFSY        0x1FU
-#define ADXL345_OFSZ        0x20U
-#define ADXL345_BW_RATE     0x2CU
-#define ADXL345_POWER_CTL   0x2DU
-#define ADXL345_DATA_FORMAT 0x31U
-#define ADXL345_DATAX0      0x32U
-
-/* Bits */
-
-#define MEASURE             0x08U
-
-#define FULL_RES            0x08U
-#define RANGE_4_G           0x01U
-
-#define DATA_RATE_1600      0x0EU
 
 static volatile uint8_t u8_accelCalibrating = 0U;
 
@@ -78,7 +57,7 @@ BOARD_ERROR  board_drv_adxl345_read(void)
     uint16_t u16_i;
 
                     /*board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);*/
-    be_result = board_i2c_DMA_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
+    be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
 /*
     u16_i = (((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);
     rawAccel.i16_Y = (int16_t)u16_i;

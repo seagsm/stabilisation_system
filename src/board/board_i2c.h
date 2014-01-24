@@ -6,6 +6,7 @@
 #include "board_NVIC.h"
 #include "board_sys_tick.h"
 #include "board_gyro.h"
+#include "api_i2c_acquisition.h"
 
 
 /* I2C SPE mask */
@@ -146,10 +147,11 @@ typedef enum i2c_state
 #define u16	uint16_t
 
 
-extern volatile uint8_t MasterReceptionComplete;
+/* extern vu8 vu8_master_reception_complete; */
 
-extern uint8_t u8_GyroId;
-extern BOARD_3X_DATA u16_3DX_DMA_data;
+
+extern uint8_t gu8_board_i2c_GyroId;
+
 
 
 
@@ -162,22 +164,16 @@ static void board_i2c_lowlevel_init(void);
 BOARD_ERROR board_i2c_read(
                             uint8_t  u8_device_address,
                             uint8_t  u8_start_read_address,
-                            uint32_t u32_number_byte_to_read,
-                            uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
-                          );
-BOARD_ERROR board_i2c_DMA_read(
-                            uint8_t  u8_device_address,
-                            uint8_t  u8_start_read_address,
-                            uint32_t u32_number_byte_to_read,
+                            uint16_t u16_number_byte_to_read,
                             uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
                           );
 
 BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
-static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint32_t NumByteToRead, uint8_t SlaveAddress);
+static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint16_t NumByteToRead, uint8_t SlaveAddress);
 static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(
                                                             uint8_t* pBuffer,
-                                                            uint32_t NumByteToWrite,
+                                                            uint16_t NumByteToWrite,
                                                             uint8_t SlaveAddress
                                                        );
 
@@ -187,7 +183,16 @@ void I2C1_EV_IRQHandler(void);
 void I2C1_ER_IRQHandler(void);
 
 
-static void v_data_add(uint32_t u32_data);
+/* Service functions. */
+static void v_dma_ch7_one_time_read(void);
+static void v_dma_ch6_one_time_write(void);
+
+extern BOARD_ERROR be_board_i2c_write_start(uint8_t* pu8_buffer, uint16_t u16_num_byte_to_write, uint8_t u8_device_address);
+extern BOARD_ERROR be_board_i2c_read_start(uint8_t* pu8_buffer, uint16_t u16_number_byte_to_read, uint8_t u8_device_address);
+
+
+
+/* static void v_data_add(uint32_t u32_data); */
 
 
 #endif

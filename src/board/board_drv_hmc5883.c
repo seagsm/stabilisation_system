@@ -4,14 +4,14 @@
 
 
 static BOARD_FLOAT_3X_DATA bf3d_mag_scale_factor;
-static BOARD_3X_DATA       b3d_raw_magnitometer;
+static BOARD_U16_3X_DATA       b3d_raw_magnitometer;
 
 BOARD_ERROR be_board_drv_hmc5883_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t u8_buffer[6];
 
-    be_result |= board_i2c_DMA_read(HMC5883_ADDRESS, HMC5883_DATA_X_MSB_REG, 6U, u8_buffer);
+    be_result |= board_i2c_read(HMC5883_ADDRESS, HMC5883_DATA_X_MSB_REG, 6U, u8_buffer);
 
     b3d_raw_magnitometer.u16_X = (((uint16_t)  u8_buffer[0]) << 8U) + ((uint16_t)u8_buffer[1]);
     b3d_raw_magnitometer.u16_Y = (((uint16_t)  u8_buffer[2]) << 8U) + ((uint16_t)u8_buffer[3]);

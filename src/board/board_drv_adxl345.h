@@ -8,6 +8,39 @@
 #include "board_i2c.h"
 
 
+/* Address */
+#define USE_ACCEL_RT_BIAS   1
+/* #define ADXL345_ADDRESS 0x53U*/
+#define ADXL345_ADDRESS 0xA7U
+/* Registers */
+
+#define ADXL345_OFSX        0x1EU
+#define ADXL345_OFSY        0x1FU
+#define ADXL345_OFSZ        0x20U
+#define ADXL345_BW_RATE     0x2CU
+#define ADXL345_POWER_CTL   0x2DU
+#define ADXL345_DATA_FORMAT 0x31U
+#define ADXL345_DATAX0      0x32U
+
+/* Bits */
+
+#define MEASURE             0x08U
+
+#define FULL_RES            0x08U
+#define RANGE_4_G           0x01U
+
+#define DATA_RATE_1600      0x0EU
+
+
+
+
+
+
+
+
+
+
+
 /*
 extern uint8_t accelCalibrating;
 

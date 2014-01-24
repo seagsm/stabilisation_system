@@ -10,11 +10,11 @@ BOARD_ERROR be_board_drv_l3g4200d_detect(void)
     volatile uint32_t u32_i = 0xFFFFFFU;
 
     gv_board_sys_tick_fast_delay(25U);
-    board_i2c_DMA_read(L3G4200D_ADDRESS, L3G4200D_WHO_AM_I, 2U, &u8_device_id);
+    board_i2c_read(L3G4200D_ADDRESS, L3G4200D_WHO_AM_I, 2U, &u8_device_id);
 
-    while(MasterReceptionComplete == 0U)
-    {}
-     u8_device_id =   (uint8_t)u16_3DX_DMA_data.u16_X;
+/*    while(vu8_master_reception_complete == 0U)*/
+/*    {}*/
+     u8_device_id =  gu8_board_i2c_GyroId;
     if (u8_device_id != L3G4200D_ID)
     {
       be_result = BOARD_ERR_ERROR;
@@ -77,12 +77,12 @@ BOARD_ERROR be_board_drv_l3g4200d_align(void)
 
 
 /* Read 3 gyro values into buffer. */
-BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_3X_DATA *p_board_drv_gyro_data)
+BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_U16_3X_DATA *p_board_drv_gyro_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t buf[6];
 
-    be_result = board_i2c_DMA_read(L3G4200D_ADDRESS, L3G4200D_GYRO_OUT, 6U, buf);
+    be_result = board_i2c_read(L3G4200D_ADDRESS, L3G4200D_GYRO_OUT, 6U, buf);
 /*
     p_board_drv_gyro_data->u16_X = (((uint16_t)  buf[0]) << 8U) + ((uint16_t)buf[1]);
     p_board_drv_gyro_data->u16_Y = (((uint16_t)  buf[2]) << 8U) + ((uint16_t)buf[3]);

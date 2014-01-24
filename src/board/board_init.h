@@ -16,8 +16,9 @@
 #include "board_gyro.h"
 #include "board_acc.h"
 #include "board_mag.h"
+#include "api_i2c_acquisition.h"
 
-#define BOARD_INIT_TOTAL_STEPS 9U
+#define BOARD_INIT_TOTAL_STEPS 10U
 
 BOARD_ERROR be_board_init_main_init(void);
 

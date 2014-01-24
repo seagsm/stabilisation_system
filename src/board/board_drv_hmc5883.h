@@ -47,7 +47,7 @@
 
 
 extern BOARD_FLOAT_3X_DATA magScaleFactor;
-extern BOARD_3X_DATA rawMag;
+extern BOARD_U16_3X_DATA rawMag;
 extern int16_t magSum[3];
 extern uint8_t newMagData;
 

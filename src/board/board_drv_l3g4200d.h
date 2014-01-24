@@ -41,7 +41,7 @@
 
 BOARD_ERROR be_board_drv_l3g4200d_init(void);
 BOARD_ERROR be_board_drv_l3g4200d_align(void);
-BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_3X_DATA *p_board_drv_gyro_data);
+BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_U16_3X_DATA *p_board_drv_gyro_data);
 BOARD_ERROR be_board_drv_l3g4200d_detect(void);
 BOARD_ERROR be_board_drv_l3g4200d_config(uint16_t u16_lpf);
 

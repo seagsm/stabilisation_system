@@ -3,45 +3,33 @@
 
 #include "board_i2c.h"
 
-#define DMA_ENABLE 1U
+/* Common variables for setup interrupt and DMA modules. */
 static  NVIC_InitTypeDef	NVIC_InitStructure;
-static  DMA_InitTypeDef  	I2CDMA_InitStructure;
-static volatile uint32_t I2CDirection = I2C_DIRECTION_TX;
-static volatile uint32_t NumbOfBytes1;
-static volatile uint32_t NumbOfBytes2;
-static volatile uint8_t  Address;
+static  DMA_InitTypeDef  	DMA_I2C_InitStructure;
 
-static volatile uint16_t u16_I2C_DMA_TC_flag = 0U;
+/* Used in I2C1_EV_IRQHandler to detect direction of transmittion for correction R/W bit of address. */
+static vu8 vu8_master_direction = Transmitter;
 
+/* Address of slave device, used in I2C1_EV_IRQHandler. */
+static uint8_t u8_slave_addr;
 
+/* Masters receive process state */
+static vu8 vu8_master_reception_complete;
 
-/* Local variables -------------------------------------------------------*/
-static vu8 MasterDirection = Transmitter;
-static u16 SlaveADDR;
-static u16 check_begin = FALSE;
+/* Masters send process state */
+static vu8 vu8_master_transition_complete;
 
-
-static volatile uint8_t tmp_del = 1U;
-
-volatile uint8_t MasterReceptionComplete = 0U;
-
-static volatile uint8_t MasterTransitionComplete    = 0U; /* to indicate master's send process */
-volatile uint8_t WriteComplete                      = 0U; /* to indicate target's internal write process */
-
-int I2C_NumByteToWrite = 0U;
-u8 I2C_NumByteWritingNow = 0U;
-u8* I2C_pBuffer = 0U;
-u16 I2C_WriteAddr = 0U;
-/*P-V operation on I2C1 */
+/*Prevent miss operation on I2C1 */
 static vu8 PV_flag_1;
-
-static volatile I2C_STATE i2c_comm_state;
 
 /* DMA use buffer to storage data from slave device. */
 static uint8_t u8_rc_dma_buffer[6];
 
+/* Flag of one time operation. Should be 0 for multitime functions. */
+static uint8_t u8_one_time_rw = 0U;
 
-BOARD_3X_DATA u16_3DX_DMA_data;
+/* Global.Used in gyrodetect function. */
+uint8_t gu8_board_i2c_GyroId;
 
 /* Initialization of I2C1 module. */
 BOARD_ERROR be_board_i2c_init(void)
@@ -59,45 +47,69 @@ BOARD_ERROR be_board_i2c_init(void)
 }
 
 
+/**/
+BOARD_ERROR be_board_i2c_write_start(uint8_t* pu8_buffer, uint16_t u16_num_byte_to_write, uint8_t u8_device_address)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    u8_one_time_rw = 0U;/* Should be zero. */
+    be_result = be_board_i2c_DMA_master_buffer_write(pu8_buffer, u16_num_byte_to_write, u8_device_address);
+    return(be_result);
+}
+/**/
+BOARD_ERROR be_board_i2c_read_start(uint8_t* pu8_buffer, uint16_t u16_number_byte_to_read, uint8_t u8_device_address)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    u8_one_time_rw = 0U;/* Should be zero. */
+    be_result = be_board_i2c_master_buffer_DMA_read (pu8_buffer, u16_number_byte_to_read, u8_device_address);
+    return(be_result);
+}
+
+
+
+
 /* This function write to I2C device. */
 BOARD_ERROR board_i2c_write(
                                 uint8_t u8_device_address,
                                 uint8_t u8_write_address,
                                 uint8_t u8_write_data
-                            )
+                           )
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t u8_write_buffer[2U]= { 0U, 0U};
 
-    u8_write_buffer[0U] = u8_write_address;
-    u8_write_buffer[1U] = u8_write_data;
-    /* be_result = be_board_i2c_master_buffer_write(I2C1, u8_write_buffer,2U,I2C_MODULE_MODE, u8_device_address); */
+    u8_write_buffer[0U] = u8_write_address; /* Address of device register. */
+    u8_write_buffer[1U] = u8_write_data;    /* Data for writing to device register. */
 
+    /* Use one time read ISR. */
+    u8_one_time_rw = 1U;
     be_result = be_board_i2c_DMA_master_buffer_write(u8_write_buffer, 2U, u8_device_address);
-    while(MasterTransitionComplete == 0U)
+    while(vu8_master_transition_complete == 0U)
     {}
     return(be_result);
 }
 
 /* This function read data from slave device using DMA read function + interrupt. */
-BOARD_ERROR board_i2c_DMA_read(
-                                uint8_t  u8_device_address,
-                                uint8_t  u8_start_read_address,
-                                uint32_t u32_number_byte_to_read,
-                                uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
-                              )
+BOARD_ERROR board_i2c_read(
+                            uint8_t  u8_device_address,
+                            uint8_t  u8_start_read_address,
+                            uint16_t u16_number_byte_to_read,
+                            uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
+                          )
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    u16_I2C_DMA_TC_flag = 0U;
     /* Write read address for reading datas. */
     /* be_result  = be_board_i2c_master_buffer_write(I2C1, &u8_start_read_address,1U,I2C_MODULE_MODE, u8_device_address);*/
+    /* Use one time read ISR. */
+    u8_one_time_rw = 1U;
     be_result = be_board_i2c_DMA_master_buffer_write(&u8_start_read_address, 1U, u8_device_address);
-    while(MasterTransitionComplete == 0U)
+    while(vu8_master_transition_complete == 0U)
     {}
-    /* Read MSB and LSB from address 0xF6. */
-    be_result |= be_board_i2c_master_buffer_DMA_read (pu8_pointer_to_buffer, u32_number_byte_to_read, u8_device_address);
-    while(MasterReceptionComplete == 0U)
+    u8_one_time_rw = 1U;
+    be_result |= be_board_i2c_master_buffer_DMA_read (pu8_pointer_to_buffer, u16_number_byte_to_read, u8_device_address);
+    while(vu8_master_reception_complete == 0U)
     {}
 
     return(be_result);
@@ -106,13 +118,11 @@ BOARD_ERROR board_i2c_DMA_read(
 /* Read slave using DMA and interrupt. */
 static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
                                                         uint8_t* pBuffer,
-                                                        uint32_t NumByteToRead,
+                                                        uint16_t NumByteToRead,
                                                         uint8_t SlaveAddress
                                                       )
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    volatile uint32_t temp = 0U;
-    volatile uint32_t Timeout = 0U;
 
 	/* PV operation */
 	if (PV_flag_1 == 0U)
@@ -121,20 +131,20 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
 
         /* Configure I2Cx DMA channel */
         DMA_DeInit(DMA1_Channel7);
-        I2CDMA_InitStructure.DMA_PeripheralBaseAddr = (u32)I2C1_DR_Address;
+        DMA_I2C_InitStructure.DMA_PeripheralBaseAddr = (u32)I2C1_DR_Address;
 
-        I2CDMA_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; 		/* fixed local buffer for test. */
-        I2CDMA_InitStructure.DMA_DIR 				= DMA_DIR_PeripheralSRC; 		/* fixed for receive function */
-        I2CDMA_InitStructure.DMA_BufferSize 		= (uint32_t)NumByteToRead; 		/* number byte for read. */
-        I2CDMA_InitStructure.DMA_PeripheralInc 		= DMA_PeripheralInc_Disable;	/* fixed */
-        I2CDMA_InitStructure.DMA_MemoryInc 			= DMA_MemoryInc_Enable; 		/* fixed */
-        I2CDMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte; 		/*fixed */
-        I2CDMA_InitStructure.DMA_MemoryDataSize 	= DMA_MemoryDataSize_Byte; 		/*fixed */
-        I2CDMA_InitStructure.DMA_Mode 				= DMA_Mode_Normal; 				/* fixed */
-        I2CDMA_InitStructure.DMA_Priority 			= DMA_Priority_VeryHigh; 		/* up to user */
-        I2CDMA_InitStructure.DMA_M2M 				= DMA_M2M_Disable; 				/* fixed */
+        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; 		/* fixed local buffer for test. */
+        DMA_I2C_InitStructure.DMA_DIR 				= DMA_DIR_PeripheralSRC; 		/* fixed for receive function */
+        DMA_I2C_InitStructure.DMA_BufferSize 		= (uint32_t)NumByteToRead; 		/* number byte for read. */
+        DMA_I2C_InitStructure.DMA_PeripheralInc     = DMA_PeripheralInc_Disable;	/* fixed */
+        DMA_I2C_InitStructure.DMA_MemoryInc         = DMA_MemoryInc_Enable; 		/* fixed */
+        DMA_I2C_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte; 	/*fixed */
+        DMA_I2C_InitStructure.DMA_MemoryDataSize 	= DMA_MemoryDataSize_Byte; 		/*fixed */
+        DMA_I2C_InitStructure.DMA_Mode 				= DMA_Mode_Normal; 				/* fixed */
+        DMA_I2C_InitStructure.DMA_Priority 			= DMA_Priority_VeryHigh; 		/* up to user */
+        DMA_I2C_InitStructure.DMA_M2M 				= DMA_M2M_Disable; 				/* fixed */
 
-        DMA_Init(DMA1_Channel7, &I2CDMA_InitStructure);
+        DMA_Init(DMA1_Channel7, &DMA_I2C_InitStructure);
         DMA_ITConfig(DMA1_Channel7, DMA_IT_TC, ENABLE);
 
         NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel7_IRQn;
@@ -144,14 +154,11 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
         NVIC_Init(&NVIC_InitStructure);
 
         /*initialize static parameter*/
-        MasterDirection = Receiver;
-        MasterReceptionComplete = 0U;
+        vu8_master_direction = Receiver;
+        vu8_master_reception_complete = 0U;
 
         /*initialize static parameter according to input parameter*/
-        SlaveADDR = SlaveAddress;
-
-        /* global state variable i2c_comm_state */
-        i2c_comm_state = COMM_PRE;
+        u8_slave_addr = SlaveAddress;
 
         I2C_AcknowledgeConfig(I2C1, ENABLE);
         I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_ERR , ENABLE);/*only SB int allowed */
@@ -176,7 +183,7 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
 /**
   * Writes buffer of bytes.
   */
-static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint32_t NumByteToWrite, uint8_t SlaveAddress)
+static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint16_t NumByteToWrite, uint8_t SlaveAddress)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -184,19 +191,19 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint32
 	    /* I2C1 TX DMA Channel configuration */
 		DMA_DeInit(DMA1_Channel6);
 
-		I2CDMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)I2C1_DR_Address;
-		I2CDMA_InitStructure.DMA_MemoryBaseAddr 	= (uint32_t)pBuffer;   		/* This parameter will be configured durig communication */
-        I2CDMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
-		I2CDMA_InitStructure.DMA_BufferSize 		= NumByteToWrite;           /* This parameter will be configured durig communication */
-		I2CDMA_InitStructure.DMA_PeripheralInc 		= DMA_PeripheralInc_Disable;
-		I2CDMA_InitStructure.DMA_MemoryInc 			= DMA_MemoryInc_Enable;
-		I2CDMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
-		I2CDMA_InitStructure.DMA_MemoryDataSize 	= DMA_MemoryDataSize_Byte;
-		I2CDMA_InitStructure.DMA_Mode 				= DMA_Mode_Normal;
-		I2CDMA_InitStructure.DMA_Priority 			= DMA_Priority_VeryHigh;
-		I2CDMA_InitStructure.DMA_M2M 				= DMA_M2M_Disable;
+		DMA_I2C_InitStructure.DMA_PeripheralBaseAddr    = (uint32_t)I2C1_DR_Address;
+		DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	    = (uint32_t)pBuffer;   		/* This parameter will be configured durig communication */
+        DMA_I2C_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
+		DMA_I2C_InitStructure.DMA_BufferSize 		    = NumByteToWrite;           /* This parameter will be configured durig communication */
+		DMA_I2C_InitStructure.DMA_PeripheralInc 		= DMA_PeripheralInc_Disable;
+		DMA_I2C_InitStructure.DMA_MemoryInc 			= DMA_MemoryInc_Enable;
+		DMA_I2C_InitStructure.DMA_PeripheralDataSize    = DMA_MemoryDataSize_Byte;
+		DMA_I2C_InitStructure.DMA_MemoryDataSize 	    = DMA_MemoryDataSize_Byte;
+		DMA_I2C_InitStructure.DMA_Mode 				    = DMA_Mode_Normal;
+		DMA_I2C_InitStructure.DMA_Priority 			    = DMA_Priority_VeryHigh;
+		DMA_I2C_InitStructure.DMA_M2M 				    = DMA_M2M_Disable;
 
-	    DMA_Init(DMA1_Channel6, &I2CDMA_InitStructure);
+	    DMA_Init(DMA1_Channel6, &DMA_I2C_InitStructure);
 	    DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
 
 		NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel6_IRQn;
@@ -206,11 +213,11 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint32
 		NVIC_Init(&NVIC_InitStructure);
 
         /*initialize static parameter*/
-        MasterDirection = Transmitter;
-        MasterTransitionComplete = 0U;
+        vu8_master_direction = Transmitter;
+        vu8_master_transition_complete = 0U;
 
         /*initialize static parameter according to input parameter*/
-        SlaveADDR = SlaveAddress;
+        u8_slave_addr = SlaveAddress;
 
 		I2C_AcknowledgeConfig(I2C1, ENABLE);
 		I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, ENABLE);
@@ -223,7 +230,6 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint32
 		I2C_GenerateSTART(I2C1, ENABLE);
 		return(be_result);
 }
-
 
 /**
 * @brief  Initializes peripherals: I2Cx, GPIO, DMA channels .
@@ -283,6 +289,28 @@ void DMA1_Channel6_IRQHandler(void)
 {
 	if (DMA_GetFlagStatus(DMA1_FLAG_TC6))
 	{
+        /* This function for case of one time write. */
+        v_dma_ch6_one_time_write();
+        if(u8_one_time_rw == 0U)
+        {
+            /* start read function. */
+            be_api_i2c_read_process_start();
+        }
+
+        DMA_ClearFlag(DMA1_FLAG_TC6);
+	}
+	if(DMA_GetFlagStatus(DMA1_FLAG_GL6))
+	{
+		DMA_ClearFlag( DMA1_FLAG_GL6);
+	}
+	if(DMA_GetFlagStatus(DMA1_FLAG_HT6))
+	{
+		DMA_ClearFlag( DMA1_FLAG_HT6);
+	}
+}
+
+static void v_dma_ch6_one_time_write(void)
+{
 		if (I2C1->SR2 & 0x01U) /* master send DMA finish, check process later */
 		{
 			/* DMA1-6 (I2C1 Tx DMA)transfer complete ISR */
@@ -295,47 +323,42 @@ void DMA1_Channel6_IRQHandler(void)
 			/* wait until BUSY clear */
 			while (I2C1->SR2 & 0x02U)
 			{}
-			MasterTransitionComplete = 1U;
+			vu8_master_transition_complete = 1U;
 		}
 		else /* slave send DMA finish */
 		{
 
 		}
-		DMA_ClearFlag(DMA1_FLAG_TC6);
-	}
-	if(DMA_GetFlagStatus(DMA1_FLAG_GL6))
-	{
-		DMA_ClearFlag( DMA1_FLAG_GL6);
-	}
-	if(DMA_GetFlagStatus(DMA1_FLAG_HT6))
-	{
-		DMA_ClearFlag( DMA1_FLAG_HT6);
-	}
 }
+
+
 
 /* DMA I2C1 DMA_CHANNEL_7 interrupt. End of receive data from slave. */
 void DMA1_Channel7_IRQHandler(void)
 {
 	if (DMA_GetFlagStatus(DMA1_FLAG_TC7))
 	{
-		if (I2C1->SR2 & 0x01U) /* master receive DMA finish */
-		{
-            /* Case: of Gyro data reading. */
-            board_gyro_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
-            board_gyro_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
-            board_gyro_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
-            /* Case: gyro dev id. */
-            u16_3DX_DMA_data.u16_X = u8_rc_dma_buffer[0];
-            /* Disable DMA. */
-            I2C_DMACmd(I2C1, DISABLE);
-            /* Stop I2C communuation. */
-			I2C_GenerateSTOP(I2C1, ENABLE);
-            i2c_comm_state = COMM_DONE;
-            /* Set data read ready flag. */
-			MasterReceptionComplete = 1U;
-            PV_flag_1 = 0U;
-            GPIO_ResetBits( GPIOB, GPIO_Pin_12);
-		}
+        /* This function for case of one time read */
+        v_dma_ch7_one_time_read();
+        if(u8_one_time_rw == 0U)
+        {
+            /* TODO: should be optimised. */
+            api_i2c_data.array[api_i2c_data.u8_device].data[0]= u8_rc_dma_buffer[0];
+            api_i2c_data.array[api_i2c_data.u8_device].data[1]= u8_rc_dma_buffer[1];
+            api_i2c_data.array[api_i2c_data.u8_device].data[2]= u8_rc_dma_buffer[2];
+            api_i2c_data.array[api_i2c_data.u8_device].data[3]= u8_rc_dma_buffer[3];
+            api_i2c_data.array[api_i2c_data.u8_device].data[4]= u8_rc_dma_buffer[4];
+            api_i2c_data.array[api_i2c_data.u8_device].data[5]= u8_rc_dma_buffer[5];
+            api_i2c_data.u8_device++;
+            if(api_i2c_data.u8_device < MAX_DEV_NUM) /* Maximum device number = 3. */
+            {
+                be_api_i2c_write_process_start();
+            }
+            else
+            {
+                api_i2c_data.u8_ready = 1U;
+            }
+        }
 		DMA_ClearFlag(DMA1_FLAG_TC7);
 	}
 	if (DMA_GetFlagStatus(DMA1_FLAG_GL7))
@@ -348,6 +371,30 @@ void DMA1_Channel7_IRQHandler(void)
 	}
 }
 
+static void v_dma_ch7_one_time_read(void)
+{
+    if (I2C1->SR2 & 0x01U) /* master receive DMA finish */
+	{
+        /* Case: of Gyro data reading. */
+        board_gyro_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
+        board_gyro_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
+        board_gyro_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
+
+        gu8_board_i2c_GyroId = u8_rc_dma_buffer[0];
+
+        /* Disable DMA. */
+        I2C_DMACmd(I2C1, DISABLE);
+
+        /* Stop I2C communuation. */
+		I2C_GenerateSTOP(I2C1, ENABLE);
+
+        /* Set data read ready flag. */
+		vu8_master_reception_complete = 1U;
+        PV_flag_1 = 0U;
+        GPIO_ResetBits( GPIOB, GPIO_Pin_12);
+	}
+}
+
 /* I2C event interrupt. Used for I2C DMA reading. */
 void I2C1_EV_IRQHandler(void)
 {
@@ -357,18 +404,14 @@ void I2C1_EV_IRQHandler(void)
     {
         /* Master send start condition and now should send slave address. */
         case I2C_EVENT_MASTER_MODE_SELECT: /* EV5 (0x00030001)*/
-            if(!check_begin)/* It will be used for transmit. */
-            {
-                i2c_comm_state = COMM_IN_PROCESS;
-            }
-            if (MasterDirection == Receiver)
+            if (vu8_master_direction == Receiver)
             {   /* Master sending address for reading. Master will read data from slave. */
-                I2C_Send7bitAddress(I2C1, (u8)SlaveADDR, I2C_Direction_Receiver);
+                I2C_Send7bitAddress(I2C1, u8_slave_addr, I2C_Direction_Receiver);
             }
             else
             {
                 /* Master sending slave address for write, master will write to salve. */
-                I2C_Send7bitAddress(I2C1, (u8)SlaveADDR, I2C_Direction_Transmitter);
+                I2C_Send7bitAddress(I2C1, u8_slave_addr, I2C_Direction_Transmitter);
             }
             I2C_ITConfig(I2C1, I2C_IT_BUF , ENABLE);	/*also TxE int allowed */
             /* I2C_IT_BUF Buffer interrupt mask, allow us to have an EV7,byte received. */
@@ -392,6 +435,7 @@ void I2C1_EV_IRQHandler(void)
         /* Master Transmitter events */
 		case I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED: /* EV8 just after EV6 */
             /* BUSY, MSL, ADDR, TXE and TRA 0x70082 */
+
             I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF, DISABLE);
 			I2C_DMACmd(I2C1, ENABLE);
 			DMA_Cmd(DMA1_Channel6, ENABLE);
@@ -414,15 +458,10 @@ void I2C1_ER_IRQHandler(void)
 {
     if(I2C_GetFlagStatus(I2C1, I2C_FLAG_AF))
 	{
-		if(check_begin)
-		{
-			I2C_GenerateSTART(I2C1, ENABLE);
-		}
-		else if(I2C1->SR2 & 0x01U)
+        if(I2C1->SR2 & 0x01U)
 		{
 			/*!! receive over */
 			I2C_GenerateSTOP(I2C1, ENABLE);
-			i2c_comm_state = COMM_EXIT;
 			PV_flag_1 = 0U;
 		}
         I2C_ClearFlag(I2C1, I2C_FLAG_AF);
@@ -433,12 +472,28 @@ void I2C1_ER_IRQHandler(void)
 		if (I2C1->SR2 & 0x01U)
 		{
 			I2C_GenerateSTOP(I2C1, ENABLE);
-			i2c_comm_state = COMM_EXIT;
 			PV_flag_1 = 0U;
 		}
 		I2C_ClearFlag(I2C1, I2C_FLAG_BERR);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
