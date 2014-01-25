@@ -357,6 +357,7 @@ void DMA1_Channel7_IRQHandler(void)
             else
             {
                 api_i2c_data.u8_ready = 1U;
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);
             }
         }
 		DMA_ClearFlag(DMA1_FLAG_TC7);
@@ -391,7 +392,6 @@ static void v_dma_ch7_one_time_read(void)
         /* Set data read ready flag. */
 		vu8_master_reception_complete = 1U;
         PV_flag_1 = 0U;
-        GPIO_ResetBits( GPIOB, GPIO_Pin_12);
 	}
 }
 

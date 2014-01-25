@@ -46,15 +46,9 @@ int main( void)
             case BOARD_SYSTEM_RUN:                          /* Run of control loop(interrupt?).*/
                 v_board_state_update_current_state(BOARD_SYSTEM_RUN);
                 gv_board_sys_tick_delay(100U);
-                timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);
-/*
+                timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);/* send data to servo. */
+
                 GPIO_SetBits( GPIOB, GPIO_Pin_12);
-                gv_board_sys_tick_fast_delay(50U);
-                GPIO_ResetBits( GPIOB, GPIO_Pin_12);
-*/GPIO_SetBits( GPIOB, GPIO_Pin_12);
-               /* be_board_gyro_read(&board_gyro_data);*/       /* It take around 800microSec. */
-                /*be_board_acc_read();*/
-                /*be_board_mag_read(); */
                 be_api_i2c_acquisition_start();
 
 /*GPIO_ResetBits( GPIOB, GPIO_Pin_12);*/

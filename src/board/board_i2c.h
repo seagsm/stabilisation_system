@@ -79,7 +79,7 @@
 #define I2C_IT_ERR                      ((uint16_t)0x0100)
 
 
-#define  ClockSpeed            400000U
+#define  ClockSpeed            100000U  /* 100000 is standart speed for i2c protocols. */
 
 #define I2C_DIRECTION_TX 0U
 #define I2C_DIRECTION_RX 1U

@@ -1,34 +1,14 @@
-
 #include "api_i2c_acquisition.h"
 
-
+/*
+    Global structure, has read from device data.
+    Each device has six bytes array inside of that structure.
+*/
 BOARD_I2C_DATA api_i2c_data;
-
 
 static BOARD_DEVICE_PARAMETERS bdp_i2c_devices[MAX_DEV_NUM];
 
-
-
- /* Read start sequence acquisition   : */
-BOARD_ERROR be_api_i2c_acquisition_start(void)
-{
-    BOARD_ERROR be_result = BOARD_ERR_OK;
-
-    /* Reset device number. */
-    api_i2c_data.u8_device = 0U;
-    /* Reset data ready flag. */
-    api_i2c_data.u8_ready  = 0U;
-    /* Start process by starting first writing. */
-    be_result = be_api_i2c_write_process_start();
-    return(be_result);
-}
-
-
-
-
-
- /* Data acquisition init function.*/
-
+/* Data acquisition init function. Sould be started first. */
 BOARD_ERROR be_api_i2c_acquisition_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -54,8 +34,35 @@ BOARD_ERROR be_api_i2c_acquisition_init(void)
     return(be_result);
 }
 
+/*
+    Start of read sequence acquisition.
+    It took 20 uSec, and data will be ready after:
+    speed 100000 - 2.65mSec.
+    speed 400000 - 0.79mSec.
+    This function start write sequence for first device and exit. Read sequence is full automatic
+    done by combination of DMA and interrupt.
+    DMA interupt CH6 "writing done" start reading sequence from first device.
+    DMA interupt CH7 "reading done" copy data from static DMA CH7 array to
+    api_i2c_data.array[0], increase device number for 1 and start write
+    sequence for device 1 ...
+    At the end of operation, then device number = 3 (0,1,2 - 3 devices),
+    DMA interrupt function set data ready flag  api_i2c_data.u8_ready to 1
+    end exit.
+*/
+BOARD_ERROR be_api_i2c_acquisition_start(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
 
+    /* Reset device number. */
+    api_i2c_data.u8_device = 0U;
+    /* Reset data ready flag. */
+    api_i2c_data.u8_ready  = 0U;
+    /* Start process by starting first writing. */
+    be_result = be_api_i2c_write_process_start();
+    return(be_result);
+}
 
+/* Write process start service function. */
 BOARD_ERROR be_api_i2c_write_process_start(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -71,6 +78,7 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
     return(be_result);
 }
 
+/* Read process start service function. */
 BOARD_ERROR be_api_i2c_read_process_start(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -81,15 +89,9 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
     pu8_buffer              = &api_i2c_data.array[api_i2c_data.u8_device].data[0];      /* Pointer of start of read buffer. */
 	u16_num_byte_to_read    =  bdp_i2c_devices[api_i2c_data.u8_device].u16_r_sizeof;    /* Number of byte to read. ( here always 6 ) */
 	u8_device_address	    =  bdp_i2c_devices[api_i2c_data.u8_device].u8_slave_address;/* Address of read device. */
-
+    /* Call read-init function. */
     be_result = be_board_i2c_read_start(pu8_buffer, u16_num_byte_to_read, u8_device_address);
 
     return(be_result);
 }
-
-
-
-
-
-
 
