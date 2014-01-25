@@ -58,3 +58,22 @@ Software should provide:
 10.GUI should provide realtime data from onboard system during connection. 
 
 Firmware should be developed in accordance with MISRA rules.
+
+25.01.2014
+Main init functions are done.
+1.Should be finalising I2C acqusition function. Should be decided how to send data during one time I2C reading.
+(Now it just copy to Gyro variable)
+2.Clean DMA TX for Uart1. The RX interrupt should be added.	
+	Should be added functions for RX round buffer. For parsing input comand packets. 
+
+
+
+
+
+
+
+
+
+
+
+
