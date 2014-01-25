@@ -1849,6 +1849,12 @@
       <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_main_loop.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_main_loop.h</name>
+      </file>
     </group>
     <group>
       <name>board</name>
@@ -1917,6 +1923,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_mag.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_main_loop.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_main_loop.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_NVIC.c</name>

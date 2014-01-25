@@ -27,13 +27,18 @@
 #define USART3_PRIORITY_GROUP 6U
 #define USART3_SUB_PRIORITY   1U
 
+/* TIMER1 MAIN LOOP INTERRUPT ******************/
+#define TIMER1_PERIOD_INTERUPT_PRIORITY_GROUP       8U
+#define TIMER1_PERIOD_INTERUPT_SUB_PRIORITY_GROUP   0U
+
+
 /* TIMER4 CAPTURE ******************************/
 #define TIMER4_CAPTURE_PRIORITY_GROUP 1U        /* PPM capture. */
 #define TIMER4_CAPTURE_SUB_PRIORITY   0U
 
 /* DMA ******************************************/
 
-#define DMA1_Channel1_PRIORITY_GROUP      8U    /* ADC channels DMA transfer end.  */
+#define DMA1_Channel1_PRIORITY_GROUP      6U    /* ADC channels DMA transfer end.  */
 #define DMA1_Channel1_SUB_PRIORITY_GROUP  0U
 
 #define DMA1_Channel2_PRIORITY_GROUP      4U    /* UART3 DMA TX transfer end. GPS  */

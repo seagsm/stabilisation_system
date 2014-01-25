@@ -1,4 +1,10 @@
 
+/* Code style rules:                */
+/* 1. Code should be an ideal.      */
+/* 2. An ideal code does not exist. */
+/*                 Vadym Volokitin. */
+
+
 #include "main.h"
 
 
@@ -42,23 +48,26 @@ int main( void)
 #endif
                 /* Should be removed. Real setup inside  be_board_system_init_unlock() */
                 v_board_state_set_required_state(BOARD_SYSTEM_RUN);
+
                 break;
-            case BOARD_SYSTEM_RUN:                          /* Run of control loop(interrupt?).*/
-                v_board_state_update_current_state(BOARD_SYSTEM_RUN);
+
+            case BOARD_SYSTEM_RUN:
+                /* One time switch a board to RUN state. */
+                if(bss_board_state_get_current_state() != BOARD_SYSTEM_RUN )
+                {
+                    /* Start main loop interrupt. */
+                    be_api_main_loop_start();
+                    v_board_state_update_current_state(BOARD_SYSTEM_RUN);
+                }
+
                 gv_board_sys_tick_delay(100U);
                 timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);/* send data to servo. */
-
-                GPIO_SetBits( GPIOB, GPIO_Pin_12);
-                be_api_i2c_acquisition_start();
-
-/*GPIO_ResetBits( GPIOB, GPIO_Pin_12);*/
-
-
-
+#if 0
                 GPIO_SetBits( GPIOA, GPIO_Pin_12);
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOA, GPIO_Pin_12);
-
+#endif
+                /* Led. */
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);

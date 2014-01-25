@@ -30,10 +30,10 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result = be_board_adc_init();    /* Init ADC module. */
                 break;
             case (3U):
-                be_result = be_board_ppm_init();    /* Init PPM input capture. */
+                be_result = be_board_ppm_init();    /* Init PPM input capture. (Timer_4) */
                 break;
             case (4U):
-                be_result = be_board_pwm_init();    /* Init PWM chanels. */
+                be_result = be_board_pwm_init();    /* Init PWM chanels. (Timer_2 and Timer_3)*/
                 break;
             case (5U):
                 be_result = be_board_i2c_init();    /* Init I2C1 chanels. */
@@ -48,10 +48,12 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result = be_board_mag_init();    /* Init magnetometer module. */
                 break;
             case (9U):
-                be_result = be_api_i2c_acquisition_init(); /* Init data acquisition process. */
+                be_result = be_api_i2c_acquisition_init(); /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */
                 break;
-
-          default:
+            case (10U):
+                be_result = be_api_main_loop_init(); /* Init of Timer_1 for main loop interrupt. */
+                break;
+            default:
                 be_result = BOARD_ERR_ERROR;
                 break;
         }

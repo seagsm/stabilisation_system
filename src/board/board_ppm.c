@@ -166,17 +166,18 @@ void TIM4_IRQHandler(void)
         /* PPM input connected to CH3 .*/
         /* Get capture value. */
         u16_current_period = TIM_GetCapture3(TIM4);
+        /* Select start PPM channel. It is first pulse after timeout more than 5000. */
         if((u32_over_flag != 0U)||(u16_current_period > 5000U))
         {
             u32_channel_number  = 1U;
         }
         else
-        {
+        {   /* Fill of "bc_channel_value_structure" by value of each channel in acording with CH number. */
             switch(u32_channel_number)
             {
               case 1U:
                     bc_channel_value_structure.u16_channel_1_value = u16_current_period;
-                    u32_channel_number++;
+                    u32_channel_number++;/* TODO: should be optimized. */
                 break;
               case 2U:
                     bc_channel_value_structure.u16_channel_2_value = u16_current_period;
