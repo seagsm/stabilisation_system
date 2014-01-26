@@ -22,7 +22,7 @@ void SysTick_Handler(void)
 }
 
 /* With function return system time in milliSeconds. */
-static uint64_t gu64_read_system_time(void)
+uint64_t gu64_read_system_time(void)
 {
   return(u64_system_time);
 }

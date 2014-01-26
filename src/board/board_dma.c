@@ -4,7 +4,7 @@
 
 static uint8_t u8_board_dma_buff_DMA1_CH4_TX[DMA1_CH4_TX_SIZE];
 
-static uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
+uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
 
 /* This function should initialise usart dma. */
 BOARD_ERROR be_board_dma1_init(void)
@@ -120,70 +120,34 @@ void DMA1_Channel4_IRQHandler(void)
 */
 void board_dma_send_buff(void)
 {
-    uint16_t u16_i = 0U;
-#if 1
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_1_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_1_value>>8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_2_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_2_value>>8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_3_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_3_value>>8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_4_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_4_value>>8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_5_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_5_value>>8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_6_value & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_6_value>>8) & 0xFFU);
-    u16_i++;
+    uint16_t u16_CRC = 0U;
+    uint16_t u16_i;
 
-/* Sensors. */
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_X & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_X >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_Y & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_Y >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_Z & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_Z >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_X & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_X >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_Y & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_Y >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_Z & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_Z >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_X & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_X >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_Y & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_Y >> 8) & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_Z & 0xFFU);
-    u16_i++;
-    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_Z >> 8) & 0xFFU);
-    u16_i++;
+#if 1
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);
+/* PPM channels. */
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_1_value);
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_2_value);
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_3_value);
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_4_value);
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_5_value);
+    board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_6_value);
+
+
+/* Sensors raw data. */
+    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_gyro_raw_data);
+    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_acce_raw_data);
+    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_magn_raw_data);
+
+/* System time. */
+    board_dma_add_system_time_to_tx_packet(&u16_i);
+
+/* CRC calculation of all array from 0 to current u16_i.*/
+    u16_CRC = gu16_api_CRC16_alg(u16_i);
+    board_dma_add_u16_to_packet(&u16_i,u16_CRC);
+
+/* CRC. */
     u8_tx_data_packet[u16_i] = 0x0AU;
     u16_i++;
     u8_tx_data_packet[u16_i] = 0x0DU;
@@ -193,18 +157,74 @@ void board_dma_send_buff(void)
 
 }
 
+/* This function add to u8_tx_data_packet array u16 value and increment index. */
+static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
+{
+    uint16_t u16_index;
+
+    u16_index = *pu16_i;
+    u8_tx_data_packet[u16_index] = (uint8_t)(  u16_value & 0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)( (u16_value >> 8) & 0xFFU);
+    u16_index++;
+
+    *pu16_i = u16_index;
+}
+
+/* This function add to u8_tx_data_packet array BOARD_U16_3X_DATA value and increment index. */
+static void board_dma_add_bu163x_to_packet(uint16_t *pu16_i, BOARD_U16_3X_DATA bu163x_value)
+{
+    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_X);
+    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_Y);
+    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_Z);
+}
 
 
+/* This function add HEAD to u8_tx_data_packet array and increment index. */
+static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)
+{
+    uint16_t u16_index;
 
+    /* First index of packet always is zero. */
+    *pu16_i = 0U;
+    u16_index = *pu16_i;
+    /* Create head structure. */
+    u8_tx_data_packet[u16_index] = 'D';
+    u16_index++;
+    u8_tx_data_packet[u16_index] = 'A';
+    u16_index++;
+    u8_tx_data_packet[u16_index] = 'T';
+    u16_index++;
+    u8_tx_data_packet[u16_index] = 'A';
+    u16_index++;
+    *pu16_i = u16_index;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+/* This function add u64 system time to tx packet*/
+static void board_dma_add_system_time_to_tx_packet(uint16_t *pu16_i)
+{
+    uint16_t u16_index;
+    uint64_t u64_sys_time;
+    /* First index of packet always is zero. */
+    *pu16_i = 0U;
+    u16_index = *pu16_i;
+    /* Get system time. */
+    u64_sys_time = gu64_read_system_time();
+    /* Add system time to tx packet. */
+    u8_tx_data_packet[u16_index] = (uint8_t)( u64_sys_time&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 8)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 16)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 24)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 32)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 40)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 48)&0xFFU);
+    u16_index++;
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 56)&0xFFU);
+    u16_index++;
+}
