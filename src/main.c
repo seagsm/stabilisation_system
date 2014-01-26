@@ -60,7 +60,7 @@ int main( void)
                     v_board_state_update_current_state(BOARD_SYSTEM_RUN);
                 }
 
-                gv_board_sys_tick_delay(100U);
+                gv_board_sys_tick_delay(300U);
                 timer2_PWM_duty_CH1(bc_channel_value_structure.u16_channel_1_value);/* send data to servo. */
 #if 0
                 GPIO_SetBits( GPIOA, GPIO_Pin_12);
@@ -72,7 +72,8 @@ int main( void)
                 gv_board_sys_tick_fast_delay(50U);
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
 
-                gv_board_dma_send_packet();
+            /*    gv_board_dma_send_packet(); */
+                board_dma_send_buff();
 
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);

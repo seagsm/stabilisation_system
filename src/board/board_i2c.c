@@ -31,6 +31,10 @@ static uint8_t u8_one_time_rw = 0U;
 /* Global.Used in gyrodetect function. */
 uint8_t gu8_board_i2c_GyroId;
 
+/* Global.Used for one time sensor data reading. */
+BOARD_U16_3X_DATA board_i2c_sensor_data;
+
+
 /* Initialization of I2C1 module. */
 BOARD_ERROR be_board_i2c_init(void)
 {
@@ -376,11 +380,12 @@ static void v_dma_ch7_one_time_read(void)
 {
     if (I2C1->SR2 & 0x01U) /* master receive DMA finish */
 	{
-        /* Case: of Gyro data reading. */
-        board_gyro_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
-        board_gyro_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
-        board_gyro_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
-
+        /*TODO: Should be optimised. */
+        /* Case of one time sansor data reading. */
+        board_i2c_sensor_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
+        board_i2c_sensor_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
+        board_i2c_sensor_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
+        /* Case of Gyro id reading. */
         gu8_board_i2c_GyroId = u8_rc_dma_buffer[0];
 
         /* Disable DMA. */

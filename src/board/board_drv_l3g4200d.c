@@ -83,11 +83,11 @@ BOARD_ERROR be_board_drv_l3g4200d_read(BOARD_U16_3X_DATA *p_board_drv_gyro_data)
     uint8_t buf[6];
 
     be_result = board_i2c_read(L3G4200D_ADDRESS, L3G4200D_GYRO_OUT, 6U, buf);
-/*
-    p_board_drv_gyro_data->u16_X = (((uint16_t)  buf[0]) << 8U) + ((uint16_t)buf[1]);
-    p_board_drv_gyro_data->u16_Y = (((uint16_t)  buf[2]) << 8U) + ((uint16_t)buf[3]);
-    p_board_drv_gyro_data->u16_Z = (((uint16_t)  buf[4]) << 8U) + ((uint16_t)buf[5]);
-*/
+
+    p_board_drv_gyro_data->u16_X = board_i2c_sensor_data.u16_X;
+    p_board_drv_gyro_data->u16_Y = board_i2c_sensor_data.u16_Y;
+    p_board_drv_gyro_data->u16_Z = board_i2c_sensor_data.u16_Z;
+
     be_result = BOARD_ERR_OK;
     return(be_result);
 }

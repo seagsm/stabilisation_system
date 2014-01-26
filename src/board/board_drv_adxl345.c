@@ -58,16 +58,16 @@ BOARD_ERROR  board_drv_adxl345_read(void)
 
                     /*board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);*/
     be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
-/*
-    u16_i = (((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);
+#if 1
+    u16_i = board_i2c_sensor_data.u16_X;/*(((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);*/
     rawAccel.i16_Y = (int16_t)u16_i;
 
-    u16_i = (((uint16_t)u8_buffer[3]) << 8U) + ((uint16_t)u8_buffer[2]);
+    u16_i = board_i2c_sensor_data.u16_Y;/* (((uint16_t)u8_buffer[3]) << 8U) + ((uint16_t)u8_buffer[2]);*/
     rawAccel.i16_X = (int16_t)u16_i;
 
-    u16_i = (((uint16_t)u8_buffer[5]) << 8U) + ((uint16_t)u8_buffer[4]);
+    u16_i = board_i2c_sensor_data.u16_Z;/*(((uint16_t)u8_buffer[5]) << 8U) + ((uint16_t)u8_buffer[4]);*/
     rawAccel.i16_Z = (int16_t)u16_i;
-*/
+#endif
     return (be_result);
 }
 
@@ -89,7 +89,7 @@ BOARD_ERROR  board_drv_adxl345_init(void)
     gv_board_sys_tick_fast_delay(100U);
 
 #if USE_ACCEL_RT_BIAS
-    /* computeAccelRTBias(); */
+    computeAccelRTBias();
 #else
     accelRTBias.fl_X = 0.0f;
     accelRTBias.fl_Y = 0.0f;

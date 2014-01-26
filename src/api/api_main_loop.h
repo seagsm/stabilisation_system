@@ -12,10 +12,16 @@
  */
 #define PERIOD_OF_MAIN_LOOP 3500U /* 3000 - 3mSec, 4000 - 4mSec. */
 
+
+extern    BOARD_U16_3X_DATA bu163d_api_main_loop_gyro_raw_data;
+extern    BOARD_U16_3X_DATA bu163d_api_main_loop_acce_raw_data;
+extern    BOARD_U16_3X_DATA bu163d_api_main_loop_magn_raw_data;
+
+
 BOARD_ERROR be_api_main_loop_init(void);
 BOARD_ERROR be_api_main_loop_start(void);
 static  void v_api_main_loop_process(void);
-static  void v_api_main_loop_sensor_data_copy(void);
+static  void v_api_main_loop_sensor_data_preprocessing(void);
 static  void v_api_main_loop_control_loop(void);
 
 

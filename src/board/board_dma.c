@@ -4,6 +4,8 @@
 
 static uint8_t u8_board_dma_buff_DMA1_CH4_TX[DMA1_CH4_TX_SIZE];
 
+static uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
+
 /* This function should initialise usart dma. */
 BOARD_ERROR be_board_dma1_init(void)
 {
@@ -44,82 +46,28 @@ BOARD_ERROR be_board_dma1_init(void)
     NVIC_Init(&NVIC_InitStructure);
     DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, ENABLE);
 
-    /* TODO: it is example of code. */
-
     /* Start DMA transmitting. */
     DMA_Cmd(DMA1_Channel4, ENABLE);
-
-    /*Test for round buffer. */
-    {
-        gv_board_dma_send_packet();
-    }
-    /*********************************/
 
     return(be_result);
 }
 
-void gv_board_dma_send_packet(void)
+
+
+
+/* Function copy tx data packet to DMA TX round buffer. */
+static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-
-    uint8_t test[100];
-
     uint16_t u16_byte_counter;
-
-    test[0] = (uint8_t)(bc_channel_value_structure.u16_channel_1_value & 0xFFU);
-    test[1] = (uint8_t)((bc_channel_value_structure.u16_channel_1_value>>8) & 0xFFU);
-
-    test[2] = (uint8_t)(bc_channel_value_structure.u16_channel_2_value & 0xFFU);
-    test[3] = (uint8_t)((bc_channel_value_structure.u16_channel_2_value>>8) & 0xFFU);
-
-    test[4] = (uint8_t)(bc_channel_value_structure.u16_channel_3_value & 0xFFU);
-    test[5] = (uint8_t)((bc_channel_value_structure.u16_channel_3_value>>8) & 0xFFU);
-
-    test[6] = (uint8_t)(bc_channel_value_structure.u16_channel_4_value & 0xFFU);
-    test[7] = (uint8_t)((bc_channel_value_structure.u16_channel_4_value>>8) & 0xFFU);
-
-    test[8] = (uint8_t)(bc_channel_value_structure.u16_channel_5_value & 0xFFU);
-    test[9] = (uint8_t)((bc_channel_value_structure.u16_channel_5_value>>8) & 0xFFU);
-
-    test[10] = (uint8_t)(bc_channel_value_structure.u16_channel_6_value & 0xFFU);
-    test[11] = (uint8_t)((bc_channel_value_structure.u16_channel_6_value>>8) & 0xFFU);
-
-    test[12] = (uint8_t)(board_gyro_data.u16_X & 0xFFU);
-    test[13] = (uint8_t)((board_gyro_data.u16_X >> 8) & 0xFFU);
-
-    test[14] = (uint8_t)(board_gyro_data.u16_Y & 0xFFU);
-    test[15] = (uint8_t)((board_gyro_data.u16_Y >> 8) & 0xFFU);
-
-    test[16] = (uint8_t)(board_gyro_data.u16_Z & 0xFFU);
-    test[17] = (uint8_t)((board_gyro_data.u16_Z >> 8) & 0xFFU);
-
-
-    test[18] = 0x0AU;
-    test[19] = 0x0DU;
-    /*
-    test[0] = 'h';
-    test[1] = 'e';
-    test[2] = 'l';
-    test[3] = 'l';
-    test[4] = 'o';
-    test[5] = ' ';
-    test[6] = 'w';
-    test[7] = 'o';
-    test[8] = 'r';
-    test[9] = 'd';
-    test[10] = 0x0AU;
-    test[11] = 0x0DU;
-    test[12] = 0x00U;
-*/
-    u16_byte_counter = 0U;
-
     /* Disable DMA interrupt to avoid problem with dual access to round buffer. */
     NVIC_DisableIRQ(DMA1_Channel4_IRQn);
 
     /* Copy data to USART1 TX round buffer. */
-    while(u16_byte_counter < 20U)
+    u16_byte_counter = 0U;
+    while(u16_byte_counter < u16_size_of_tx_data)
     {
-        be_result = be_board_r_buff_USART1_TX_Put_byte(test[u16_byte_counter]);
+        be_result = be_board_r_buff_USART1_TX_Put_byte(u8_tx_data_packet[u16_byte_counter]);
         if(be_result == BOARD_ERR_FULL)
         {
             break;
@@ -131,15 +79,14 @@ void gv_board_dma_send_packet(void)
     NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 }
 
-
 void DMA1_Channel4_IRQHandler(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t u8_byte;
     uint16_t u16_counter;
 
-    u16_counter = 0U;
     /* Copy from UASRT1 user round buffer to DMA1_CH4 buffer. */
+    u16_counter = 0U;
     while((be_result == BOARD_ERR_OK)&&(u16_counter < DMA1_CH4_TX_SIZE))
     {
         be_result = be_board_r_buff_USART1_TX_Get_byte(&u8_byte);
@@ -150,13 +97,14 @@ void DMA1_Channel4_IRQHandler(void)
         }
     }
     if(u16_counter > 0U)
-    {   /* Restart DMA chanel for new transaction. */
-        DMA1_Channel4->CCR  &= (uint16_t)(~DMA_CCR1_EN);
-        DMA1_Channel4->CNDTR = u16_counter;
-        DMA1_Channel4->CCR  |= DMA_CCR1_EN;
+    {
+        /* Restart DMA chanel for new transaction. */
+        DMA_Cmd(DMA1_Channel4, DISABLE);
+        DMA_SetCurrDataCounter(DMA1_Channel4, u16_counter);
+        DMA_Cmd(DMA1_Channel4, ENABLE);
 
         /* clear flag "end_of_TX through DMA channel". */
-        DMA1->IFCR |= DMA_ISR_TCIF4;
+        DMA_ClearFlag(DMA_ISR_TCIF4);
     }
     else
     {
@@ -166,3 +114,97 @@ void DMA1_Channel4_IRQHandler(void)
         NVIC_DisableIRQ(DMA1_Channel4_IRQn);
     }
 }
+
+/* Function send data packet to ground station(PC).
+   It placed here to avoid MICRA restriction to operate with pointers to array.
+*/
+void board_dma_send_buff(void)
+{
+    uint16_t u16_i = 0U;
+#if 1
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_1_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_1_value>>8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_2_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_2_value>>8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_3_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_3_value>>8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_4_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_4_value>>8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_5_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_5_value>>8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bc_channel_value_structure.u16_channel_6_value & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bc_channel_value_structure.u16_channel_6_value>>8) & 0xFFU);
+    u16_i++;
+
+/* Sensors. */
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_X & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_X >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_Y & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_Y >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_gyro_raw_data.u16_Z & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_gyro_raw_data.u16_Z >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_X & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_X >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_Y & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_Y >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_acce_raw_data.u16_Z & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_acce_raw_data.u16_Z >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_X & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_X >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_Y & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_Y >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)(bu163d_api_main_loop_magn_raw_data.u16_Z & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = (uint8_t)((bu163d_api_main_loop_magn_raw_data.u16_Z >> 8) & 0xFFU);
+    u16_i++;
+    u8_tx_data_packet[u16_i] = 0x0AU;
+    u16_i++;
+    u8_tx_data_packet[u16_i] = 0x0DU;
+    u16_i++;
+#endif
+    sv_board_dma_send_packet(u16_i);
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

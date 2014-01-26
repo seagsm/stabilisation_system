@@ -1,7 +1,6 @@
 
 #include "board_gyro.h"
 
-BOARD_U16_3X_DATA board_gyro_data;
 
 /* Detecting gyro module. */
 BOARD_ERROR be_board_gyro_detect(void)

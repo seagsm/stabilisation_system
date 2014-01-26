@@ -5,7 +5,6 @@
 #include "board_system_type.h"
 #include "board_drv_l3g4200d.h"
 
-extern BOARD_U16_3X_DATA board_gyro_data;
 
 BOARD_ERROR be_board_gyro_detect(void);
 BOARD_ERROR be_board_gyro_init(void);

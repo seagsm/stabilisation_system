@@ -9,7 +9,7 @@
 
 
 
-#define TX_USART1_SIZE  64U
+#define TX_USART1_SIZE  128U
 #define RX_USART1_SIZE  64U
 
 

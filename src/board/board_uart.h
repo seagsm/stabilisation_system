@@ -9,7 +9,7 @@
 
 
 /**
- * @brief Definition for USART1.
+ * Definition for USART1.
  */
 #define BOARD_USART1_TX_GPIO_PORT           GPIOA
 #define BOARD_USART1_TX_PIN                 GPIO_Pin_9
@@ -17,19 +17,8 @@
 #define BOARD_USART1_RX_PIN                 GPIO_Pin_10
 #define BOARD_USART1_IRQn                   USART1_IRQn
 
-
 /**
- * @brief Definition for USART2
- */
-#define BOARD_USART2_TX_GPIO_PORT           GPIOA
-#define BOARD_USART2_TX_PIN                 GPIO_Pin_2
-#define BOARD_USART2_RX_GPIO_PORT           GPIOA
-#define BOARD_USART2_RX_PIN                 GPIO_Pin_3
-#define BOARD_USART2_IRQn                   USART2_IRQn
-
-
-/**
- * @brief Definition for USART3
+ * Definition for USART3
  */
 #define BOARD_USART3_TX_GPIO_PORT           GPIOB
 #define BOARD_USART3_TX_PIN                 GPIO_Pin_10
