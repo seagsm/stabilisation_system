@@ -3,7 +3,7 @@
 
 
 /* This function calc CRC summ for u8_tx_data_packet from board_dma.h */
-uint16_t gu16_api_CRC16_alg(uint16_t length)
+uint16_t gu16_api_CRC16_alg(uint16_t u16_start, uint16_t length)
 {
     const uint16_t u16_polinom = 0xa001U;
           uint16_t u16_code = 0xffffU;
@@ -11,7 +11,7 @@ uint16_t gu16_api_CRC16_alg(uint16_t length)
           uint16_t i;
           uint16_t j;
 
-          for (i = 0U; i < length; i++)
+          for (i = u16_start; i < length; i++)
           {
               /* For each byte from array */
 
