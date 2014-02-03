@@ -19,7 +19,7 @@ BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
 static BOARD_I16_3X_DATA rawAccel;
 
-static BOARD_FLOAT_3X_DATA bf3x_accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f};
+static BOARD_FLOAT_3X_DATA bf3x_accelScaleFactor={ 9.8065f / 256.0f, 9.8065f / 256.0f, 9.8065f / 256.0f };
 
 
 /* Compute Accel Runtime Bias */
@@ -30,7 +30,7 @@ static void computeAccelRTBias(void)
 
     u8_accelCalibrating = 1U;
 
-    for (samples = 0U; samples < 2000U; samples++)
+    for (samples = 0U; samples < 2000U; samples++ )
     {
         board_drv_adxl345_read();
 
@@ -56,7 +56,7 @@ BOARD_ERROR  board_drv_adxl345_read(void)
     uint8_t u8_buffer[6];
     uint16_t u16_i;
 
-                    /*board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);*/
+ /* board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer); */
     be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
 #if 1
     u16_i = board_i2c_sensor_data.u16_X;/*(((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);*/

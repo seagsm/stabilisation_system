@@ -136,9 +136,9 @@ void board_dma_send_buff(void)
 
 
 /* Sensors raw data. */
-    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_gyro_raw_data);/* 6 bytes. */
-    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_acce_raw_data);/* 6 bytes. */
-    board_dma_add_bu163x_to_packet(&u16_i, bu163d_api_main_loop_magn_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_gyro_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_acce_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_magn_raw_data);/* 6 bytes. */
 
 /* System time. */
     board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
@@ -158,6 +158,7 @@ void board_dma_send_buff(void)
 }
 
 /* This function add to u8_tx_data_packet array u16 value and increment index. */
+
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
 {
     uint16_t u16_index;
@@ -171,12 +172,12 @@ static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
     *pu16_i = u16_index;
 }
 
-/* This function add to u8_tx_data_packet array BOARD_U16_3X_DATA value and increment index. */
-static void board_dma_add_bu163x_to_packet(uint16_t *pu16_i, BOARD_U16_3X_DATA bu163x_value)
+/* This function add to u8_tx_data_packet array BOARD_I16_3X_DATA value and increment index. */
+static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value)
 {
-    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_X);
-    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_Y);
-    board_dma_add_u16_to_packet(pu16_i, bu163x_value.u16_Z);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_X);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_Y);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_Z);
 }
 
 

@@ -64,11 +64,13 @@ Main init functions are done.
 1.Should be finalising I2C acqusition function. Should be decided how to send data during one time I2C reading.
 (Now it just copy to Gyro variable)
 2.Clean DMA TX for Uart1. The RX interrupt should be added.	
-	Should be added functions for RX round buffer. For parsing input comand packets. 
+	Should be added functions for RX round buffer. For parsing input command packets. 
 
-
-
-
+03.02.2014
+1. I2C acqusition function done. Data saving to global variables for raw data.
+	Should be added normalising function for converting raw data to real float value in accordance with value dimmension(degr/sec, m/sec^2,H)
+	And add filters. So, this function should completly prepare sensors data for processing algorithm.
+2. DMA TX for Uart1 cleared. RX not ready yet. It will be postponded.
 
 
 

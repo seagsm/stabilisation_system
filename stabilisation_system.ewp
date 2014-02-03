@@ -1850,6 +1850,12 @@
         <name>$PROJ_DIR$\src\api\api_CRC.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_data_normalising.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_data_normalising.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.c</name>
       </file>
       <file>
