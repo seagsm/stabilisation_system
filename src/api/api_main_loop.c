@@ -46,11 +46,11 @@ static void v_api_main_loop_sensor_data_preprocessing(void)
     u16_tmp = (((uint16_t)  api_i2c_data.array[0].data[4]) << 8U) + ((uint16_t)api_i2c_data.array[0].data[5]);
     bi163d_api_main_loop_gyro_raw_data.i16_Z = (int16_t) u16_tmp;
     /* Accelerometer. */
-    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[0]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[1]);
+    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[1]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[0]);
     bi163d_api_main_loop_acce_raw_data.i16_X = (int16_t) u16_tmp;
-    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[2]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[3]);
+    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[3]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[2]);
     bi163d_api_main_loop_acce_raw_data.i16_Y = (int16_t) u16_tmp;
-    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[4]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[5]);
+    u16_tmp = (((uint16_t)  api_i2c_data.array[1].data[5]) << 8U) + ((uint16_t)api_i2c_data.array[1].data[4]);
     bi163d_api_main_loop_acce_raw_data.i16_Z = (int16_t) u16_tmp;
     /* Magnetometer. */
     u16_tmp = (((uint16_t)  api_i2c_data.array[2].data[0]) << 8U) + ((uint16_t)api_i2c_data.array[2].data[1]);

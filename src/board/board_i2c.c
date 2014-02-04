@@ -361,7 +361,7 @@ void DMA1_Channel7_IRQHandler(void)
             else
             {
                 api_i2c_data.u8_ready = 1U;
-                GPIO_ResetBits( GPIOB, GPIO_Pin_12);
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
             }
         }
 		DMA_ClearFlag(DMA1_FLAG_TC7);

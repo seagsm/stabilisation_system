@@ -7,7 +7,7 @@
 
 static volatile uint8_t u8_accelCalibrating = 0U;
 
-static BOARD_FLOAT_3X_DATA accelRTBias = { 0.0f, 0.0f, 0.0f };
+BOARD_FLOAT_3X_DATA accelRTBias = { 0.0f, 0.0f, 0.0f };
 
 BOARD_I32_3X_DATA accelSum100Hz = { 0, 0, 0 };
 
@@ -54,19 +54,31 @@ BOARD_ERROR  board_drv_adxl345_read(void)
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     uint8_t u8_buffer[6];
+    int16_t i16_i;
+    uint16_t u16_lsb,u16_msb;
     uint16_t u16_i;
-
- /* board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer); */
+    /* board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer); */
     be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
 #if 1
-    u16_i = board_i2c_sensor_data.u16_X;/*(((uint16_t)u8_buffer[1]) << 8U) + ((uint16_t)u8_buffer[0]);*/
-    rawAccel.i16_Y = (int16_t)u16_i;
 
-    u16_i = board_i2c_sensor_data.u16_Y;/* (((uint16_t)u8_buffer[3]) << 8U) + ((uint16_t)u8_buffer[2]);*/
-    rawAccel.i16_X = (int16_t)u16_i;
+    u16_lsb = ((board_i2c_sensor_data.u16_X >> 8U )&0x00FFU);
+    u16_msb = ((board_i2c_sensor_data.u16_X << 8U )&0xFF00U);
+    u16_i   = u16_msb + u16_lsb;
+    i16_i   = (int16_t)u16_i;
+    rawAccel.i16_X = i16_i;
+    u16_lsb = ((board_i2c_sensor_data.u16_Y >> 8U )&0x00FFU);
+    u16_msb = ((board_i2c_sensor_data.u16_Y << 8U )&0xFF00U);
+    u16_i   = u16_msb + u16_lsb;
+    i16_i   = (int16_t)u16_i;
+    rawAccel.i16_Y = i16_i;
+    u16_lsb = ((board_i2c_sensor_data.u16_Z >> 8U )&0x00FFU);
+    u16_msb = ((board_i2c_sensor_data.u16_Z << 8U )&0xFF00U);
+    u16_i   = u16_msb + u16_lsb;
+    i16_i   = (int16_t)u16_i;
+    rawAccel.i16_Z = i16_i;
 
-    u16_i = board_i2c_sensor_data.u16_Z;/*(((uint16_t)u8_buffer[5]) << 8U) + ((uint16_t)u8_buffer[4]);*/
-    rawAccel.i16_Z = (int16_t)u16_i;
+
+
 #endif
     return (be_result);
 }
@@ -84,7 +96,7 @@ BOARD_ERROR  board_drv_adxl345_init(void)
 
     gv_board_sys_tick_fast_delay(10U);
 
-    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_1600);
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_400);
 
     gv_board_sys_tick_fast_delay(100U);
 

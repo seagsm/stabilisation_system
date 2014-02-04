@@ -30,21 +30,21 @@
 #define RANGE_4_G           0x01U
 
 #define DATA_RATE_1600      0x0EU
+#define DATA_RATE_800       0x0DU
+#define DATA_RATE_400       0x0CU
+#define DATA_RATE_200       0x0BU
+#define DATA_RATE_100       0x0AU
 
 
 
 
 
-
-
-
+extern BOARD_FLOAT_3X_DATA accelRTBias;
 
 
 
 /*
 extern uint8_t accelCalibrating;
-
-extern BOARD_FLOAT_3X_DATA accelRTBias;
 
 extern BOARD_I32_3X_DATA accelSum100Hz;
 

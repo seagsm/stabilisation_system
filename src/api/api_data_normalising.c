@@ -19,10 +19,9 @@ void v_api_data_normalising_gyro(void)
 
 void v_api_data_normalising_acce(void)
 {
-    b_float3d_api_main_loop_acce_data.fl_X = (float)bi163d_api_main_loop_acce_raw_data.i16_X;
-    b_float3d_api_main_loop_acce_data.fl_Y = (float)bi163d_api_main_loop_acce_raw_data.i16_Y;
-    b_float3d_api_main_loop_acce_data.fl_Z = (float)bi163d_api_main_loop_acce_raw_data.i16_Z;
-
+    b_float3d_api_main_loop_acce_data.fl_X = ((float)bi163d_api_main_loop_acce_raw_data.i16_X) - accelRTBias.fl_X;
+    b_float3d_api_main_loop_acce_data.fl_Y = ((float)bi163d_api_main_loop_acce_raw_data.i16_Y) - accelRTBias.fl_Y;
+    b_float3d_api_main_loop_acce_data.fl_Z = ((float)bi163d_api_main_loop_acce_raw_data.i16_Z) - accelRTBias.fl_Z;
 }
 
 void v_api_data_normalising_magn(void)
