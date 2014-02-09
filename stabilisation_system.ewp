@@ -1844,6 +1844,12 @@
     <group>
       <name>api</name>
       <file>
+        <name>$PROJ_DIR$\src\api\api_common.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_common.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_CRC.c</name>
       </file>
       <file>
@@ -1866,6 +1872,24 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_main_loop.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\MadgwickAHRS.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\MahonyAHRS.c</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\MahonyAHRS.h</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
       </file>
     </group>
     <group>

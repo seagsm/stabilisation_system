@@ -5,6 +5,7 @@
 
 #include "stm32f10x.h"
 
+#define _M_PI 3.1415926535
 
 typedef struct
 {

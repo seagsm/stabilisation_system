@@ -4,6 +4,11 @@
 BOARD_I16_3X_DATA bi163d_api_main_loop_gyro_raw_data;
 BOARD_I16_3X_DATA bi163d_api_main_loop_acce_raw_data;
 BOARD_I16_3X_DATA bi163d_api_main_loop_magn_raw_data;
+float fl_quaternion[4] = {1.0f, 0.0f, 1.0f, .0f };
+
+static float float_api_main_loop_old_time;
+static float float_api_main_loop_now_time;
+       float float_api_main_loop_sample_period;
 
 static void v_api_main_loop_process(void)
 {
@@ -13,6 +18,14 @@ static void v_api_main_loop_process(void)
     {
         v_api_main_loop_sensor_data_preprocessing();
         be_api_i2c_acquisition_start();
+
+        /* Sample period calculation. */
+        float_api_main_loop_now_time      = (float)gu64_read_system_time();
+        float_api_main_loop_sample_period = float_api_main_loop_now_time - float_api_main_loop_old_time;
+        float_api_main_loop_old_time      = float_api_main_loop_now_time;
+        /* Convert period from tick to seconds. */
+        float_api_main_loop_sample_period = float_api_main_loop_sample_period / 1000.0f;
+
         v_api_main_loop_control_loop();
     }
     else
@@ -27,8 +40,14 @@ static void v_api_main_loop_process(void)
 static void v_api_main_loop_control_loop(void)
 {
 
-
-
+    madgwick_AccGyro(
+                         deg2rad(b_float3d_api_main_loop_gyro_data.fl_X),
+                         deg2rad(b_float3d_api_main_loop_gyro_data.fl_Y),
+                         deg2rad(b_float3d_api_main_loop_gyro_data.fl_Z),
+                                 b_float3d_api_main_loop_acce_data.fl_X,
+                                 b_float3d_api_main_loop_acce_data.fl_Y,
+                                 b_float3d_api_main_loop_acce_data.fl_Z
+                    );
 }
 /*
     This function copy and convert data from api_i2c_data structure to
@@ -37,7 +56,7 @@ static void v_api_main_loop_control_loop(void)
 static void v_api_main_loop_sensor_data_preprocessing(void)
 {
     uint16_t u16_tmp;
-    /* Convert api_i2c_data data to int16. */
+    /* Convert api_i2c_data data buffer to int16 sensors data. */
     /* Gyro. */
     u16_tmp = (((uint16_t)  api_i2c_data.array[0].data[0]) << 8U) + ((uint16_t)api_i2c_data.array[0].data[1]);
     bi163d_api_main_loop_gyro_raw_data.i16_X = (int16_t) u16_tmp;

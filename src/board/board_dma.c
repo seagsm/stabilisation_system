@@ -141,7 +141,12 @@ void board_dma_send_buff(void)
     board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_gyro_data);
     board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_acce_data);
     board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_magn_data);
-/* System time. */
+/* Send quaternion. */
+    board_dma_add_float_to_packet(&u16_i, fl_quaternion[0]);
+    board_dma_add_float_to_packet(&u16_i, fl_quaternion[1]);
+    board_dma_add_float_to_packet(&u16_i, fl_quaternion[2]);
+    board_dma_add_float_to_packet(&u16_i, fl_quaternion[3]);
+ /* System time. */
     board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
     u16_CRC = gu16_api_CRC16_alg(1U, u16_i);
@@ -152,7 +157,7 @@ void board_dma_send_buff(void)
     /* HEAD of TX packet. */
     board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
     {
-        while(u16_i < (67U))
+        while(u16_i < (83U))
         {
             u8_tx_data_packet[u16_i] = (uint8_t)u16_i;
             u16_i++;
@@ -182,7 +187,7 @@ static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
     *pu16_i = u16_index;
 }
 
-/* This function add to u8_tx_data_packet array BOARD_I16_3X_DATA value and increment index. */
+/* This function add to u8_tx_data_packet array a BOARD_I16_3X_DATA value and increment index. */
 static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value)
 {
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_X);
@@ -190,20 +195,19 @@ static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA b
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_Z);
 }
 
-/* This function add to u8_tx_data_packet array BOARD_FLOAT_3X_DATA value and increment index. */
+/* This function add to u8_tx_data_packet array a BOARD_FLOAT_3X_DATA value and increment index. */
 static void board_dma_add_b_float3d_to_packet(uint16_t *pu16_i, BOARD_FLOAT_3X_DATA b_float3d_value)
 {
+    board_dma_add_float_to_packet(pu16_i, b_float3d_value.fl_X);
+    board_dma_add_float_to_packet(pu16_i, b_float3d_value.fl_Y);
+    board_dma_add_float_to_packet(pu16_i, b_float3d_value.fl_Z);
+}
+
+/* This function add to u8_tx_data_packet array a float value and increment index. */
+static void board_dma_add_float_to_packet(uint16_t *pu16_i, float f_value)
+{
     uint32_t u32_i;
-
-    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_X);
-    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
-    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
-
-    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_Y);
-    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
-    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
-
-    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_Z);
+    u32_i = *(uint32_t*)((void*)&f_value);
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
 }
