@@ -36,7 +36,7 @@
 #define L3G4200D_DLPF_93HZ       0xC0U
 
 /* Current definition. */
-#define BOARD_DRV_GYRO_RATE               L3G4200D_FS_SEL_250DPS
+#define BOARD_DRV_GYRO_RATE               L3G4200D_FS_SEL_500DPS
 #define BOARD_DRV_LOWPASS_FILTER_RATE     L3G4200D_DLPF_32HZ
 
 BOARD_ERROR be_board_drv_l3g4200d_init(void);

@@ -5,11 +5,11 @@
 #include "board_system_type.h"
 #include "api_main_loop.h"
 
-/*
+
 extern BOARD_FLOAT_3X_DATA b_float3d_api_main_loop_gyro_data;
 extern BOARD_FLOAT_3X_DATA b_float3d_api_main_loop_acce_data;
 extern BOARD_FLOAT_3X_DATA b_float3d_api_main_loop_magn_data;
-*/
+
 
 
 

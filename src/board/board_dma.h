@@ -31,6 +31,7 @@ static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
 void board_dma_send_buff(void);
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value);
 static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value);
+static void board_dma_add_b_float3d_to_packet(uint16_t *pu16_i, BOARD_FLOAT_3X_DATA b_float3d_value);
 static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i);
 static void board_dma_add_system_time_to_tx_packet(uint16_t *pu16_i);
 #endif

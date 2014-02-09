@@ -133,32 +133,42 @@ void board_dma_send_buff(void)
     board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_4_value);/* 2 bytes. */
     board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_5_value);/* 2 bytes. */
     board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_6_value);/* 2 bytes. */
-
-
 /* Sensors raw data. */
     board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_gyro_raw_data);/* 6 bytes. */
     board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_acce_raw_data);/* 6 bytes. */
     board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_magn_raw_data);/* 6 bytes. */
-
+/* Send sensors normalising data. */
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_gyro_data);
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_acce_data);
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_magn_data);
 /* System time. */
     board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
-
-/* CRC calculation of all array from 0+4 (size of head) to current u16_i.*/
-    u16_CRC = gu16_api_CRC16_alg(4U, u16_i);
-    board_dma_add_u16_to_packet(&u16_i,u16_CRC);/* 2 bytes. */
-
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u16_CRC = gu16_api_CRC16_alg(1U, u16_i);
 /* CRC. */
-    u8_tx_data_packet[u16_i] = 0x0AU;
-    u16_i++;
-    u8_tx_data_packet[u16_i] = 0x0DU;
-    u16_i++;
+    board_dma_add_u16_to_packet(&u16_i,u16_CRC);/* 2 bytes. */
+#else
+/* Test packet. */
+    /* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+    {
+        while(u16_i < (67U))
+        {
+            u8_tx_data_packet[u16_i] = (uint8_t)u16_i;
+            u16_i++;
+        }
+    }
+    /* System time. */
+    board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
+    /* CRC calculation of all array from 0+4 (size of head) to current u16_i.*/
+    u16_CRC = gu16_api_CRC16_alg(1U, u16_i);
+    board_dma_add_u16_to_packet(&u16_i,u16_CRC);/* 2 bytes. */
 #endif
+    /* Send packet. */
     sv_board_dma_send_packet(u16_i);
-
 }
 
 /* This function add to u8_tx_data_packet array u16 value and increment index. */
-
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
 {
     uint16_t u16_index;
@@ -180,6 +190,23 @@ static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA b
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)bi163x_value.i16_Z);
 }
 
+/* This function add to u8_tx_data_packet array BOARD_FLOAT_3X_DATA value and increment index. */
+static void board_dma_add_b_float3d_to_packet(uint16_t *pu16_i, BOARD_FLOAT_3X_DATA b_float3d_value)
+{
+    uint32_t u32_i;
+
+    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_X);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
+
+    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_Y);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
+
+    u32_i = *(uint32_t*)((void*)&b_float3d_value.fl_Z);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
+}
 
 /* This function add HEAD to u8_tx_data_packet array and increment index. */
 static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)
@@ -189,19 +216,13 @@ static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)
     /* First index of packet always is zero. */
     *pu16_i = 0U;
     u16_index = *pu16_i;
-    /* Create head structure. */
-    u8_tx_data_packet[u16_index] = 'D';
-    u16_index++;
-    u8_tx_data_packet[u16_index] = 'A';
-    u16_index++;
-    u8_tx_data_packet[u16_index] = 'T';
-    u16_index++;
-    u8_tx_data_packet[u16_index] = 'A';
+    /* Create head structure. 0x73 is header. */
+    u8_tx_data_packet[u16_index] = 0x73U;
     u16_index++;
     *pu16_i = u16_index;
 }
 
-/* This function add u64 system time to tx packet*/
+/* This function add u64 system time to tx packet. */
 static void board_dma_add_system_time_to_tx_packet(uint16_t *pu16_i)
 {
     uint16_t u16_index;

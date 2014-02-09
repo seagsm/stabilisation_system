@@ -27,7 +27,11 @@
 #define MEASURE             0x08U
 
 #define FULL_RES            0x08U
+
+#define RANGE_2_G           0x00U
 #define RANGE_4_G           0x01U
+#define RANGE_8_G           0x02U
+#define RANGE_16_G          0x03U
 
 #define DATA_RATE_1600      0x0EU
 #define DATA_RATE_800       0x0DU
