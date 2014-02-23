@@ -73,6 +73,39 @@ Main init functions are done.
 2. DMA TX for Uart1 cleared. RX not ready yet. It will be postponded.
 3. Check Acceleration sensor data. for 4g it has 11bits or +- 10bits on 16 bits, so it should be devided by 32 to get right value.
 
+10.02.2014
+Normalising done.
+All work well. Gyro, Accel and Magnetometer.
+Fixed communication with PC.
+Added stab algorithm.
+
+Next step milestones:
+15.02.14	Check G+A stabilisation on PC.
+			Check G+A stabilisation on Board.
+16.02.14	Add PPM calibration protocol.
+22.02.14    Add Magnetometr calibration protocol.
+23.02.14	Check G+A+M stabilisation on PC.
+			Check G+A+M stabilisation on Board.
+02.03.14	Add PID coefficients to communication protocol.
+			Add control loop PID.
+08.03.14	Add filters for all input data from sensors.
+			It can be done as part of normalising function.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -51,7 +51,7 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result = be_api_i2c_acquisition_init(); /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */
                 break;
             case (10U):
-                be_result = be_api_main_loop_init(); /* Init of Timer_1 for main loop interrupt. */
+                be_result = be_api_main_loop_init();  /* Init of Timer_1 for main loop interrupt. */
                 break;
             default:
                 be_result = BOARD_ERR_ERROR;

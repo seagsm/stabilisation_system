@@ -10,6 +10,9 @@
 
 #define PPM_TIM4_CH3    3U
 
+#define BOARD_PPM_ZERO_VALUE 1500
+#define BOARD_PPM_MIN_VALUE  1000
+#define BOARD_PPM_MAX_VALUE  2000
 extern BOARD_CHANNEL_VALUE bc_channel_value_structure;
 BOARD_ERROR be_board_ppm_init(void);
 void TIM4_IRQHandler(void);

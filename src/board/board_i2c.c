@@ -211,8 +211,8 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint16
 	    DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
 
 		NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel6_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority           = DMA1_Channel6_SUB_PRIORITY_GROUP;
 		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = DMA1_Channel6_PRIORITY_GROUP;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority           = DMA1_Channel6_SUB_PRIORITY_GROUP;
 		NVIC_InitStructure.NVIC_IRQChannelCmd                   = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);
 
@@ -271,10 +271,8 @@ static void board_i2c_lowlevel_init(void)
 	I2C_Cmd(I2C1, ENABLE);
     I2C_Init(I2C1, &I2C_InitStructure);
 
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-
 	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_EV_SUB_PRIORITY_GROUP;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_EV_PRIORITY_GROUP;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_EV_SUB_PRIORITY_GROUP;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);

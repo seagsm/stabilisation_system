@@ -10,7 +10,10 @@ void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay
     float Beta = madgwick_Beta;
 
     /* short name local variable for readability*/
-    float q1 = fl_quaternion[0], q2 = fl_quaternion[1], q3 = fl_quaternion[2], q4 = fl_quaternion[3];
+    float q1 = fl_api_body_angle_quaternion[0];
+    float q2 = fl_api_body_angle_quaternion[1];
+    float q3 = fl_api_body_angle_quaternion[2];
+    float q4 = fl_api_body_angle_quaternion[3];
     float norm;
     float hx, hy, _2bx, _2bz;
     float s1, s2, s3, s4;
@@ -62,9 +65,9 @@ void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay
     doubl_i = (double)float_i;
     norm    = (float)sqrt(doubl_i);
 
-    if ( (int32_t)(norm) == 0)
+    if (fabs((double)norm) < 0.0000001)
     {
-      /* return; */ /* handle NaN. */
+        /*   be_result = BOARD_ERR_EMPTY; */
     }
     norm = 1.0f / norm;        /* use reciprocal for division. */
     mx = mx * norm;
@@ -107,24 +110,28 @@ void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay
     qDot4 = 0.5f * ( q1 * gz + q2 * gy - q3 * gx) - Beta * s4;
 
     /* Integrate to yield quaternion. */
-    q1 = q1 + qDot1 * float_api_main_loop_sample_period;
-    q2 = q2 + qDot2 * float_api_main_loop_sample_period;
-    q3 = q3 + qDot3 * float_api_main_loop_sample_period;
-    q4 = q4 + qDot4 * float_api_main_loop_sample_period;
+    q1 = q1 + qDot1 * fl_api_body_angle_sample_period;
+    q2 = q2 + qDot2 * fl_api_body_angle_sample_period;
+    q3 = q3 + qDot3 * fl_api_body_angle_sample_period;
+    q4 = q4 + qDot4 * fl_api_body_angle_sample_period;
     /* norm = 1.0f / (float)sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4); */   /* normalise quaternion. */
     norm = 1.0f / madgwick_4x_float_length(q1,q2,q3,q4);    /* normalise quaternion. */
 
-    fl_quaternion[0] = q1 * norm;
-    fl_quaternion[1] = q2 * norm;
-    fl_quaternion[2] = q3 * norm;
-    fl_quaternion[3] = q4 * norm;
+    fl_api_body_angle_quaternion[0] = q1 * norm;
+    fl_api_body_angle_quaternion[1] = q2 * norm;
+    fl_api_body_angle_quaternion[2] = q3 * norm;
+    fl_api_body_angle_quaternion[3] = q4 * norm;
 }
 
 
-void madgwick_AccGyro(float gx, float gy, float gz, float ax, float ay, float az)
+BOARD_ERROR madgwick_AccGyro(float gx, float gy, float gz, float ax, float ay, float az)
 {
+    BOARD_ERROR be_result = BOARD_ERR_OK;
     float Beta = madgwick_Beta;
-    float q1 = fl_quaternion[0], q2 = fl_quaternion[1], q3 = fl_quaternion[2], q4 = fl_quaternion[3];   /* short name local variable for readability. */
+    float q1 = fl_api_body_angle_quaternion[0];
+    float q2 = fl_api_body_angle_quaternion[1];
+    float q3 = fl_api_body_angle_quaternion[2];
+    float q4 = fl_api_body_angle_quaternion[3];  /* short name local variable for readability. */
     float norm;
     float s1, s2, s3, s4;
     float qDot1, qDot2, qDot3, qDot4;
@@ -151,44 +158,64 @@ void madgwick_AccGyro(float gx, float gy, float gz, float ax, float ay, float az
 
     if ((int32_t)norm == 0)
     {
-       /* return;*/ /* handle NaN. */
+       be_result = BOARD_ERR_EMPTY;
     }
-    norm = 1.0f / norm;        /* use reciprocal for division. */
-    ax *= norm;
-    ay *= norm;
-    az *= norm;
+    else
+    {
+        norm = 1.0f / norm;        /* use reciprocal for division. */
+        ax *= norm;
+        ay *= norm;
+        az *= norm;
 
-    /* Gradient decent algorithm corrective step. */
-    s1 = _4q1 * q3q3 + _2q3 * ax + _4q1 * q2q2 - _2q2 * ay;
-    s2 = _4q2 * q4q4 - _2q4 * ax + 4.0f * q1q1 * q2 - _2q1 * ay - _4q2 + _8q2 * q2q2 + _8q2 * q3q3 + _4q2 * az;
-    s3 = 4.0f * q1q1 * q3 + _2q1 * ax + _4q3 * q4q4 - _2q4 * ay - _4q3 + _8q3 * q2q2 + _8q3 * q3q3 + _4q3 * az;
-    s4 = 4.0f * q2q2 * q4 - _2q2 * ax + 4.0f * q3q3 * q4 - _2q3 * ay;
+        /* Gradient decent algorithm corrective step. */
+        s1 = _4q1 * q3q3 + _2q3 * ax + _4q1 * q2q2 - _2q2 * ay;
+        s2 = _4q2 * q4q4 - _2q4 * ax + 4.0f * q1q1 * q2 - _2q1 * ay - _4q2 + _8q2 * q2q2 + _8q2 * q3q3 + _4q2 * az;
+        s3 = 4.0f * q1q1 * q3 + _2q1 * ax + _4q3 * q4q4 - _2q4 * ay - _4q3 + _8q3 * q2q2 + _8q3 * q3q3 + _4q3 * az;
+        s4 = 4.0f * q2q2 * q4 - _2q2 * ax + 4.0f * q3q3 * q4 - _2q3 * ay;
 
+        /*norm = 1.0f / (float)sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4);*/    /* normalise step magnitude. */
+        norm = madgwick_4x_float_length(s1,s2,s3,s4);
+        if (fabs((double)norm) < 0.0000001)
+        {
+            be_result = BOARD_ERR_EMPTY;
+        }
+        else
+        {
+            norm = 1.0f / norm;    /* normalise step magnitude. */
+            s1 *= norm;
+            s2 *= norm;
+            s3 *= norm;
+            s4 *= norm;
 
-    /*norm = 1.0f / (float)sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4);*/    /* normalise step magnitude. */
-    norm = 1.0f / madgwick_4x_float_length(s1,s2,s3,s4);    /* normalise step magnitude. */
-    s1 *= norm;
-    s2 *= norm;
-    s3 *= norm;
-    s4 *= norm;
+            /* Compute rate of change of quaternion. */
+            qDot1 = 0.5f * (-q2 * gx - q3 * gy - q4 * gz) - Beta * s1;
+            qDot2 = 0.5f * (q1 * gx + q3 * gz - q4 * gy) - Beta * s2;
+            qDot3 = 0.5f * (q1 * gy - q2 * gz + q4 * gx) - Beta * s3;
+            qDot4 = 0.5f * (q1 * gz + q2 * gy - q3 * gx) - Beta * s4;
 
-    /* Compute rate of change of quaternion. */
-    qDot1 = 0.5f * (-q2 * gx - q3 * gy - q4 * gz) - Beta * s1;
-    qDot2 = 0.5f * (q1 * gx + q3 * gz - q4 * gy) - Beta * s2;
-    qDot3 = 0.5f * (q1 * gy - q2 * gz + q4 * gx) - Beta * s3;
-    qDot4 = 0.5f * (q1 * gz + q2 * gy - q3 * gx) - Beta * s4;
+            /* Integrate to yield quaternion. */
+            q1 += qDot1 * fl_api_body_angle_sample_period;
+            q2 += qDot2 * fl_api_body_angle_sample_period;
+            q3 += qDot3 * fl_api_body_angle_sample_period;
+            q4 += qDot4 * fl_api_body_angle_sample_period;
 
-    /* Integrate to yield quaternion. */
-    q1 += qDot1 * float_api_main_loop_sample_period;
-    q2 += qDot2 * float_api_main_loop_sample_period;
-    q3 += qDot3 * float_api_main_loop_sample_period;
-    q4 += qDot4 * float_api_main_loop_sample_period;
-    /* norm = 1.0f / (float)sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4); */    /* normalise quaternion. */
-    norm = 1.0f / madgwick_4x_float_length(q1,q2,q3,q4);    /* normalise quaternion. */
-    fl_quaternion[0] = q1 * norm;
-    fl_quaternion[1] = q2 * norm;
-    fl_quaternion[2] = q3 * norm;
-    fl_quaternion[3] = q4 * norm;
+            /* norm = 1.0f / (float)sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4); */    /* normalise quaternion. */
+            norm = madgwick_4x_float_length(q1,q2,q3,q4);
+            if (fabs((double)norm) < 0.0000001)
+            {
+                be_result = BOARD_ERR_EMPTY;
+            }
+            else
+            {
+                norm = 1.0f / norm;    /* normalise quaternion. */
+                fl_api_body_angle_quaternion[0] = q1 * norm;
+                fl_api_body_angle_quaternion[1] = q2 * norm;
+                fl_api_body_angle_quaternion[2] = q3 * norm;
+                fl_api_body_angle_quaternion[3] = q4 * norm;
+            }
+        }
+    }
+    return(be_result);
 }
 
 

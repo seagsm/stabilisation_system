@@ -16,7 +16,7 @@
 #define I2C1_EV_PRIORITY_GROUP      2U
 #define I2C1_EV_SUB_PRIORITY_GROUP  0U
 
-#define I2C1_ER_PRIORITY_GROUP      0U
+#define I2C1_ER_PRIORITY_GROUP      1U
 #define I2C1_ER_SUB_PRIORITY_GROUP  0U
 
 /* USART1 *********************/
@@ -25,7 +25,7 @@
 
 /* USART3 */
 #define USART3_PRIORITY_GROUP 6U
-#define USART3_SUB_PRIORITY   1U
+#define USART3_SUB_PRIORITY   0U
 
 /* TIMER1 MAIN LOOP INTERRUPT ******************/
 #define TIMER1_PERIOD_INTERUPT_PRIORITY_GROUP       8U
@@ -33,7 +33,7 @@
 
 
 /* TIMER4 CAPTURE ******************************/
-#define TIMER4_CAPTURE_PRIORITY_GROUP 1U        /* PPM capture. */
+#define TIMER4_CAPTURE_PRIORITY_GROUP 0U        /* PPM capture. */
 #define TIMER4_CAPTURE_SUB_PRIORITY   0U
 
 /* DMA ******************************************/
@@ -58,11 +58,6 @@
 
 
 void NVIC_init(void);
-
-
-
-
-
 
 #endif
 

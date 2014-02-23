@@ -52,9 +52,6 @@ BOARD_ERROR be_board_dma1_init(void)
     return(be_result);
 }
 
-
-
-
 /* Function copy tx data packet to DMA TX round buffer. */
 static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data)
 {
@@ -134,18 +131,22 @@ void board_dma_send_buff(void)
     board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_5_value);/* 2 bytes. */
     board_dma_add_u16_to_packet(&u16_i, bc_channel_value_structure.u16_channel_6_value);/* 2 bytes. */
 /* Sensors raw data. */
-    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_gyro_raw_data);/* 6 bytes. */
-    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_acce_raw_data);/* 6 bytes. */
-    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_main_loop_magn_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_data_prepr_gyro_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_data_prepr_acce_raw_data);/* 6 bytes. */
+    board_dma_add_bi163x_to_packet(&u16_i, bi163d_api_data_prepr_magn_raw_data);/* 6 bytes. */
 /* Send sensors normalising data. */
-    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_gyro_data);
-    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_acce_data);
-    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_main_loop_magn_data);
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_data_norm_gyro_data);
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_data_norm_acce_data);
+    board_dma_add_b_float3d_to_packet(&u16_i, b_float3d_api_data_norm_magn_data);
 /* Send quaternion. */
-    board_dma_add_float_to_packet(&u16_i, fl_quaternion[0]);
-    board_dma_add_float_to_packet(&u16_i, fl_quaternion[1]);
-    board_dma_add_float_to_packet(&u16_i, fl_quaternion[2]);
-    board_dma_add_float_to_packet(&u16_i, fl_quaternion[3]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_quaternion[0]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_quaternion[1]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_quaternion[2]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_quaternion[3]);
+/* Send body wind angles fl_api_body_angle_wind_angles*/
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[0]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[1]);
+    board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[2]);
  /* System time. */
     board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/

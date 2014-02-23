@@ -1844,6 +1844,12 @@
     <group>
       <name>api</name>
       <file>
+        <name>$PROJ_DIR$\src\api\api_body_angle_calculation.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_body_angle_calculation.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_common.c</name>
       </file>
       <file>
@@ -1862,6 +1868,18 @@
         <name>$PROJ_DIR$\src\api\api_data_normalising.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_data_preprocessing.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_data_preprocessing.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_device.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_device.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.c</name>
       </file>
       <file>
@@ -1872,6 +1890,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_main_loop.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_pid.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_pid.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>

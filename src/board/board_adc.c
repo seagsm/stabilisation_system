@@ -123,6 +123,7 @@ static BOARD_ERROR be_board_adc_gpio_init(void)
 
 void DMA1_Channel1_IRQHandler(void)
 {  /*4 ch - 110uS, int function min 3,6 uS. */
+
    DMA_ClearITPendingBit( DMA1_IT_TC1);
    DMA_ITConfig(DMA1_Channel1, DMA1_IT_TC1, DISABLE);
 /*
