@@ -51,10 +51,18 @@ void api_end_device_update(void)
     i32_servo = constrain_i32(i32_servo,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
 
     /* Drive end devices. */
+    /* Test motor. */
+    timer2_PWM_duty_CH1((uint16_t)i32_motor[2]);
+    /* Test servo.*/
+    timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);
+
+
+    /*
     timer2_PWM_duty_CH1((uint16_t)i32_motor[0]);
     timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);
     timer2_PWM_duty_CH3((uint16_t)i32_motor[2]);
     timer2_PWM_duty_CH4((uint16_t)i32_servo);
+    */
 }
 
 

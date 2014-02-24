@@ -147,6 +147,12 @@ void board_dma_send_buff(void)
     board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[0]);
     board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[1]);
     board_dma_add_float_to_packet(&u16_i, fl_api_body_angle_wind_angles[2]);
+
+/*  PDF output. */
+    board_dma_add_i32_to_packet(&u16_i, pid_api_pid_data[0].i32_pid_output);
+    board_dma_add_i32_to_packet(&u16_i, pid_api_pid_data[1].i32_pid_output);
+    board_dma_add_i32_to_packet(&u16_i, pid_api_pid_data[2].i32_pid_output);
+
  /* System time. */
     board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
@@ -212,6 +218,16 @@ static void board_dma_add_float_to_packet(uint16_t *pu16_i, float f_value)
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
     board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
 }
+
+/* This function add to u8_tx_data_packet array a float value and increment index. */
+static void board_dma_add_i32_to_packet(uint16_t *pu16_i, int32_t i32_value)
+{
+    uint32_t u32_i;
+    u32_i = *(uint32_t*)((void*)&i32_value);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)u32_i);
+    board_dma_add_u16_to_packet(pu16_i, (uint16_t)(u32_i >> 16));
+}
+
 
 /* This function add HEAD to u8_tx_data_packet array and increment index. */
 static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)

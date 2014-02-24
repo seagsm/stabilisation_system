@@ -85,7 +85,7 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     i32_position_error = constrain_i32(2 * i32_set_point - i32_angle_position, -MAX_ANGLE_INCLINATION, MAX_ANGLE_INCLINATION);
 
    /* Level proportional stabilisation. */
-    i32_p_term = (current_pid->i32_p_gain * i32_position_error) /1000;
+    i32_p_term = (current_pid->i32_p_gain * i32_position_error) /100;
 
    /*
     * p_dyn_gain->p roll or pitch arround 70

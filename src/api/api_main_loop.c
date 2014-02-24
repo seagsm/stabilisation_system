@@ -38,12 +38,11 @@ static void v_api_main_loop_control_loop(void)
 
     if(be_result == BOARD_ERR_OK)
     {
-        /* Call  calculation of next frame of PDF. */
+        /* Call  calculation of next frame of PDF. It body angles. */
         api_pid_update_frame();
 
-        /* Call motor and servo control. */
+        /* Call motor and servo control. It use data from previous step. */
         api_end_device_update();
-
     }
 }
 

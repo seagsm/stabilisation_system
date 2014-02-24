@@ -13,6 +13,7 @@
 #include "api_CRC.h"
 #include "board_sys_tick.h"
 
+
 /* This is size of packet that will be send by DMA TX. */
 #define DMA1_CH4_TX_SIZE 16U
 /*
@@ -31,6 +32,7 @@ static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
 void board_dma_send_buff(void);
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value);
 static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value);
+static void board_dma_add_i32_to_packet(uint16_t *pu16_i, int32_t i32_value);
 static void board_dma_add_b_float3d_to_packet(uint16_t *pu16_i, BOARD_FLOAT_3X_DATA b_float3d_value);
 static void board_dma_add_float_to_packet(uint16_t *pu16_i, float f_value);
 static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i);
