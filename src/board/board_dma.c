@@ -112,6 +112,8 @@ void DMA1_Channel4_IRQHandler(void)
     }
 }
 
+#if 0
+/* old gui tx function. */
 /* Function send data packet to ground station(PC).
    It placed here to avoid MICRA restriction to operate with pointers to array.
 */
@@ -179,6 +181,87 @@ void board_dma_send_buff(void)
     /* Send packet. */
     sv_board_dma_send_packet(u16_i);
 }
+/* End ols function. */
+#endif
+
+void board_dma_send_buff(void)
+{
+    uint8_t u8_CRC = 0U;
+    uint16_t u16_i;
+
+#if 1
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+    u16_i++;/* index of next element. */
+
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = 0x02U; /* answer */
+
+/* Add of ID of parameters. */
+    board_dma_add_u16_to_packet(&u16_i, 0x0047U);/*  Gyro Roll Angle speed ID. */
+
+/* Add parameters value. */
+    board_dma_add_float_to_packet(&u16_i, b_float3d_api_data_norm_gyro_data.fl_X);
+
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+
+/* Add SIZE. */
+    u8_tx_data_packet[0x01U] = (uint8_t)u16_i; /* 1 bytes. */
+
+#else
+/* Test packet. */
+    /* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+    {
+        while(u16_i < (83U))
+        {
+            u8_tx_data_packet[u16_i] = (uint8_t)u16_i;
+            u16_i++;
+        }
+    }
+    /* System time. */
+    board_dma_add_system_time_to_tx_packet(&u16_i);/* 8 bytes. */
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+/* Add SIZE. */
+    u8_tx_data_packet[0x01U] = (uint8_t)u16_i; /* 1 bytes. */
+#endif
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* This function add to u8_tx_data_packet array u16 value and increment index. */
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
