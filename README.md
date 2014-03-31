@@ -1,5 +1,7 @@
 stabilisation_system
 ====================
+Software structure:
+http://www.gliffy.com/go/publish/5397367
 
 This is flight stabilisation system project for ARM CORTEX M3.
 Here C code for firmware and C# code for GUI.
