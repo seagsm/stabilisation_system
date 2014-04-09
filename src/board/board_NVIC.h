@@ -50,6 +50,9 @@
 #define DMA1_Channel4_PRIORITY_GROUP      14U   /* UART1 DMA TX transfer end. COM1 */
 #define DMA1_Channel4_SUB_PRIORITY_GROUP  0U
 
+#define DMA1_Channel5_PRIORITY_GROUP      13U   /* UART1 DMA RX receive end. COM1 */
+#define DMA1_Channel5_SUB_PRIORITY_GROUP  0U
+
 #define DMA1_Channel6_PRIORITY_GROUP      3U    /* I2C1 TX DMA transfer end.       */
 #define DMA1_Channel6_SUB_PRIORITY_GROUP  0U
 

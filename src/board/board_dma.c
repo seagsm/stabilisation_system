@@ -3,11 +3,13 @@
 #include "board_dma.h"
 
 static uint8_t u8_board_dma_buff_DMA1_CH4_TX[DMA1_CH4_TX_SIZE];
+static uint8_t u8_board_dma_buff_DMA1_CH5_RX[DMA1_CH5_RX_SIZE];
 
 uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
+uint8_t u8_rx_data_packet[USART_TX_DATA_PACKET_SIZE];
 
-/* This function should initialise usart dma. */
-BOARD_ERROR be_board_dma1_init(void)
+/* This function should initialise usart TX dma channel 4. */
+BOARD_ERROR be_board_dma1_ch4_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     NVIC_InitTypeDef  NVIC_InitStructure;
@@ -48,6 +50,52 @@ BOARD_ERROR be_board_dma1_init(void)
 
     /* Start DMA transmitting. */
     DMA_Cmd(DMA1_Channel4, ENABLE);
+
+    return(be_result);
+}
+
+/* This function should initialise usart RX dma channel 5. */
+BOARD_ERROR be_board_dma1_ch5_init(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    NVIC_InitTypeDef  NVIC_InitStructure;
+    DMA_InitTypeDef DMA_InitStructure;
+
+    /* DMA module clk ON. */
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+    /* DMA reset. */
+    DMA_DeInit(DMA1_Channel5);
+
+    /* Fill DMA init structure before initialisation. */
+    DMA_InitStructure.DMA_PeripheralBaseAddr    = (uint32_t)(&USART1->DR);
+    DMA_InitStructure.DMA_MemoryBaseAddr        = (uint32_t)u8_board_dma_buff_DMA1_CH5_RX;
+    DMA_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralSRC;
+    DMA_InitStructure.DMA_BufferSize            = DMA1_CH5_RX_SIZE;
+    DMA_InitStructure.DMA_PeripheralInc         = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc             = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize    = DMA_PeripheralDataSize_Byte;
+    DMA_InitStructure.DMA_MemoryDataSize        = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_Mode                  = DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority              = DMA_Priority_Low;
+    DMA_InitStructure.DMA_M2M                   = DMA_M2M_Disable;
+
+    /* Initialisation of DMA UART TX. */
+    DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+    /* UART1 TX  <-  DMA enable. */
+    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+
+    /* Setup DMA TX end of transfer interrupt. */
+    NVIC_InitStructure.NVIC_IRQChannel = (unsigned char)DMA1_Channel5_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = DMA1_Channel5_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = DMA1_Channel5_SUB_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+
+    /* Start DMA transmitting. */
+    DMA_Cmd(DMA1_Channel5, ENABLE);
 
     return(be_result);
 }
