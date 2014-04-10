@@ -83,8 +83,8 @@ BOARD_ERROR be_board_dma1_ch5_init(void)
     /* Initialisation of DMA UART TX. */
     DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
-    /* UART1 TX  <-  DMA enable. */
-    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+    /* UART1 RX  ->  DMA enable. */
+    USART_DMACmd(USART1, USART_DMAReq_Rx, ENABLE);
 
     /* Setup DMA TX end of transfer interrupt. */
     NVIC_InitStructure.NVIC_IRQChannel = (unsigned char)DMA1_Channel5_IRQn;
@@ -159,6 +159,12 @@ void DMA1_Channel4_IRQHandler(void)
         NVIC_DisableIRQ(DMA1_Channel4_IRQn);
     }
 }
+
+void DMA1_Channel5_IRQHandler(void)
+{
+    DMA1->IFCR |= DMA_ISR_TCIF5;
+}
+
 
 #if 0
 /* old gui tx function. */

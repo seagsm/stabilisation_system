@@ -3,3 +3,5 @@ Debug
 /settings/stabilisation_system.wsdt
 
 /stabilisation_system.dep
+/settings/stabilisation_system.cspy.bat
+/settings/stabilisation_system.dbgdt
