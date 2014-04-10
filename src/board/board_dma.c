@@ -4,6 +4,7 @@
 
 static uint8_t u8_board_dma_buff_DMA1_CH4_TX[DMA1_CH4_TX_SIZE];
 static uint8_t u8_board_dma_buff_DMA1_CH5_RX[DMA1_CH5_RX_SIZE];
+static uint16_t u16_DMA1_CH5_interrupt_counter = 0U;
 
 uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
 uint8_t u8_rx_data_packet[USART_TX_DATA_PACKET_SIZE];
@@ -162,9 +163,19 @@ void DMA1_Channel4_IRQHandler(void)
 
 void DMA1_Channel5_IRQHandler(void)
 {
+    /* Add circle DMA buffer overflow counter. */
+    u16_DMA1_CH5_interrupt_counter++;
+    /* Reset DMA transfer complete interrupt.*/
     DMA1->IFCR |= DMA_ISR_TCIF5;
 }
 
+static uint16_t u16_board_dma_DMA1_CH5_byte_received(void)
+{
+    uint16_t u16_byte_received = 0U;
+
+    u16_byte_received = DMA_GetCurrDataCounter(DMA1_Channel5);
+    return u16_byte_received;
+}
 
 #if 0
 /* old gui tx function. */

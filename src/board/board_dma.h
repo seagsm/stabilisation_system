@@ -36,6 +36,7 @@ BOARD_ERROR be_board_dma1_ch5_init(void);
 void DMA1_Channel4_IRQHandler(void);
 void DMA1_Channel5_IRQHandler(void);
 
+static uint16_t u16_board_dma_DMA1_CH5_byte_received(void);
 static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
 void board_dma_send_buff(void);
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value);
