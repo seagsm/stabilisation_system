@@ -179,42 +179,61 @@ static uint16_t u16_board_dma_DMA1_CH5_byte_received(void)
     uint16_t u16_byte_received = 0U;
 
     u16_DMA1_CH5_intr_index = u16_DMA1_CH5_interrupt_counter;
-    u16_DMA1_CH5_head_index = DMA_GetCurrDataCounter(DMA1_Channel5);
+    u16_DMA1_CH5_head_index = DMA1_CH5_RX_SIZE - DMA_GetCurrDataCounter(DMA1_Channel5);
     u16_byte_received = ( u16_DMA1_CH5_intr_index * DMA1_CH5_RX_SIZE) + u16_DMA1_CH5_head_index - u16_DMA1_CH5_tail_index;
     return u16_byte_received;
 }
 
 
 /* Function copy received data from DMA1_CH5 buffer to UART1 received buffer. It should be called uninterrupted as possible.*/
-static BOARD_ERROR be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer(void)
+BOARD_ERROR be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint16_t u16_byte_counter = 0U;
     uint8_t u8_byte;
-        
+
     u16_byte_counter = u16_board_dma_DMA1_CH5_byte_received();
-    
-    /* If read more that buffer size, we losted some bytes, but we can read just last buffer size amount of bytes. */
-    if(u16_byte_counter > DMA1_CH5_RX_SIZE )
-    {  
-        u16_byte_counter = DMA1_CH5_RX_SIZE;
-    }  
-    
-    /* Read byte by byte. */
-    while (u16_byte_counter > 0U)
-    {  
-        u8_byte = u8_board_dma_buff_DMA1_CH5_RX[u16_DMA1_CH5_tail_index];
-        be_result = be_board_r_buff_tail_eat_USART1_RX_Put_byte(u8_byte);
-        u16_byte_counter--;
-        u16_DMA1_CH5_tail_index++;
-        if(u16_DMA1_CH5_tail_index >= DMA1_CH5_RX_SIZE)
+    if(u16_byte_counter > 0U )
+    {
+        /* If read more that buffer size, we losted some bytes, but we can read just last buffer size amount of bytes. */
+        if(u16_byte_counter > DMA1_CH5_RX_SIZE )
         {
-            u16_DMA1_CH5_tail_index = 0U;
-        }  
+            u16_byte_counter = DMA1_CH5_RX_SIZE;
+
+            /* Probably we loosed some data, so, set tail index to head index and read all byte from buffer. */
+            u16_DMA1_CH5_tail_index = u16_DMA1_CH5_head_index;
+
+            /* Read byte by byte. */
+            while (u16_byte_counter > 0U)
+            {
+                u8_byte = u8_board_dma_buff_DMA1_CH5_RX[u16_DMA1_CH5_tail_index];
+                be_result = be_board_r_buff_tail_eat_USART1_RX_Put_byte(u8_byte);
+                u16_byte_counter--;
+                u16_DMA1_CH5_tail_index++;
+                if(u16_DMA1_CH5_tail_index >= DMA1_CH5_RX_SIZE)
+                {
+                    u16_DMA1_CH5_tail_index = 0U;
+                }
+            }
+        }
+        else
+        {
+            /* Read byte by byte. */
+            while (u16_byte_counter > 0U)
+            {
+                u8_byte = u8_board_dma_buff_DMA1_CH5_RX[u16_DMA1_CH5_tail_index];
+                be_result = be_board_r_buff_tail_eat_USART1_RX_Put_byte(u8_byte);
+                u16_byte_counter--;
+                u16_DMA1_CH5_tail_index++;
+                if(u16_DMA1_CH5_tail_index >= DMA1_CH5_RX_SIZE)
+                {
+                    u16_DMA1_CH5_tail_index = 0U;
+                }
+            }
+        }
+        /* Reset interrupt counter, related with size of received bytes. */
+        u16_DMA1_CH5_interrupt_counter = u16_DMA1_CH5_interrupt_counter - u16_DMA1_CH5_intr_index;
     }
-    
-    /* Reset interrupt counter, related with size of received bytes. */    
-    u16_DMA1_CH5_interrupt_counter = u16_DMA1_CH5_interrupt_counter - u16_DMA1_CH5_intr_index;
     return(be_result);
 }
 

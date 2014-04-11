@@ -4,10 +4,11 @@
 #include "stm32f10x.h"
 #include "board_system_type.h"
 #include "board_main_loop.h"
+#include "board_dma.h"
 
 #include "api_i2c_acquisition.h"
 #include "api_data_normalising.h"
-
+#include "api_cmd.h"
 
 #include "MadgwickAHRS.h"
 #include "api_end_device.h"

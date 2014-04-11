@@ -103,7 +103,7 @@ BOARD_ERROR be_board_r_buff_USART1_RX_Put_byte(uint8_t u8_byte)
 BOARD_ERROR be_board_r_buff_tail_eat_USART1_RX_Put_byte(uint8_t u8_byte)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     /* Save byte to buffer. */
     u8_board_r_buff_USART1_RX[rb_USART1_RX.gu16_r_buffer_head] = u8_byte;
     /* Shift head index to next buffer address. */
@@ -121,9 +121,9 @@ BOARD_ERROR be_board_r_buff_tail_eat_USART1_RX_Put_byte(uint8_t u8_byte)
     else
     {
         rb_USART1_RX.gu16_r_buffer_tail = rb_USART1_RX.gu16_r_buffer_head;
-        be_result = BOARD_ERR_OVERLOAD;  
+        be_result = BOARD_ERR_OVERLOAD;
     }
-    return(be_result);    
+    return(be_result);
 }
 
 /* This function get one byte from USART1 RX round buffer. If buffer is empty this function return error */
@@ -147,4 +147,36 @@ BOARD_ERROR be_board_r_buff_USART1_RX_Get_byte(uint8_t *u8_byte)
     }
     return(be_result);
 }
+
+/* Functions get and set rx buffer structure parameters */
+uint16_t u16_board_r_buff_USART1_RX_tail_get_buffer(void)
+{
+    return(rb_USART1_RX.gu16_r_buffer_tail);
+}
+
+void v_board_r_buff_USART1_RX_tail_buffer_set(uint16_t u16_tail)
+{
+    rb_USART1_RX.gu16_r_buffer_tail = u16_tail;
+}
+
+uint16_t u16_board_r_buff_USART1_RX_size_buffer_get(void)
+{
+    return(rb_USART1_RX.gu16_r_buffer_size);
+}
+
+void v_board_r_buff_USART1_RX_size_buffer_set(uint16_t u16_size)
+{
+    rb_USART1_RX.gu16_r_buffer_size = u16_size;
+}
+
+
+
+
+
+
+
+
+
+
+
 
