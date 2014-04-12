@@ -11,6 +11,7 @@
 
 void api_cmd_reading_packet(void);
 static BOARD_ERROR be_api_CMD_decoding_packet(void);
+static BOARD_ERROR be_api_CMD_data_answer(uint16_t u16_data_id);
 static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length);
 
 

@@ -40,7 +40,9 @@ static uint16_t u16_board_dma_DMA1_CH5_byte_received(void);
 static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
 
 BOARD_ERROR be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer(void);
-void board_dma_send_buff(void);
+
+void board_dma_send_answer_float(uint16_t u16_data_id, float float_data);
+void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data);
 
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value);
 static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value);

@@ -163,12 +163,73 @@ void api_cmd_reading_packet(void)
 static BOARD_ERROR be_api_CMD_decoding_packet(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint16_t u16_data_id = 0U;
+    uint8_t u8_cmd_id  = 0U;
 
-    board_dma_send_buff();
+    u8_cmd_id = u8_value_buffer[0];
+    u16_data_id = (uint16_t)u8_value_buffer[1] + 100U * (uint16_t)u8_value_buffer[2];
 
+    switch (u8_cmd_id)
+    {
+      case READ32:
+        be_api_CMD_data_answer(u16_data_id);
+        break;
+      default:
+        be_result = BOARD_ERR_ID;
+        break;
+    }
     return(be_result);
 }
 
+
+static BOARD_ERROR be_api_CMD_data_answer(uint16_t u16_data_id)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    switch(u16_data_id)
+    {
+        case 0x0043U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_X);
+            break;
+        case 0x0044U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_Y);
+            break;
+        case 0x0045U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_Z);
+            break;
+        case 0x0046U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_X);
+            break;
+        case 0x0047U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Y);
+            break;
+        case 0x0048U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Z);
+            break;
+        case 0x0053U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_X);
+            break;
+        case 0x0054U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Y);
+            break;
+        case 0x0055U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Z);
+            break;
+        case 0x0056U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_X);
+            break;
+        case 0x0057U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_Y);
+            break;
+        case 0x0058U:
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_Z);
+            break;
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
+    }
+    return(be_result);
+}
 
 
 /* This function calc CRC summ for linear buffer from board_dma.h */

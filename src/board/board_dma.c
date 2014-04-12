@@ -313,7 +313,9 @@ void board_dma_send_buff(void)
 /* End ols function. */
 #endif
 
-void board_dma_send_buff(void)
+/* Function send answer float*/
+
+void board_dma_send_answer_float(uint16_t u16_data_id, float float_data)
 {
     uint8_t u8_CRC = 0U;
     uint8_t u8_size = 0U;
@@ -328,10 +330,10 @@ void board_dma_send_buff(void)
     u8_tx_data_packet[u16_i] = 0x02U; /* answer */
     u16_i++;/* index of next element */
 /* Add of ID of parameters. */
-    board_dma_add_u16_to_packet(&u16_i, 0x0047U);/*  Gyro Roll Angle speed ID. */
+    board_dma_add_u16_to_packet(&u16_i, u16_data_id);
 
 /* Add parameters value. */
-    board_dma_add_float_to_packet(&u16_i, b_float3d_api_data_norm_gyro_data.fl_X);
+    board_dma_add_float_to_packet(&u16_i, float_data);
 
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
     u8_CRC = gu8_api_CRC8(2U, u16_i);
@@ -349,7 +351,40 @@ void board_dma_send_buff(void)
     sv_board_dma_send_packet(u16_i);
 }
 
+void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
 
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = 0x02U; /* answer */
+    u16_i++;/* index of next element */
+/* Add of ID of parameters. */
+    board_dma_add_u16_to_packet(&u16_i, u16_data_id);
+
+/* Add parameters value. */
+    board_dma_add_i32_to_packet(&u16_i, i32_data);
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    u16_i++;
+
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    u8_tx_data_packet[0x01U] = u8_size; /* 1 bytes. */
+
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
 
 
 
