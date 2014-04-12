@@ -32,6 +32,7 @@ void api_cmd_reading_packet(void)
         {
             /* Flag header found. */
             u8_flag = 1U;
+            break;
         }
     }
 
@@ -128,8 +129,26 @@ void api_cmd_reading_packet(void)
             }
             break;
 		case 4:
-                /* Decoding data from packet */
-                /* TODO: In line_buffer we have now packet information load. We should decode it here. */
+            /* Decoding data from packet */
+            /* TODO: In line_buffer we have now packet information load. We should decode it here. */
+            be_result = be_api_CMD_decoding_packet();
+            if(be_result == BOARD_ERR_OK)
+            {
+                /* Start looking for next packet. */
+                u8_flag = 0U;
+            }
+            else
+            {
+                u8_flag = 0U;
+                /* Restore tail index in RX UART1 buffer. */
+                v_board_r_buff_USART1_RX_tail_buffer_set(u16_save_tail_index);
+                /* Restore size of data in RX UART1 buffer. */
+                v_board_r_buff_USART1_RX_size_buffer_set(u16_save_size);
+                /* Remove header from UART1 buffer. */
+                /* Read byte from UART1 RX buffer to remove header byte. Remember, after reading size--, tail++. */
+                be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
+				be_result = BOARD_ERR_RANGE;
+            }
             break;
 
 		default:
@@ -139,8 +158,17 @@ void api_cmd_reading_packet(void)
 			break;
 		}
 	}
-
 }
+
+static BOARD_ERROR be_api_CMD_decoding_packet(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    board_dma_send_buff();
+
+    return(be_result);
+}
+
 
 
 /* This function calc CRC summ for linear buffer from board_dma.h */

@@ -74,7 +74,7 @@ int main( void)
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
 
             /*    gv_board_dma_send_packet(); */
-                board_dma_send_buff();
+            /*    board_dma_send_buff(); */
 
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);

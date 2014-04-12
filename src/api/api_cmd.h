@@ -10,6 +10,7 @@
 #define API_CMD_MAX_SIZE_OF_LINE_BUFFER 32U
 
 void api_cmd_reading_packet(void);
+static BOARD_ERROR be_api_CMD_decoding_packet(void);
 static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length);
 
 
