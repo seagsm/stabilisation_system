@@ -91,7 +91,21 @@ Next step milestones:
 08.03.14	Add filters for all input data from sensors.
 			It can be done as part of normalising function.
 
+14.04.2014
+"15.02.14"	Check G+A stabilisation on PC.      DONE
+			Check G+A stabilisation on Board.   DONE
 
+After solving architecture problem was added RX functionality. 
+RX was initiated to work through DMA. DMA work in cycle mode. 
+And generate interrupt just to count DMA cycle. It "main frame" 
+interrupt calling function to copy data from DMA buffer to UART 
+round buffer and calling data processing function. Copy data from 
+DMA buffer should be done from main frame interrupt to avoid loosing 
+serial data. Developing of this architecture took one month. 
+
+Was developed and adopted GUI for communication with board. 
+
+21.04.2014 Add full functionality to read/write PID from/to board.
 
 
 
