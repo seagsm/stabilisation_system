@@ -313,8 +313,71 @@ void board_dma_send_buff(void)
 /* End ols function. */
 #endif
 
-/* Function send answer float*/
+/* Function send WRITE_OK.*/
+void board_dma_send_WRITE_OK(void)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
 
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = WRITE_OK; /* write_ok */
+    u16_i++;/* index of next element */
+
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    u16_i++;
+
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    u8_tx_data_packet[0x01U] = u8_size; /* 1 bytes. */
+
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
+
+/* Function send WRITE_OK.*/
+void board_dma_send_ERROR(void)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
+
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = ERROR; /* write_ok */
+    u16_i++;/* index of next element */
+
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    u16_i++;
+
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    u8_tx_data_packet[0x01U] = u8_size; /* 1 bytes. */
+
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
+
+/* Function send answer float*/
 void board_dma_send_answer_float(uint16_t u16_data_id, float float_data)
 {
     uint8_t u8_CRC = 0U;
@@ -327,7 +390,7 @@ void board_dma_send_answer_float(uint16_t u16_data_id, float float_data)
     u16_i++;/* index of size */
 
 /* Add command ID. */
-    u8_tx_data_packet[u16_i] = 0x02U; /* answer */
+    u8_tx_data_packet[u16_i] = ANSWER; /* answer */
     u16_i++;/* index of next element */
 /* Add of ID of parameters. */
     board_dma_add_u16_to_packet(&u16_i, u16_data_id);
@@ -386,28 +449,41 @@ void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data)
     sv_board_dma_send_packet(u16_i);
 }
 
+/* Function send u64 answer. */
+void board_dma_send_answer_uint64(uint16_t u16_data_id, uint64_t u64_data)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
 
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
 
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = 0x02U; /* answer */
+    u16_i++;/* index of next element */
+/* Add of ID of parameters. */
+    board_dma_add_u16_to_packet(&u16_i, u16_data_id);
 
+/* Add parameters value. */
+    board_dma_add_u64_to_packet(&u16_i, u64_data);
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
 
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    u16_i++;
 
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    u8_tx_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
 
 /* This function add to u8_tx_data_packet array u16 value and increment index. */
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
@@ -423,6 +499,7 @@ static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
     *pu16_i = u16_index;
 }
 
+#if 0
 /* This function add to u8_tx_data_packet array a BOARD_I16_3X_DATA value and increment index. */
 static void board_dma_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value)
 {
@@ -438,6 +515,7 @@ static void board_dma_add_b_float3d_to_packet(uint16_t *pu16_i, BOARD_FLOAT_3X_D
     board_dma_add_float_to_packet(pu16_i, b_float3d_value.fl_Y);
     board_dma_add_float_to_packet(pu16_i, b_float3d_value.fl_Z);
 }
+#endif
 
 /* This function add to u8_tx_data_packet array a float value and increment index. */
 static void board_dma_add_float_to_packet(uint16_t *pu16_i, float f_value)
@@ -473,30 +551,27 @@ static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)
 }
 
 /* This function add u64 system time to tx packet. */
-static void board_dma_add_system_time_to_tx_packet(uint16_t *pu16_i)
+static void board_dma_add_u64_to_packet(uint16_t *pu16_i, uint64_t u64_data)
 {
     uint16_t u16_index;
-    uint64_t u64_sys_time;
-
     u16_index = *pu16_i;
-    /* Get system time. */
-    u64_sys_time = gu64_read_system_time();
+
     /* Add system time to tx packet. */
-    u8_tx_data_packet[u16_index] = (uint8_t)( u64_sys_time&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)( u64_data&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 8)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 8)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 16)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 16)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 24)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 24)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 32)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 32)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 40)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 40)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 48)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 48)&0xFFU);
     u16_index++;
-    u8_tx_data_packet[u16_index] = (uint8_t)((u64_sys_time >> 56)&0xFFU);
+    u8_tx_data_packet[u16_index] = (uint8_t)((u64_data >> 56)&0xFFU);
     u16_index++;
     *pu16_i = u16_index;
 }

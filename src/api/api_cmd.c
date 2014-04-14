@@ -160,11 +160,13 @@ void api_cmd_reading_packet(void)
 	}
 }
 
+/* Function decoding packet and call suitable process function. */
 static BOARD_ERROR be_api_CMD_decoding_packet(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    uint16_t u16_data_id = 0U;
-    uint8_t u8_cmd_id  = 0U;
+    uint16_t u16_data_id  = 0U;
+    uint8_t u8_cmd_id     = 0U;
+    int32_t i32_data_load = 0;
 
     u8_cmd_id = u8_value_buffer[0];
     u16_data_id = (uint16_t)u8_value_buffer[1] + 100U * (uint16_t)u8_value_buffer[2];
@@ -172,7 +174,13 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
     switch (u8_cmd_id)
     {
       case READ32:
-        be_api_CMD_data_answer(u16_data_id);
+        be_result = be_api_CMD_data_answer_i32(u16_data_id);
+        break;
+      case READ64:
+        be_result = be_api_CMD_data_answer_u64(u16_data_id);
+        break;
+      case WRITE32:
+        be_result = be_api_CMD_data_write_i32(u16_data_id, i32_data_load );
         break;
       default:
         be_result = BOARD_ERR_ID;
@@ -181,13 +189,181 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
     return(be_result);
 }
 
+static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    switch(u16_data_id)
+    {
+            /* Get system time. */
+        case 0x00FAU:
+            board_dma_send_answer_uint64(u16_data_id, gu64_read_system_time());
+            break; 
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
+    }       
+    return(be_result);
+}
 
-static BOARD_ERROR be_api_CMD_data_answer(uint16_t u16_data_id)
+/* Function decode right data ID and write receivet value to right place. */
+static BOARD_ERROR be_api_CMD_data_write_i32(uint16_t u16_data_id, int32_t i32_data_load )
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+     switch(u16_data_id)
+    {
+        /* Pitch. */
+        case 0x0010U:
+            pid_api_pid_data[Pitch].i32_p_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0011U:
+            pid_api_pid_data[Pitch].i32_p_dyn_gain = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0012U:
+            pid_api_pid_data[Pitch].i32_i_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0013U:
+            pid_api_pid_data[Pitch].i32_d_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0014U:
+            pid_api_pid_data[Pitch].i32_i_min      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0015U:
+            pid_api_pid_data[Pitch].i32_i_max      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        /* Roll. */
+        case 0x0020U:
+            pid_api_pid_data[Roll].i32_p_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0021U:
+            pid_api_pid_data[Roll].i32_p_dyn_gain = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0022U:
+            pid_api_pid_data[Roll].i32_i_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0023U:
+            pid_api_pid_data[Roll].i32_d_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0024U:
+            pid_api_pid_data[Roll].i32_i_min      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0025U:
+            pid_api_pid_data[Roll].i32_i_max      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;   
+        /* Yaw. */
+        case 0x0030U:
+            pid_api_pid_data[Yaw].i32_p_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0031U:
+            pid_api_pid_data[Yaw].i32_p_dyn_gain = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0032U:
+            pid_api_pid_data[Yaw].i32_i_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0033U:
+            pid_api_pid_data[Yaw].i32_d_gain     = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0034U:
+            pid_api_pid_data[Yaw].i32_i_min      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;     
+        case 0x0035U:
+            pid_api_pid_data[Yaw].i32_i_max      = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;   
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
+    }
+    
+    return(be_result);
+}
+
+/* Function decode right data ID and send right value to PC. */
+static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     switch(u16_data_id)
     {
+        /* pid_api_pid_data[Pitch] */
+        case 0x0010U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_gain);
+            break;      
+        case 0x0011U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_dyn_gain);
+            break;      
+        case 0x0012U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_gain);
+            break;      
+        case 0x0013U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_d_gain);
+            break;      
+        case 0x0014U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_min);
+            break;      
+        case 0x0015U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_max);
+            break;      
+
+        /* pid_api_pid_data[Roll] */
+        case 0x0020U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_gain);
+            break;      
+        case 0x0021U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_dyn_gain);
+            break;      
+        case 0x0022U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_gain);
+            break;      
+        case 0x0023U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_d_gain);
+            break;      
+        case 0x0024U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_min);
+            break;      
+        case 0x0025U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_max);
+            break;      
+
+        /* pid_api_pid_data[Yaw] */
+        case 0x0030U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_gain);
+            break;      
+        case 0x0031U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_dyn_gain);
+            break;      
+        case 0x0032U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_gain);
+            break;      
+        case 0x0033U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_d_gain);
+            break;      
+        case 0x0034U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_min);
+            break;      
+        case 0x0035U:
+            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_max);
+            break;      
+      
+        /* Gyro sensor. */
         case 0x0043U:
             board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_X);
             break;
@@ -206,6 +382,8 @@ static BOARD_ERROR be_api_CMD_data_answer(uint16_t u16_data_id)
         case 0x0048U:
             board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Z);
             break;
+            
+        /* Acceleration sensor. */
         case 0x0053U:
             board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_X);
             break;
@@ -230,7 +408,6 @@ static BOARD_ERROR be_api_CMD_data_answer(uint16_t u16_data_id)
     }
     return(be_result);
 }
-
 
 /* This function calc CRC summ for linear buffer from board_dma.h */
 static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length)
