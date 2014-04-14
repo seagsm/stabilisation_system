@@ -20,7 +20,7 @@ static void api_pid_init_Pitch(void)
     pid_api_pid_data[Pitch].i32_i_dyn_gain       = PITCH_I_GAIN_DYN;
     pid_api_pid_data[Pitch].i32_i_state          = 0;
     pid_api_pid_data[Pitch].i32_i_min            = PITCH_I_MIN;
-    pid_api_pid_data[Pitch].i32_i_min            = PITCH_I_MAX;
+    pid_api_pid_data[Pitch].i32_i_max            = PITCH_I_MAX;
     pid_api_pid_data[Pitch].i32_d_gain           = PITCH_D_GAIN;
     pid_api_pid_data[Pitch].i32_d_dyn_gain       = PITCH_D_GAIN_DYN;
     pid_api_pid_data[Pitch].i32_d_state          = 0;
@@ -38,7 +38,7 @@ static void api_pid_init_Roll(void)
     pid_api_pid_data[Roll].i32_i_dyn_gain       = ROLL_I_GAIN_DYN;
     pid_api_pid_data[Roll].i32_i_state          = 0;
     pid_api_pid_data[Roll].i32_i_min            = ROLL_I_MIN;
-    pid_api_pid_data[Roll].i32_i_min            = ROLL_I_MAX;
+    pid_api_pid_data[Roll].i32_i_max            = ROLL_I_MAX;
     pid_api_pid_data[Roll].i32_d_gain           = ROLL_D_GAIN;
     pid_api_pid_data[Roll].i32_d_dyn_gain       = ROLL_D_GAIN_DYN;
     pid_api_pid_data[Roll].i32_d_state          = 0;
@@ -56,7 +56,7 @@ static void api_pid_init_Yaw(void)
     pid_api_pid_data[Yaw].i32_i_dyn_gain       = YAW_I_GAIN_DYN;
     pid_api_pid_data[Yaw].i32_i_state          = 0;
     pid_api_pid_data[Yaw].i32_i_min            = YAW_I_MIN;
-    pid_api_pid_data[Yaw].i32_i_min            = YAW_I_MAX;
+    pid_api_pid_data[Yaw].i32_i_max            = YAW_I_MAX;
     pid_api_pid_data[Yaw].i32_d_gain           = YAW_D_GAIN;
     pid_api_pid_data[Yaw].i32_d_dyn_gain       = YAW_D_GAIN_DYN;
     pid_api_pid_data[Yaw].i32_d_state          = 0;
