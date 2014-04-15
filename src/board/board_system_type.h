@@ -37,6 +37,15 @@ typedef struct
 
 typedef struct
 {
+    float fl_q0;
+    float fl_q1;
+    float fl_q2;
+    float fl_q3;
+} BOARD_QUAT;
+
+
+typedef struct
+{
     uint8_t   u8_slave_address;
     uint16_t  u16_r_sizeof;
     uint16_t  u16_w_sizeof;

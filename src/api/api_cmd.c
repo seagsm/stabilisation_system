@@ -165,12 +165,18 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint16_t u16_data_id  = 0U;
+    uint16_t u16_a  = 0U;
+    uint16_t u16_b  = 0U;
     uint8_t u8_cmd_id     = 0U;
     int32_t i32_data_load = 0;
     uint32_t u32_data_load = 0U;
 
     u8_cmd_id = u8_value_buffer[0];
-    u16_data_id = (uint16_t)u8_value_buffer[1] + 100U * (uint16_t)u8_value_buffer[2];
+    u16_a = (uint16_t)u8_value_buffer[1];
+    u16_b = (uint16_t)u8_value_buffer[2];
+    u16_b = u16_b << 8;
+    u16_data_id = u16_a + u16_b;
+    /*u16_data_id = (uint16_t)u8_value_buffer[1] + 100U * (uint16_t)u8_value_buffer[2]; */
 
     switch (u8_cmd_id)
     {
@@ -180,6 +186,10 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
       case READ64:
         be_result = be_api_CMD_data_answer_u64(u16_data_id);
         break;
+      case READQUAT:
+        be_result = be_api_CMD_data_answer_quaternion(u16_data_id);
+        break;
+
       case WRITE32:
         i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
 
@@ -191,6 +201,30 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
     }
     return(be_result);
 }
+
+static BOARD_ERROR be_api_CMD_data_answer_quaternion(uint16_t u16_data_id)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    BOARD_QUAT  bq_data;
+    switch(u16_data_id)
+    {
+            /* Send quaternion. */
+        case 0x0120U:
+            bq_data.fl_q0 = fl_api_body_angle_quaternion[0];
+            bq_data.fl_q1 = fl_api_body_angle_quaternion[1];
+            bq_data.fl_q2 = fl_api_body_angle_quaternion[2];
+            bq_data.fl_q3 = fl_api_body_angle_quaternion[3];
+
+            board_dma_send_answer_quaternion(u16_data_id, bq_data);
+            break;
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
+    }
+    return(be_result);
+}
+
+
 
 static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id)
 {

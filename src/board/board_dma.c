@@ -485,6 +485,45 @@ void board_dma_send_answer_uint64(uint16_t u16_data_id, uint64_t u64_data)
     sv_board_dma_send_packet(u16_i);
 }
 
+void board_dma_send_answer_quaternion(uint16_t u16_data_id, BOARD_QUAT  bq_data)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
+
+/* HEAD of TX packet. */
+    board_dma_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+
+/* Add command ID. */
+    u8_tx_data_packet[u16_i] = 0x02U; /* answer */
+    u16_i++;/* index of next element */
+/* Add of ID of parameters. */
+    board_dma_add_u16_to_packet(&u16_i, u16_data_id);
+
+/* Add parameters value. */
+    board_dma_add_float_to_packet(&u16_i, bq_data.fl_q0);
+    board_dma_add_float_to_packet(&u16_i, bq_data.fl_q1);
+    board_dma_add_float_to_packet(&u16_i, bq_data.fl_q2);
+    board_dma_add_float_to_packet(&u16_i, bq_data.fl_q3);
+
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    u8_tx_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    u16_i++;
+
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    u8_tx_data_packet[0x01U] = u8_size; /* 1 bytes. */
+
+    /* Send packet. */
+    sv_board_dma_send_packet(u16_i);
+}
+
 /* This function add to u8_tx_data_packet array u16 value and increment index. */
 static void board_dma_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value)
 {
