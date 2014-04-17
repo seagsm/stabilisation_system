@@ -46,6 +46,7 @@ void board_dma_send_answer_float(uint16_t u16_data_id, float float_data);
 void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data);
 void board_dma_send_answer_uint64(uint16_t u16_data_id, uint64_t u64_data);
 void board_dma_send_answer_quaternion(uint16_t u16_data_id, BOARD_QUAT  bq_data);
+void board_dma_send_answer_float_vector3d(uint16_t u16_data_id, BOARD_FLOAT_3X_DATA fv3d_data);
 void board_dma_send_WRITE_OK(void);
 void board_dma_send_ERROR(void);
 

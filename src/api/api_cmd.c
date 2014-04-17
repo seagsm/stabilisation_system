@@ -169,14 +169,12 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
     uint16_t u16_b  = 0U;
     uint8_t u8_cmd_id     = 0U;
     int32_t i32_data_load = 0;
-    uint32_t u32_data_load = 0U;
 
     u8_cmd_id = u8_value_buffer[0];
     u16_a = (uint16_t)u8_value_buffer[1];
     u16_b = (uint16_t)u8_value_buffer[2];
     u16_b = u16_b << 8;
     u16_data_id = u16_a + u16_b;
-    /*u16_data_id = (uint16_t)u8_value_buffer[1] + 100U * (uint16_t)u8_value_buffer[2]; */
 
     switch (u8_cmd_id)
     {
@@ -189,6 +187,10 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
       case READQUAT:
         be_result = be_api_CMD_data_answer_quaternion(u16_data_id);
         break;
+      case READVECTOR3D:
+        be_result = be_api_CMD_data_answer_float_vector3d(u16_data_id);
+        break;
+
 
       case WRITE32:
         i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
@@ -198,6 +200,27 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
       default:
         be_result = BOARD_ERR_ID;
         break;
+    }
+    return(be_result);
+}
+
+static BOARD_ERROR be_api_CMD_data_answer_float_vector3d(uint16_t u16_data_id)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    BOARD_FLOAT_3X_DATA fv3d_data;
+    switch(u16_data_id)
+    {
+            /* Send body wing angles. */
+        case 0x0140U:
+            fv3d_data.fl_X = fl_api_body_angle_wind_angles[0];
+            fv3d_data.fl_Y = fl_api_body_angle_wind_angles[1];
+            fv3d_data.fl_Z = fl_api_body_angle_wind_angles[2];
+
+            board_dma_send_answer_float_vector3d(u16_data_id, fv3d_data);
+            break;
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
     }
     return(be_result);
 }
