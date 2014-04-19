@@ -97,7 +97,7 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     */
 
     /* Angle speed proportional stabilisation */
-    i32_p_term = i32_p_term - (i32_angle_speed * current_pid->i32_p_dyn_gain)/ 80 / 19;
+    i32_p_term = i32_p_term - (i32_angle_speed * current_pid->i32_p_dyn_gain)/10;
 
     /* Integration. */
     current_pid->i32_i_state = constrain_i32(current_pid->i32_i_state + i32_position_error, current_pid->i32_i_min, current_pid->i32_i_max);
@@ -115,7 +115,7 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     current_pid->i32_d_1_state = current_pid->i32_d_0_state;
     current_pid->i32_d_0_state = i32_d_state;
 
-    i32_d_term = (i32_d_summ * current_pid->i32_d_dyn_gain)/2048 ;/* //32// pid->d_gain arround 40 , so pid->d_gain/32 arround 1~2 */
+    i32_d_term = (i32_d_summ * current_pid->i32_d_gain)/2048 ;/* //32// pid->d_gain arround 40 , so pid->d_gain/32 arround 1~2 */
 
     /* Save result of PID calculation back to structure. */
     current_pid->i32_pid_output = i32_p_term + i32_i_term - i32_d_term;

@@ -45,8 +45,8 @@
 
 enum
 {
-  Pitch = 0,
-  Roll  = 1,
+  Pitch = 1,
+  Roll  = 0,
   Yaw   = 2
 };
 
