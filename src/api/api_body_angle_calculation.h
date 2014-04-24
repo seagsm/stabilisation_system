@@ -2,7 +2,6 @@
 #define API_BODY_ANGLE_CALCULATION_H 1
 
 #include "stm32f10x.h"
-#include "math.h"
 #include "board_system_type.h"
 #include "api_common.h"
 #include "api_data_normalising.h"

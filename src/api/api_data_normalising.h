@@ -2,6 +2,7 @@
 #define API_DATA_NORMALISING_H 1
 
 #include "stm32f10x.h"
+#include "math.h"
 #include "board_system_type.h"
 #include "api_data_preprocessing.h"
 #include "api_common.h"

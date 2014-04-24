@@ -8,7 +8,8 @@ BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_acce_data;
 static BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_magn_data;
 
 /* Calculation of GYRO normalising coefficient to have degre per second (dps). */
-static float f_gyro_rate = ( 500.0 *((float)(BOARD_DRV_GYRO_RATE >> 4) - 11.0))/(65536.0);
+/* static float f_gyro_rate = ( 500.0 *((float)(BOARD_DRV_GYRO_RATE >> 4) - 11.0))/(65536.0); */
+static float f_gyro_rate = 0.00875 * (float)( 1U << ((BOARD_DRV_GYRO_RATE >> 4) - 12U)); 
 
 void v_api_data_normalising_gyro(void)
 {

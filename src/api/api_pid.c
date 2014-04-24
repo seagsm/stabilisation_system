@@ -95,6 +95,10 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     * 0.244/0.0125 ~ 19
     * So 19 is fitting coefficient
     */
+    
+    
+    
+    
 
     /* Angle speed proportional stabilisation */
     i32_p_term = i32_p_term - (i32_angle_speed * current_pid->i32_p_dyn_gain)/10;
