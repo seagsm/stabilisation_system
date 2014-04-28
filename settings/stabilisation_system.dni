@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=108361750
+Checksum=413969622
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -31,8 +31,9 @@ Fmt6={W}0:msg	4	0
 Fmt7={W}0:u16_data_id	4	0
 Fmt8={W}0:u16_i	4	0
 Fmt9={W}0:u16_value	4	0
-Fmt10={W}0:u32_i	4	0
-Fmt11={W}0:u8_test_value	3	0
+Fmt10={W}0:u32_address	4	0
+Fmt11={W}0:u32_i	4	0
+Fmt12={W}0:u8_test_value	3	0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""

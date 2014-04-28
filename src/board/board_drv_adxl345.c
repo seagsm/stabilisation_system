@@ -93,7 +93,7 @@ BOARD_ERROR  board_drv_adxl345_init(void)
 
     gv_board_sys_tick_fast_delay(10U);
 
-    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_400);
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_BW_RATE, DATA_RATE_100);/* DATA_RATE_400 */
 
     gv_board_sys_tick_fast_delay(100U);
 

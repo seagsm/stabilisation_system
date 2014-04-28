@@ -10,6 +10,9 @@
 
 extern BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_gyro_data;
 extern BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_acce_data;
+
+extern BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_out_acce_data;
+
 /* extern BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_magn_data; */
 
 void v_api_data_normalising_gyro(void);

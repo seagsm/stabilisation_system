@@ -3,7 +3,7 @@
 
 
 
-static float madgwick_Beta = 0.1f;
+static float madgwick_Beta = 0.02f;
 
 void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
 {

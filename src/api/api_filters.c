@@ -44,12 +44,12 @@ float float_api_filters_iir_acc_x(float float_new_sample)
         -2.40934285658631710000f,
         0.51747819978804011000f
     };
-    
+
     /* Output samples. */
-    static float y[NCoef+1]; 
-    
+    static float y[NCoef+1];
+
     /* Input samples.  */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -86,12 +86,12 @@ float float_api_filters_iir_acc_y(float float_new_sample)
         -2.40934285658631710000f,
         0.51747819978804011000f
     };
-    
+
     /* Output samples. */
-    static float y[NCoef+1]; 
-    
+    static float y[NCoef+1];
+
     /* Input samples.  */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -128,12 +128,12 @@ float float_api_filters_iir_acc_z(float float_new_sample)
         -2.40934285658631710000f,
         0.51747819978804011000f
     };
-    
+
     /* Output samples. */
-    static float y[NCoef+1]; 
-    
+    static float y[NCoef+1];
+
     /* Input samples.  */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -196,11 +196,11 @@ float float_api_filters_iir_gyro_x(float float_new_sample)
         -0.35368582226312562000f,
         0.05438080336347629600f
     };
-    
+
     /* output samples*/
-    static float y[NCoef+1]; 
+    static float y[NCoef+1];
     /* input samples */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -237,11 +237,11 @@ float float_api_filters_iir_gyro_y(float float_new_sample)
         -0.35368582226312562000f,
         0.05438080336347629600f
     };
-    
+
     /* output samples*/
-    static float y[NCoef+1]; 
+    static float y[NCoef+1];
     /* input samples */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -278,11 +278,11 @@ float float_api_filters_iir_gyro_z(float float_new_sample)
         -0.35368582226312562000f,
         0.05438080336347629600f
     };
-    
+
     /* output samples*/
-    static float y[NCoef+1]; 
+    static float y[NCoef+1];
     /* input samples */
-    static float x[NCoef+1]; 
+    static float x[NCoef+1];
     int n;
 
     /* shift the old samples */
@@ -301,6 +301,197 @@ float float_api_filters_iir_gyro_z(float float_new_sample)
     }
     return y[0];
 }
+
+#define ARRAY_SIZE 400U
+/* Middle average. */
+float float_api_filters_ma_acc_x(float float_new_sample)
+{
+    /* Input samples.  */
+    const uint16_t u16_samples = ARRAY_SIZE;
+    static float float_x[ARRAY_SIZE];
+    static float float_summ = 0;
+    static uint16_t   u16_n = 0U;
+    float float_y;
+
+    float_summ = float_summ - float_x[u16_n] + float_new_sample;
+    float_x[u16_n] = float_new_sample;
+    u16_n = u16_n + 1U;
+    if(u16_n >= ARRAY_SIZE)
+    {
+        u16_n = 0U;
+    }
+    float_y = float_summ / ((float)u16_samples);
+    return (float_y);
+}
+
+float float_api_filters_ma_acc_y(float float_new_sample)
+{
+    /* Input samples.  */
+    const uint16_t u16_samples = ARRAY_SIZE;
+    static float float_x[ARRAY_SIZE];
+    static float float_summ = 0;
+    static uint16_t   u16_n = 0U;
+    float float_y;
+
+    float_summ = float_summ - float_x[u16_n] + float_new_sample;
+    float_x[u16_n] = float_new_sample;
+    u16_n = u16_n + 1U;
+    if(u16_n >= ARRAY_SIZE)
+    {
+        u16_n = 0U;
+    }
+    float_y = float_summ / ((float)u16_samples);
+    return (float_y);
+}
+
+float float_api_filters_ma_acc_z(float float_new_sample)
+{
+    /* Input samples.  */
+    const uint16_t u16_samples = ARRAY_SIZE;
+    static float float_x[ARRAY_SIZE];
+    static float float_summ = 0;
+    static uint16_t   u16_n = 0U;
+    float float_y;
+
+    float_summ = float_summ - float_x[u16_n] + float_new_sample;
+    float_x[u16_n] = float_new_sample;
+    u16_n = u16_n + 1U;
+    if(u16_n >= ARRAY_SIZE)
+    {
+        u16_n = 0U;
+    }
+    float_y = float_summ / ((float)u16_samples);
+    return (float_y);
+}
+
+/*Acc 1Hz filter. */
+float float_api_filters_iir_acc_x_1Hz(float float_new_sample)
+{
+    float ACoef[NCoef+1] = {
+        0.00000002238270019847f,
+        0.00000008953080079387f,
+        0.00000013429620119081f,
+        0.00000008953080079387f,
+        0.00000002238270019847f
+    };
+
+    float BCoef[NCoef+1] = {
+        1.00000000000000000000f,
+        -3.93432582079873730000f,
+        5.80512542105514040000f,
+        -3.80723245722885120000f,
+        0.93643324315201870000f
+    };
+
+    /* Output samples. */
+    static float y[NCoef+1];
+
+    /* Input samples.  */
+    static float x[NCoef+1];
+    int n;
+
+    /* shift the old samples */
+    for(n = NCoef; n > 0; n--)
+    {
+       x[n] = x[n-1];
+       y[n] = y[n-1];
+    }
+
+    /* Calculate the new output */
+    x[0] = float_new_sample;
+    y[0] = ACoef[0] * x[0];
+    for(n = 1; n <= NCoef; n++)
+    {
+        y[0] += ACoef[n] * x[n] - BCoef[n] * y[n];
+    }
+    return y[0];
+}
+
+float float_api_filters_iir_acc_y_1Hz(float float_new_sample)
+{
+    float ACoef[NCoef+1] = {
+        0.00000002238270019847f,
+        0.00000008953080079387f,
+        0.00000013429620119081f,
+        0.00000008953080079387f,
+        0.00000002238270019847f
+    };
+
+    float BCoef[NCoef+1] = {
+        1.00000000000000000000f,
+        -3.93432582079873730000f,
+        5.80512542105514040000f,
+        -3.80723245722885120000f,
+        0.93643324315201870000f
+    };
+
+    /* Output samples. */
+    static float y[NCoef+1];
+
+    /* Input samples.  */
+    static float x[NCoef+1];
+    int n;
+
+    /* shift the old samples */
+    for(n = NCoef; n > 0; n--)
+    {
+       x[n] = x[n-1];
+       y[n] = y[n-1];
+    }
+
+    /* Calculate the new output */
+    x[0] = float_new_sample;
+    y[0] = ACoef[0] * x[0];
+    for(n = 1; n <= NCoef; n++)
+    {
+        y[0] += ACoef[n] * x[n] - BCoef[n] * y[n];
+    }
+    return y[0];
+}
+
+float float_api_filters_iir_acc_z_1Hz(float float_new_sample)
+{
+    float ACoef[NCoef+1] = {
+        0.00000002238270019847f,
+        0.00000008953080079387f,
+        0.00000013429620119081f,
+        0.00000008953080079387f,
+        0.00000002238270019847f
+    };
+
+    float BCoef[NCoef+1] = {
+        1.00000000000000000000f,
+        -3.93432582079873730000f,
+        5.80512542105514040000f,
+        -3.80723245722885120000f,
+        0.93643324315201870000f
+    };
+
+    /* Output samples. */
+    static float y[NCoef+1];
+
+    /* Input samples.  */
+    static float x[NCoef+1];
+    int n;
+
+    /* shift the old samples */
+    for(n = NCoef; n > 0; n--)
+    {
+       x[n] = x[n-1];
+       y[n] = y[n-1];
+    }
+
+    /* Calculate the new output */
+    x[0] = float_new_sample;
+    y[0] = ACoef[0] * x[0];
+    for(n = 1; n <= NCoef; n++)
+    {
+        y[0] += ACoef[n] * x[n] - BCoef[n] * y[n];
+    }
+    return y[0];
+}
+
+
 
 
 

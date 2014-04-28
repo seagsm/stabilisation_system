@@ -41,7 +41,8 @@ void api_end_device_update(void)
         /* i32_motor[0] = i32_throttle - i32_Pitch; */
 
         i32_motor[1] = i32_throttle - i32_Roll - (i32_Pitch * 2) / 3;
-        i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3;
+        /*i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3;*/
+        i32_motor[2] = i32_throttle - (i32_Pitch * 4)/3;
 
         i32_motor[0] = constrain_i32(i32_motor[0],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
         i32_motor[1] = constrain_i32(i32_motor[1],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
