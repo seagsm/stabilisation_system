@@ -2,13 +2,15 @@
 #define BOARD_FLASH_H 1
 
 #include "stm32f10x.h"
+/* #include "stm32f10x_gpio.h" */
+/* #include "stm32f10x_rcc.h"  */
 #include "board_system_type.h"
 
 #define FLASH_KEY1      ((uint32_t)0x45670123)
 #define FLASH_KEY2      ((uint32_t)0xCDEF89AB)
 #define FLASH_PAGE      ((uint8_t)0x7F)
 
-uint8_t u8_board_flash_ready(void);
+static uint8_t u8_board_flash_ready(void);
 void board_flash_erase_page(uint32_t u32_address);
 void board_flash_unlock(void);
 void board_flash_lock(void); 

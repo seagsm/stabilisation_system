@@ -197,11 +197,11 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -274,7 +274,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1890,6 +1890,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_filters.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_flash.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_flash.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.c</name>

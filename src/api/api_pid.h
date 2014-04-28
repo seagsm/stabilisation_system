@@ -7,14 +7,12 @@
 #include "board_ppm.h"
 #include "api_body_angle_calculation.h"
 
-
-
 /* in 0.1 degree , 1000 = 100degree, 450 = 45 degree. */
 #define MAX_ANGLE_INCLINATION 450
 
 /* Pitch */
-#define PITCH_P_GAIN        35
-#define PITCH_P_GAIN_DYN    150
+#define PITCH_P_GAIN        32
+#define PITCH_P_GAIN_DYN    100
 #define PITCH_I_GAIN        0
 #define PITCH_I_GAIN_DYN    0
 #define PITCH_I_MIN        -10000
@@ -22,8 +20,8 @@
 #define PITCH_D_GAIN        0
 #define PITCH_D_GAIN_DYN    0
 /* ROll */
-#define ROLL_P_GAIN         35
-#define ROLL_P_GAIN_DYN     150
+#define ROLL_P_GAIN         32
+#define ROLL_P_GAIN_DYN     100
 #define ROLL_I_GAIN         0
 #define ROLL_I_GAIN_DYN     0
 #define ROLL_I_MIN         -10000
@@ -32,7 +30,7 @@
 #define ROLL_D_GAIN_DYN     0
 /* Yaw */
 #define YAW_P_GAIN          0
-#define YAW_P_GAIN_DYN      150
+#define YAW_P_GAIN_DYN      100
 #define YAW_I_GAIN          0
 #define YAW_I_GAIN_DYN      0
 #define YAW_I_MIN          -10000
@@ -45,8 +43,8 @@
 
 enum
 {
-  Pitch = 1,
   Roll  = 0,
+  Pitch = 1,
   Yaw   = 2
 };
 

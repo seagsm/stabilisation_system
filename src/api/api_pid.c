@@ -1,14 +1,27 @@
 
 #include "api_pid.h"
 
+#include "api_flash.h"
+
 PID_element pid_api_pid_data[3];
 
 /* Call it to initialize PID structures. */
 void api_pid_init(void)
 {
-    api_pid_init_Pitch();
-    api_pid_init_Roll();
-    api_pid_init_Yaw();
+    uint32_t u32_CRC;
+      
+    u32_CRC = gu32_api_flash_config_CRC32((uint32_t)&api_flash_configuration);
+    if((api_flash_configuration.u32_data_is_valid == DATA_IS_VALID)&&(u32_CRC == api_flash_configuration.u32_data_CRC))
+    {
+        /* If CRC is OK : */ 
+        /* Load configuration from flash. */
+    }  
+    else
+    {
+        api_pid_init_Pitch();
+        api_pid_init_Roll();
+        api_pid_init_Yaw();
+    }
 }
 
 /* Default Pitch PID value. */

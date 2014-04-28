@@ -3,16 +3,14 @@
 #include "board_flash.h"
 
 
-#include "stm32f10x.h"
-#include "stm32f10x_gpio.h"
-#include "stm32f10x_rcc.h"
+
 
 /*
 uint8_t flash_ready(void) {
         return !(FLASH->SR & FLASH_SR_BSY);
 }
 */
-uint8_t u8_board_flash_ready(void) 
+static uint8_t u8_board_flash_ready(void) 
 {
     uint8_t u8_exit_code;
     /* Get flash busy bit. ( 1 is busy) */
@@ -79,12 +77,12 @@ void board_flash_write_variables(uint8_t u8_var0, uint8_t u8_var1, uint8_t u8_va
 {
     uint32_t u32_wr_data = 0U; 
         
-    u32_wr_data = (uint32_t)u8_var3<<24;
+    u32_wr_data =     (uint32_t)u8_var3<<24;
     u32_wr_data = u32_wr_data + u8_var2<<16; 
     u32_wr_data = u32_wr_data + u8_var1<<8;
     u32_wr_data = u32_wr_data + u8_var0;
 
-    /* Calculating saddress of wrining to page 127, defined in H file. */
+    /* Calculating start address of wrining to page 127, defined in H file. */
     uint32_t u32_st_address = FLASH_BASE + FLASH_PAGE * 1024U;
     uint16_t u16_tmp;
 
