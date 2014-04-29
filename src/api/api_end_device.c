@@ -38,10 +38,7 @@ void api_end_device_update(void)
     else
     {   /* Tricopter configuration. */
         i32_motor[0] = i32_throttle + i32_Roll - (i32_Pitch * 2) / 3;
-        /* i32_motor[0] = i32_throttle - i32_Pitch; */
-
         i32_motor[1] = i32_throttle - i32_Roll - (i32_Pitch * 2) / 3;
-        /*i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3;*/
         i32_motor[2] = i32_throttle - (i32_Pitch * 4)/3;
 
         i32_motor[0] = constrain_i32(i32_motor[0],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
@@ -49,20 +46,17 @@ void api_end_device_update(void)
         i32_motor[2] = constrain_i32(i32_motor[2],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
     }
 
-
     /* Calculate value for cource stabilisation servo. */
     /* i32_servo = BOARD_PPM_ZERO_VALUE + i32_Yaw; */
     i32_servo = (int32_t)bc_channel_value_structure.u16_channel_1_value + i32_Yaw;
     i32_servo = constrain_i32(i32_servo,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
 
+    /* For information purpose only.*/
+    float_api_common_motors[0] = (float)i32_motor[0];
+    float_api_common_motors[1] = (float)i32_motor[1];
+    float_api_common_motors[2] = (float)i32_motor[2];
+
     /* Drive end devices. */
-    /* Test motor. */
-    /* timer2_PWM_duty_CH1((uint16_t)i32_motor[0]);*/
-    /* Test servo.*/
-    /* timer2_PWM_duty_CH2((uint16_t)i32_motor[1]); */
-
-
-
     timer2_PWM_duty_CH1((uint16_t)i32_motor[0]);
     timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);
     timer2_PWM_duty_CH3((uint16_t)i32_motor[2]);

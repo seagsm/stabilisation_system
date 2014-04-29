@@ -6,9 +6,6 @@
 BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_gyro_data;
 BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_acce_data;
 
-BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_out_acce_data;
-
-
 static BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_magn_data;
 
 /* Calculation of GYRO normalising coefficient to have degre per second (dps). */
@@ -20,10 +17,14 @@ void v_api_data_normalising_gyro(void)
     b_float3d_api_data_norm_gyro_data.fl_X = (float)bi163d_api_data_prepr_gyro_raw_data.i16_X * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Y = (float)bi163d_api_data_prepr_gyro_raw_data.i16_Y * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Z = (float)bi163d_api_data_prepr_gyro_raw_data.i16_Z * f_gyro_rate;
-
+/*
     b_float3d_api_data_norm_gyro_data.fl_X = -deg2rad(b_float3d_api_data_norm_gyro_data.fl_X);
     b_float3d_api_data_norm_gyro_data.fl_Y = -deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y);
     b_float3d_api_data_norm_gyro_data.fl_Z =  deg2rad(b_float3d_api_data_norm_gyro_data.fl_Z);
+*/
+    b_float3d_api_data_norm_gyro_data.fl_X = -b_float3d_api_data_norm_gyro_data.fl_X;
+    b_float3d_api_data_norm_gyro_data.fl_Y = -b_float3d_api_data_norm_gyro_data.fl_Y;
+    b_float3d_api_data_norm_gyro_data.fl_Z =  b_float3d_api_data_norm_gyro_data.fl_Z;
 }
 
 void v_api_data_normalising_acce(void)

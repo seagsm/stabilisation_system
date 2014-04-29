@@ -455,13 +455,33 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
             break;
         case 0x0056U:
             /* board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_X);*/
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_out_acce_data.fl_X);
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_X);
             break;
         case 0x0057U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_out_acce_data.fl_Y);
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Y);
             break;
         case 0x0058U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_out_acce_data.fl_Z);
+            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Z);
+            break;
+        /* Motors output. */
+        case 0x0161U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_motors[0]);
+            break;
+        case 0x0162U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_motors[1]);
+            break;
+        case 0x0163U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_motors[2]);
+            break;
+        /* Test output. */
+        case 0x0171U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_variables[0]);
+            break;
+        case 0x0172U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_variables[1]);
+            break;
+        case 0x0173U:
+            board_dma_send_answer_float(u16_data_id, float_api_common_variables[2]);
             break;
         default:
             be_result = BOARD_ERR_ID;
