@@ -1926,15 +1926,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MahonyAHRS.c</name>
-        <excluded>
-          <configuration>Debug</configuration>
-        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MahonyAHRS.h</name>
-        <excluded>
-          <configuration>Debug</configuration>
-        </excluded>
       </file>
     </group>
     <group>

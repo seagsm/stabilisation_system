@@ -48,6 +48,7 @@ BOARD_ERROR be_api_body_angle_calculation(void)
     b_float3d_api_data_norm_gyro_data.fl_Z = float_api_filters_iir_gyro_z(b_float3d_api_data_norm_gyro_data.fl_Z);
 
     /* Calculation of body quaternion. */
+#if 1    
     be_result = madgwick_AccGyro(
                                     deg2rad(b_float3d_api_data_norm_gyro_data.fl_X),
                                     deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y),
@@ -56,6 +57,16 @@ BOARD_ERROR be_api_body_angle_calculation(void)
                                     b_float3d_api_data_norm_acce_data.fl_Y,
                                     b_float3d_api_data_norm_acce_data.fl_Z
                                 );
+#else    
+    be_result = mahony_update_AccGyro(
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_X),
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y),
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_Z),
+                                        b_float3d_api_data_norm_acce_data.fl_X,
+                                        b_float3d_api_data_norm_acce_data.fl_Y,
+                                        b_float3d_api_data_norm_acce_data.fl_Z
+                                     );
+#endif    
 
     /* Calculation of body wind angles. */
     be_result |= be_api_body_angle_QuaternionToWindAngles();
