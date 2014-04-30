@@ -1,0 +1,126 @@
+
+ 
+ COMMON PDF:
+  [0x000E] Write all PDF coefficients.
+  [0x000F] Read all PDF coefficients.
+ 
+Pitch PDF coefficients:
+  [0x0010] Proportional,(r/w)
+  [0x0011] Proportional Dynamic,(r/w)
+  [0x0012] Integral,(r/w)
+  [0x0013] Differential,(r/w)
+  [0x0014] Integral MIN  value,(r/w)
+  [0x0015] Integral MAX value,(r/w)
+ 
+  [0x001E] Write all Pitch coeff,(write only)
+  [0x001F] Read all Pitch coeff,(read only)
+ 
+ Roll PDF coefficients:
+  [0x0020] Proportional,(r/w)
+  [0x0021] Proportional Dynamic,(r/w)
+  [0x0022] Integral,(r/w)
+  [0x0023] Differential,(r/w)
+  [0x0024] Integral MIN  value,(r/w)
+  [0x0025] Integral MAX value,(r/w)
+ 
+  [0x002E] Write all Roll coeff,(write only)
+  [0x002F] Read all Roll coeff,(read only)
+ 
+ Yaw PDF coefficients:
+  [0x0030] Proportional,(r/w)
+  [0x0031] Proportional Dynamic,(r/w)
+  [0x0032] Integral,(r/w)
+  [0x0033] Differential,(r/w)
+  [0x0034] Integral MIN  value,(r/w)
+  [0x0035] Integral MAX value,(r/w)
+ 
+  [0x003E] Write all Yaw coeff,(write only)
+  [0x003F] Read all Yaw coeff,(r/w)
+ 
+ 
+  Gyro :
+  [0x0040] Pitch Polarity(Matrix),(r/w)
+  [0x0041] Roll Polarity  (Matrix),(r/w)
+  [0x0042] Yaw Polarity  (Matrix),(r/w)
+  [0x0043] Pitch raw,(read only)
+  [0x0044] Roll raw,(read only)
+  [0x0045] Yaw raw,(read only)
+  [0x0046] Pitch Angle speed,(read only)
+  [0x0047] Roll Angle speed,(read only)
+  [0x0048] Yaw Angle speed,(read only)
+  [0x004D] Read PitchRollYaw raw, (read only)
+  [0x004E] Read PitchRollYaw speed, (read only)
+  [0x004F] Read all Gyro data,( read only )
+ 
+  Acceleration:
+  [0x0050] X axis Polarity,(Matrix)
+  [0x0051] Y axis Polarity,(Matrix)
+  [0x0052] Z axis Polarity.(Matrix)
+  [0x0053] X axis raw. (read only)
+  [0x0054] Y axis raw. (read only)
+  [0x0055] Z axis raw. (read only)
+  [0x0056] X axis fitted. (read only)
+  [0x0057] Y axis fitted. (read only)
+  [0x0058] Z axis fitted. (read only)
+  [0x005D] Read XYZ raw, (read only)
+  [0x005E] Read XYZ fitted, (read only)
+  [0x005F] Read all acceleration data, (read only)
+ 
+Place for Magn,GPS,BaroAlt,BaroSpeed...
+ 
+  [0x00FA] Read system time, (read only)
+  [0x00FB] Read all sensor raw data, (read only)
+  [0x00FC] Read all sensor raw data with system time, (read only)
+  [0x00FD] Read all sensor fitted data, (read only)
+  [0x00FE] Read all sensor fitted data with system time,  (read only)
+  [0x00FF] Read all sensor data, (read only)
+ 
+ Exponenta ON/OFF:
+  [0x0101] Rc Throttle
+  [0x0102] Rc Pitch
+  [0x0103] Rc Roll
+  [0x0104] Rc Yaw
+ 
+RC input polarity:
+  [0x0111] Rc Pitch,
+  [0x0112] Rc Roll,
+  [0x0113] Rc Yaw
+  
+ End device polarity:
+  [0x0114] Motor Left,
+  [0x0115] Motor Right,
+  [0x0116] Motor Back
+  [0x0117] Direction Servo.
+ 
+ Quaternion:
+ 
+  [0x0120] Read body quaternion,(read only)
+  [0x0121] Read body quaternion q0   ,(read only)
+  [0x0122] Read body quaternion q1   ,(read only)
+  [0x0123] Read body quaternion q2   ,(read only)
+  [0x0124] Read body quaternion q3   ,(read only)
+ 
+Wind angles:
+  [0x0140] Read body wind angles,(read only)
+  [0x0141] Read body wind angles, alfa         ,(read only)
+  [0x0142] Read body wind angles, betta       ,(read only)
+  [0x0143] Read body wind angles, gamma  ,(read only)
+ 
+PDF output:
+  [0x0150] Read PDF output,(read only)
+  [0x0151] Read Pitch PID output.
+  [0x0152] Read Roll  PID output.
+  [0x0153] Read Yaw  PID output.
+ 
+End devices:
+  [0x0160] Read data for end point devices,(read only)
+  [0x0161] Read Motor[0].
+  [0x0162] Read Motor[1].
+  [0x0163] Read Motor[2].
+ 
+Test variables.   (this are used for test purpose. )  
+  [0x0170]  Read all (REAL32)
+  [0x0171]  Read VAR[0].
+  [0x0172]  Read VAR[1].
+  [0x0173]  Read VAR[2].
+ 
