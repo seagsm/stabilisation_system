@@ -4,6 +4,10 @@
 
 static void v_api_main_loop_process(void)
 {
+    static uint8_t u8_calibration = 0U;
+    static uint16_t u16_calibration_counter = 0U;
+    static int32_t i32_calibration_summ[3] = {0};
+
     if(api_i2c_data.u8_ready == 1U)
     {
         /* Convertind data from raw data array to sensors raw data. */
@@ -12,12 +16,33 @@ static void v_api_main_loop_process(void)
         /* Start data acquisition. */
         be_api_i2c_acquisition_start();
 
-        /* Convert raw sensor data to float. */
-        v_api_data_normalising();
+        /* Calibration gyro. */
+        if(u8_calibration == 0U)
+        { /* bi163d_api_data_gyro_calibration_data; */
 
-        /* Start control frame. */
-        v_api_main_loop_control_loop();
+            i32_calibration_summ[0] = i32_calibration_summ[0] + bi163d_api_data_prepr_gyro_raw_data.i16_X;
+            i32_calibration_summ[1] = i32_calibration_summ[1] + bi163d_api_data_prepr_gyro_raw_data.i16_Y;
+            i32_calibration_summ[2] = i32_calibration_summ[2] + bi163d_api_data_prepr_gyro_raw_data.i16_Z;
+            u16_calibration_counter++;
+            if(u16_calibration_counter >= CALIBRATION_COUNT)
+            {
+                i32_calibration_summ[0] = i32_calibration_summ[0] / (int32_t)CALIBRATION_COUNT;
+                i32_calibration_summ[1] = i32_calibration_summ[1] / (int32_t)CALIBRATION_COUNT;
+                i32_calibration_summ[2] = i32_calibration_summ[2] / (int32_t)CALIBRATION_COUNT;
+                bi163d_api_data_gyro_calibration_data.i16_X = (int16_t)i32_calibration_summ[0] / 2;
+                bi163d_api_data_gyro_calibration_data.i16_Y = (int16_t)i32_calibration_summ[1] / 2;
+                bi163d_api_data_gyro_calibration_data.i16_Z = (int16_t)(i32_calibration_summ[2]/ 2);
+                u8_calibration = 1U;
+            }
+        }
+        else
+        {
+            /* Convert raw sensor data to float. */
+            v_api_data_normalising();
 
+            /* Start control frame. */
+            v_api_main_loop_control_loop();
+        }
         /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
         be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
 

@@ -2,6 +2,8 @@
 #include "api_data_preprocessing.h"
 
 BOARD_I16_3X_DATA       bi163d_api_data_prepr_gyro_raw_data;
+BOARD_I16_3X_DATA       bi163d_api_data_prepr_out_gyro_raw_data;
+BOARD_I16_3X_DATA       bi163d_api_data_gyro_calibration_data;
 BOARD_I16_3X_DATA       bi163d_api_data_prepr_acce_raw_data;
 BOARD_I16_3X_DATA       bi163d_api_data_prepr_magn_raw_data;
 

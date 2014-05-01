@@ -425,13 +425,13 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
 
         /* Gyro sensor. */
         case 0x0043U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_X);
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_X);
             break;
         case 0x0044U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_Y);
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Y);
             break;
         case 0x0045U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_gyro_raw_data.i16_Z);
+            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Z);
             break;
         case 0x0046U:
             board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_X);

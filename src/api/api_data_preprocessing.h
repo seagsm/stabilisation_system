@@ -6,6 +6,8 @@
 #include "api_data_normalising.h"
 
 extern  BOARD_I16_3X_DATA bi163d_api_data_prepr_gyro_raw_data;
+extern  BOARD_I16_3X_DATA bi163d_api_data_prepr_out_gyro_raw_data;
+extern  BOARD_I16_3X_DATA bi163d_api_data_gyro_calibration_data;
 extern  BOARD_I16_3X_DATA bi163d_api_data_prepr_acce_raw_data;
 extern  BOARD_I16_3X_DATA bi163d_api_data_prepr_magn_raw_data;
 

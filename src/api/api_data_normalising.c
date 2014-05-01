@@ -14,14 +14,21 @@ static float f_gyro_rate = 0.00875 * (float)( 1U << ((BOARD_DRV_GYRO_RATE >> 4) 
 
 void v_api_data_normalising_gyro(void)
 {
+    /* Calibration. */
+    bi163d_api_data_prepr_gyro_raw_data.i16_X = bi163d_api_data_prepr_gyro_raw_data.i16_X - bi163d_api_data_gyro_calibration_data.i16_X;
+    bi163d_api_data_prepr_gyro_raw_data.i16_Y = bi163d_api_data_prepr_gyro_raw_data.i16_Y - bi163d_api_data_gyro_calibration_data.i16_Y;
+    bi163d_api_data_prepr_gyro_raw_data.i16_Z = bi163d_api_data_prepr_gyro_raw_data.i16_Z - bi163d_api_data_gyro_calibration_data.i16_Z;
+
+    /* Set output data. */
+    bi163d_api_data_prepr_out_gyro_raw_data.i16_X = bi163d_api_data_prepr_gyro_raw_data.i16_X;
+    bi163d_api_data_prepr_out_gyro_raw_data.i16_Y = bi163d_api_data_prepr_gyro_raw_data.i16_Y;
+    bi163d_api_data_prepr_out_gyro_raw_data.i16_Z = bi163d_api_data_prepr_gyro_raw_data.i16_Z;
+
+    /* Normalizing.*/
     b_float3d_api_data_norm_gyro_data.fl_X = (float)bi163d_api_data_prepr_gyro_raw_data.i16_X * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Y = (float)bi163d_api_data_prepr_gyro_raw_data.i16_Y * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Z = (float)bi163d_api_data_prepr_gyro_raw_data.i16_Z * f_gyro_rate;
-/*
-    b_float3d_api_data_norm_gyro_data.fl_X = -deg2rad(b_float3d_api_data_norm_gyro_data.fl_X);
-    b_float3d_api_data_norm_gyro_data.fl_Y = -deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y);
-    b_float3d_api_data_norm_gyro_data.fl_Z =  deg2rad(b_float3d_api_data_norm_gyro_data.fl_Z);
-*/
+    /* Fitting to axis. */
     b_float3d_api_data_norm_gyro_data.fl_X = -b_float3d_api_data_norm_gyro_data.fl_X;
     b_float3d_api_data_norm_gyro_data.fl_Y = -b_float3d_api_data_norm_gyro_data.fl_Y;
     b_float3d_api_data_norm_gyro_data.fl_Z =  b_float3d_api_data_norm_gyro_data.fl_Z;
