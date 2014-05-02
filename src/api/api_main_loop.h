@@ -17,7 +17,6 @@
  * than sensor data acquisition time (2.7mSec)
  */
 #define PERIOD_OF_MAIN_LOOP 4000U /* 3000 - 3mSec, 4000 - 4mSec. */
-#define CALIBRATION_COUNT   1000U
 
 BOARD_ERROR be_api_main_loop_init(void);
 BOARD_ERROR be_api_main_loop_start(void);

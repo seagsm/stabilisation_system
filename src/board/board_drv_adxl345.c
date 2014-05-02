@@ -17,16 +17,21 @@ BOARD_I32_3X_DATA accelSummedSamples100Hz;
 
 BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
+#if USE_ACCEL_RT_BIAS  
 static BOARD_I16_3X_DATA rawAccel;
+#endif
 
-/* Compute Accel Runtime Bias */
+/* Function compute accel Runtime Bias */
 static void computeAccelRTBias(void)
 {
+#if USE_ACCEL_RT_BIAS  
     uint16_t samples;
     BOARD_FLOAT_3X_DATA accelSum = { 0.0f, 0.0f, 0.0f};
 
     u8_accelCalibrating = 1U;
 
+/* Finaly accel calibration looks useless because later accel data used normalised only. */    
+/* Accel calibration is ON. */
     for (samples = 0U; samples < 2000U; samples++ )
     {
         board_drv_adxl345_read();
@@ -41,22 +46,29 @@ static void computeAccelRTBias(void)
     accelRTBias.fl_X =  accelSum.fl_X / 2000.0f;
     accelRTBias.fl_Y =  accelSum.fl_Y / 2000.0f;
     accelRTBias.fl_Z = (accelSum.fl_Z / 2000.0f) - 256.0f; /* 256 is 9.8 m/c^2 */
-
     u8_accelCalibrating = 0U;
+#else
+    accelRTBias.fl_X = 0.0f;
+    accelRTBias.fl_Y = 0.0f;
+    accelRTBias.fl_Z = 0.0f;   
+#endif    
 }
 
-/* Read Accelerometer. */
+/* Function read accelerometer. */
 BOARD_ERROR  board_drv_adxl345_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     uint8_t u8_buffer[6];
+    
+#if USE_ACCEL_RT_BIAS     
     int16_t i16_i;
     uint16_t u16_lsb,u16_msb;
     uint16_t u16_i;
-
+#endif
+    
     be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
-#if 1
+#if USE_ACCEL_RT_BIAS 
     /* In this version data returned through board_i2c_sensor_data structure. */
     u16_lsb = ((board_i2c_sensor_data.u16_X >> 8U )&0x00FFU);
     u16_msb = ((board_i2c_sensor_data.u16_X << 8U )&0xFF00U);
@@ -80,7 +92,7 @@ BOARD_ERROR  board_drv_adxl345_read(void)
     return (be_result);
 }
 
-/* Accel Initialization */
+/* Function do accel initialization. */
 BOARD_ERROR  board_drv_adxl345_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -97,13 +109,7 @@ BOARD_ERROR  board_drv_adxl345_init(void)
 
     gv_board_sys_tick_fast_delay(100U);
 
-#if USE_ACCEL_RT_BIAS
     computeAccelRTBias();
-#else
-    accelRTBias.fl_X = 0.0f;
-    accelRTBias.fl_Y = 0.0f;
-    accelRTBias.fl_Z = 0.0f;
-#endif
 
     return (be_result);
 }

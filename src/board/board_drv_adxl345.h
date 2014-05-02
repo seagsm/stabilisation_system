@@ -8,12 +8,13 @@
 #include "board_i2c.h"
 
 
-/* Address */
-#define USE_ACCEL_RT_BIAS   1
+
+#define USE_ACCEL_RT_BIAS   0
+
 /* #define ADXL345_ADDRESS 0x53U*/
 #define ADXL345_ADDRESS 0xA7U
-/* Registers */
 
+/* Registers */
 #define ADXL345_OFSX        0x1EU
 #define ADXL345_OFSY        0x1FU
 #define ADXL345_OFSZ        0x20U

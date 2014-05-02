@@ -5,8 +5,6 @@
 static void v_api_main_loop_process(void)
 {
     static uint8_t u8_calibration = 0U;
-    static uint16_t u16_calibration_counter = 0U;
-    static int32_t i32_calibration_summ[3] = {0};
 
     if(api_i2c_data.u8_ready == 1U)
     {
@@ -18,22 +16,9 @@ static void v_api_main_loop_process(void)
 
         /* Calibration gyro. */
         if(u8_calibration == 0U)
-        { /* bi163d_api_data_gyro_calibration_data; */
-
-            i32_calibration_summ[0] = i32_calibration_summ[0] + bi163d_api_data_prepr_gyro_raw_data.i16_X;
-            i32_calibration_summ[1] = i32_calibration_summ[1] + bi163d_api_data_prepr_gyro_raw_data.i16_Y;
-            i32_calibration_summ[2] = i32_calibration_summ[2] + bi163d_api_data_prepr_gyro_raw_data.i16_Z;
-            u16_calibration_counter++;
-            if(u16_calibration_counter >= CALIBRATION_COUNT)
-            {
-                i32_calibration_summ[0] = i32_calibration_summ[0] / (int32_t)CALIBRATION_COUNT;
-                i32_calibration_summ[1] = i32_calibration_summ[1] / (int32_t)CALIBRATION_COUNT;
-                i32_calibration_summ[2] = i32_calibration_summ[2] / (int32_t)CALIBRATION_COUNT;
-                bi163d_api_data_gyro_calibration_data.i16_X = (int16_t)i32_calibration_summ[0] / 2;
-                bi163d_api_data_gyro_calibration_data.i16_Y = (int16_t)i32_calibration_summ[1] / 2;
-                bi163d_api_data_gyro_calibration_data.i16_Z = (int16_t)(i32_calibration_summ[2]/ 2);
-                u8_calibration = 1U;
-            }
+        { 
+            /* callibration function will be called CALIBRATION_COUNT time to calculate callibration values. */
+            u8_calibration = v_api_data_normalising_gyro_calibration();
         }
         else
         {
