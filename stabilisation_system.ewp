@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.40.5.54273</state>
+          <state>6.40.3.54103</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1917,6 +1917,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_pid.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_rx_channels.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_rx_channels.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>

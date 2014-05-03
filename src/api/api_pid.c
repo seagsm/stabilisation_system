@@ -115,12 +115,12 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     */
 
     /* Angle speed proportional stabilisation */
-     
-    i32_p_term = i32_p_term - (i32_angle_speed * current_pid->i32_p_dyn_gain)/80/14; /* +- 5000 * 40 /80/14 = +-178 */  
+
+    i32_p_term = i32_p_term - (i32_angle_speed * current_pid->i32_p_dyn_gain)/80/14; /* +- 5000 * 40 /80/14 = +-178 */
 
     /* Integration. */
     current_pid->i32_i_state = constrain_i32(current_pid->i32_i_state + i32_position_error, current_pid->i32_i_min, current_pid->i32_i_max);
-    
+
     /* Calculation i_term. */
     i32_i_term = (current_pid->i32_i_state * current_pid->i32_i_gain)/4096; /* pid->i_gain arround 13,so resul arround +- 30. */
 
@@ -155,12 +155,18 @@ void api_pid_update_frame(void)
 
     /* Convert channel value to int32. */
     i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_2_value;      /* value between 1000 - 2000  */
+/*
+    TEST
+ */
+    /* i32_rc_chanel_value = 1500; */
+
 
     /* Get deviation from ZERO value. */
-    i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE;  /* value between -500 + 500  */
+    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE; */  /* value between -500 + 500  */
+    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
 
     /* Convert body inclination from degree to 0.1 degree. ( 10degree = 100(0.1degree))*/
-    f_body_angle        = fl_api_body_angle_wind_angles[Pitch] * 10.0f; 
+    f_body_angle        = fl_api_body_angle_wind_angles[Pitch] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;        /* value between -1800 + 1800 */
 
     /* Convert body angle speed from degree/sec to 0.1 degree/sec. */
@@ -173,7 +179,13 @@ void api_pid_update_frame(void)
     /* Calculation of Roll PDF frame. */
     i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_4_value;
 
-    i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE;
+/*
+    TEST
+ */
+   /*  i32_rc_chanel_value =1500; */
+
+    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE;*/
+    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
 
     f_body_angle        = fl_api_body_angle_wind_angles[Roll] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;

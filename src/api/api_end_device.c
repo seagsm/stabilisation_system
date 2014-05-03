@@ -29,6 +29,13 @@ void api_end_device_update(void)
         For some condition without it possible problems during start of motors.
     */
     i32_throttle = (int32_t)bc_channel_value_structure.u16_channel_3_value;
+
+    float_api_common_variables[0] = (float)i32_throttle;
+
+    i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
+
+    float_api_common_variables[1] = (float)i32_throttle;
+
     if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
     {
         i32_motor[0] = i32_throttle;

@@ -38,3 +38,25 @@ int32_t constrain_i32(int32_t i32_x,int32_t i32_y,int32_t i32_z)
     }
     return(i32_x);
 }
+
+/* Function return minimum value of two int32. */
+int32_t min(int32_t i32_x,int32_t i32_y)
+{
+    if(i32_x > i32_y)
+    {
+        i32_x = i32_y;
+    }
+    return(i32_x);
+}
+
+int32_t abs_t(int32_t i32_x)
+{
+    if(i32_x < 0)
+    {
+        i32_x = -i32_x;
+    }
+    return(i32_x);
+}
+
+
+

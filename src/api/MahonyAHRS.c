@@ -9,7 +9,7 @@
 
   static float mahony_Ki = 0.0;
   /* float mahony_Kp = 0.1; */ /* it was exelent stable, but -+1 degree stabilisation during 1 60 seconds */
-  static float mahony_Kp = 0.5;
+  static float mahony_Kp = 0.1;
 
   static float eInt[3];
 
@@ -19,13 +19,13 @@ BOARD_ERROR mahony_update_AccGyroMag(float gx, float gy, float gz, float ax, flo
     float Ki = mahony_Ki;
     float Kp = mahony_Kp;
     float SamplePeriod;
-    
+
     /* short name local variable for readability */
     float q1 = fl_api_body_angle_quaternion[0];
     float q2 = fl_api_body_angle_quaternion[1];
     float q3 = fl_api_body_angle_quaternion[2];
-    float q4 = fl_api_body_angle_quaternion[3];   
-    
+    float q4 = fl_api_body_angle_quaternion[3];
+
     float norm;
     float hx, hy, bx, bz;
     float vx, vy, vz, wx, wy, wz;
@@ -45,7 +45,7 @@ BOARD_ERROR mahony_update_AccGyroMag(float gx, float gy, float gz, float ax, flo
     float q3q3 = q3 * q3;
     float q3q4 = q3 * q4;
     float q4q4 = q4 * q4;
-    
+
     SamplePeriod = fl_api_body_angle_sample_period;
 
     /* Normalise accelerometer measurement */
@@ -140,18 +140,18 @@ BOARD_ERROR mahony_update_AccGyroMag(float gx, float gy, float gz, float ax, flo
                 /* handle NaN. */
                  be_result = BOARD_ERR_ERROR;
             }
-        }                
+        }
         else
         {
             /* handle NaN. */
             be_result = BOARD_ERR_ERROR;
-        }  
+        }
     }
     else
     {
         /* handle NaN. */
         be_result = BOARD_ERR_ERROR;
-    }     
+    }
     return(be_result);
 }
 
@@ -184,19 +184,19 @@ BOARD_ERROR mahony_update_AccGyro(float gx, float gy, float gz, float ax, float 
     float Kp = mahony_Kp;
     float SamplePeriod;
     /* short name local variable for readability*/
-    float q1 = fl_api_body_angle_quaternion[0]; 
-    float q2 = fl_api_body_angle_quaternion[1]; 
-    float q3 = fl_api_body_angle_quaternion[2]; 
-    float q4 = fl_api_body_angle_quaternion[3];   
-    
+    float q1 = fl_api_body_angle_quaternion[0];
+    float q2 = fl_api_body_angle_quaternion[1];
+    float q3 = fl_api_body_angle_quaternion[2];
+    float q4 = fl_api_body_angle_quaternion[3];
+
     float norm;
     float vx, vy, vz;
     float ex, ey, ez;
     float pa, pb, pc;
-            
+
     float  float_tmp_0;
     double double_tmp_0;
-    
+
     SamplePeriod = fl_api_body_angle_sample_period;
 
     /* Normalise accelerometer measurement*/
@@ -271,6 +271,6 @@ BOARD_ERROR mahony_update_AccGyro(float gx, float gy, float gz, float ax, float 
     {
         /* handle NaN. */
         be_result = BOARD_ERR_ERROR;
-    }     
+    }
     return(be_result);
 }

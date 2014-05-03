@@ -19,12 +19,12 @@ uint8_t v_api_data_normalising_gyro_calibration(void)
     static uint8_t u8_calibration_flag          = 0U;
     static int32_t i32_calibration_summ[3]      = {0};
     static uint16_t u16_calibration_counter     = 0U;
-    
+
     /* Summ CALIBRATION_COUNT amount of gyro data. */
     i32_calibration_summ[0] = i32_calibration_summ[0] + bi163d_api_data_prepr_gyro_raw_data.i16_X;
     i32_calibration_summ[1] = i32_calibration_summ[1] + bi163d_api_data_prepr_gyro_raw_data.i16_Y;
     i32_calibration_summ[2] = i32_calibration_summ[2] + bi163d_api_data_prepr_gyro_raw_data.i16_Z;
-    
+
     u16_calibration_counter++;
     if((u16_calibration_counter >= CALIBRATION_COUNT)&&(u8_calibration_flag == 0U))
     {
@@ -32,11 +32,11 @@ uint8_t v_api_data_normalising_gyro_calibration(void)
         i32_calibration_summ[0] = i32_calibration_summ[0] / (int32_t)CALIBRATION_COUNT;
         i32_calibration_summ[1] = i32_calibration_summ[1] / (int32_t)CALIBRATION_COUNT;
         i32_calibration_summ[2] = i32_calibration_summ[2] / (int32_t)CALIBRATION_COUNT;
-        
+
         /* Nor recognizet yet. */
-        bi163d_api_data_gyro_calibration_data.i16_X = (int16_t)i32_calibration_summ[0] / 2;
-        bi163d_api_data_gyro_calibration_data.i16_Y = (int16_t)i32_calibration_summ[1] / 2;
-        bi163d_api_data_gyro_calibration_data.i16_Z = (int16_t)(i32_calibration_summ[2]/ 2);
+        bi163d_api_data_gyro_calibration_data.i16_X = (int16_t)i32_calibration_summ[0] ;
+        bi163d_api_data_gyro_calibration_data.i16_Y = (int16_t)i32_calibration_summ[1] ;
+        bi163d_api_data_gyro_calibration_data.i16_Z = (int16_t)i32_calibration_summ[2];
         /* Set flag callibration done. */
         u8_calibration_flag = 1U;
     }
@@ -62,7 +62,7 @@ void v_api_data_normalising_gyro(void)
     b_float3d_api_data_norm_gyro_data.fl_X = (float)i16_tmp[0] * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Y = (float)i16_tmp[1] * f_gyro_rate;
     b_float3d_api_data_norm_gyro_data.fl_Z = (float)i16_tmp[2] * f_gyro_rate;
-    
+
     /* Fitting to axis. */
     b_float3d_api_data_norm_gyro_data.fl_X = -b_float3d_api_data_norm_gyro_data.fl_X;
     b_float3d_api_data_norm_gyro_data.fl_Y = -b_float3d_api_data_norm_gyro_data.fl_Y;

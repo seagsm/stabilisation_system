@@ -17,20 +17,20 @@ BOARD_I32_3X_DATA accelSummedSamples100Hz;
 
 BOARD_I32_3X_DATA accelSummedSamples200Hz;
 
-#if USE_ACCEL_RT_BIAS  
+#if USE_ACCEL_RT_BIAS
 static BOARD_I16_3X_DATA rawAccel;
 #endif
 
 /* Function compute accel Runtime Bias */
 static void computeAccelRTBias(void)
 {
-#if USE_ACCEL_RT_BIAS  
+#if USE_ACCEL_RT_BIAS
     uint16_t samples;
     BOARD_FLOAT_3X_DATA accelSum = { 0.0f, 0.0f, 0.0f};
 
     u8_accelCalibrating = 1U;
 
-/* Finaly accel calibration looks useless because later accel data used normalised only. */    
+/* Finaly accel calibration looks useless because later accel data used normalised only. */
 /* Accel calibration is ON. */
     for (samples = 0U; samples < 2000U; samples++ )
     {
@@ -50,8 +50,8 @@ static void computeAccelRTBias(void)
 #else
     accelRTBias.fl_X = 0.0f;
     accelRTBias.fl_Y = 0.0f;
-    accelRTBias.fl_Z = 0.0f;   
-#endif    
+    accelRTBias.fl_Z = 0.0f;
+#endif
 }
 
 /* Function read accelerometer. */
@@ -60,15 +60,15 @@ BOARD_ERROR  board_drv_adxl345_read(void)
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     uint8_t u8_buffer[6];
-    
-#if USE_ACCEL_RT_BIAS     
+
+#if USE_ACCEL_RT_BIAS
     int16_t i16_i;
     uint16_t u16_lsb,u16_msb;
     uint16_t u16_i;
 #endif
-    
+
     be_result = board_i2c_read(ADXL345_ADDRESS, ADXL345_DATAX0, 6U, u8_buffer);
-#if USE_ACCEL_RT_BIAS 
+#if USE_ACCEL_RT_BIAS
     /* In this version data returned through board_i2c_sensor_data structure. */
     u16_lsb = ((board_i2c_sensor_data.u16_X >> 8U )&0x00FFU);
     u16_msb = ((board_i2c_sensor_data.u16_X << 8U )&0xFF00U);
@@ -101,7 +101,7 @@ BOARD_ERROR  board_drv_adxl345_init(void)
 
     gv_board_sys_tick_fast_delay(10U);
 
-    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_DATA_FORMAT, FULL_RES | RANGE_4_G);/* RANGE_8_G */
+    be_result |= board_i2c_write(ADXL345_ADDRESS, ADXL345_DATA_FORMAT, FULL_RES | RANGE_16_G);/* RANGE_8_G */
 
     gv_board_sys_tick_fast_delay(10U);
 
