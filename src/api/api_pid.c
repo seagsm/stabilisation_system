@@ -200,7 +200,8 @@ void api_pid_update_frame(void)
     /* Calculation of Yaw PDF frame. */
     i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
 
-    i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE;
+    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE; */
+    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
 
     f_body_angle        = fl_api_body_angle_wind_angles[Yaw] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;

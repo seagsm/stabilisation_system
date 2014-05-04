@@ -13,6 +13,7 @@ void api_end_device_update(void)
     int32_t i32_throttle;
     /* Direction. */
     int32_t i32_servo;
+    int32_t i32_rc_chanel_yaw_value;
 
     /* Angles. */
     int32_t i32_Pitch;
@@ -46,7 +47,7 @@ void api_end_device_update(void)
     {   /* Tricopter configuration. */
         i32_motor[0] = i32_throttle + i32_Roll - (i32_Pitch * 2) / 3;
         i32_motor[1] = i32_throttle - i32_Roll - (i32_Pitch * 2) / 3;
-        i32_motor[2] = i32_throttle - (i32_Pitch * 4)/3;
+        i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3;
 
         i32_motor[0] = constrain_i32(i32_motor[0],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
         i32_motor[1] = constrain_i32(i32_motor[1],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
@@ -55,7 +56,11 @@ void api_end_device_update(void)
 
     /* Calculate value for cource stabilisation servo. */
     /* i32_servo = BOARD_PPM_ZERO_VALUE + i32_Yaw; */
-    i32_servo = (int32_t)bc_channel_value_structure.u16_channel_1_value + i32_Yaw;
+    i32_rc_chanel_yaw_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
+    i32_rc_chanel_yaw_value =  i32_rc_chanel_yaw_value - (int32_t)BOARD_PPM_ZERO_VALUE;
+
+    /* i32_servo = (int32_t)bc_channel_value_structure.u16_channel_1_value + i32_Yaw; */
+    i32_servo = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw;
     i32_servo = constrain_i32(i32_servo,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
 
     /* For information purpose only.*/
