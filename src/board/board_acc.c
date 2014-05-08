@@ -1,8 +1,7 @@
+
+
+
 #include "board_acc.h"
-
-
-
-
 
 /* Init acceerometer module. */
 BOARD_ERROR be_board_acc_init(void)

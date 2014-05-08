@@ -1952,6 +1952,12 @@
         <name>$PROJ_DIR$\src\board\board_adc.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_baro.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_baro.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_dma.c</name>
       </file>
       <file>
@@ -1962,6 +1968,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_drv_adxl345.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_drv_bmp085.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_drv_bmp085.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_drv_hmc5883.c</name>
