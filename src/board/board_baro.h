@@ -9,8 +9,8 @@
 #include "board_drv_bmp085.h"
 
 BOARD_ERROR be_board_baro_init(void);
-int32_t i32_board_baro_get_pressure(void);
-int32_t i32_board_baro_get_altitude(int32_t i32_pressure);
+uint32_t u32_board_baro_get_pressure(void);
+int32_t  i32_board_baro_get_altitude(void);
 
 
 #endif
