@@ -5,10 +5,6 @@
 
 static BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
-/* static uint8_t u8_callibration_data[22] = {0U};*/
-
-
-
 BOARD_ERROR be_board_drv_bmp085_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
