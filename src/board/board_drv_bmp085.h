@@ -33,8 +33,8 @@
 #define BMP085_PRESS_CONVERSION_TIME            28U
 
 /* Calibration parameters. */
-#define SMD500_PARAM_MG                         3038        
-#define SMD500_PARAM_MH                        -7357        
+#define SMD500_PARAM_MG                         3038
+#define SMD500_PARAM_MH                        -7357
 #define SMD500_PARAM_MI                         3791
 
 typedef enum
@@ -86,7 +86,7 @@ typedef struct
 
 BOARD_ERROR be_board_drv_bmp085_init(void);
 uint32_t   u32_board_drv_bmp085_get_pressure(void);
-BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
+static BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
 BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(void);
 BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void);
 BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void);

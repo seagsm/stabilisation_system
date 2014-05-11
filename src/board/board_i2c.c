@@ -28,9 +28,6 @@ static uint8_t u8_rc_dma_buffer[6];
 /* Flag of one time operation. Should be 0 for multitime functions. */
 static uint8_t u8_one_time_rw = 0U;
 
-/* Global.Used in gyrodetect function. */
-uint8_t gu8_board_i2c_GyroId;
-
 /* Global.Used for one time sensor data reading. */
 BOARD_U16_3X_DATA board_i2c_sensor_data;
 
@@ -137,7 +134,9 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
         DMA_DeInit(DMA1_Channel7);
         DMA_I2C_InitStructure.DMA_PeripheralBaseAddr = (u32)I2C1_DR_Address;
 
-        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; 		/* fixed local buffer for test. */
+        /* DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; */	/* fixed local buffer for test. */
+        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)pBuffer; 		        /* pointer to output buffer. */
+
         DMA_I2C_InitStructure.DMA_DIR 				= DMA_DIR_PeripheralSRC; 		/* fixed for receive function */
         DMA_I2C_InitStructure.DMA_BufferSize 		= (uint32_t)NumByteToRead; 		/* number byte for read. */
         DMA_I2C_InitStructure.DMA_PeripheralInc     = DMA_PeripheralInc_Disable;	/* fixed */
@@ -232,7 +231,7 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint16
         I2C1->CR1 &= 0xFDFFU;
     }
     I2C_GenerateSTART(I2C1, ENABLE);
-    
+
     return(be_result);
 }
 
@@ -301,12 +300,12 @@ void DMA1_Channel6_IRQHandler(void)
         }
         DMA_ClearFlag(DMA1_FLAG_TC6);
     }
-    
+
     if(DMA_GetFlagStatus(DMA1_FLAG_GL6))
     {
 	DMA_ClearFlag( DMA1_FLAG_GL6);
     }
-    
+
     if(DMA_GetFlagStatus(DMA1_FLAG_HT6))
     {
 	DMA_ClearFlag( DMA1_FLAG_HT6);
@@ -320,12 +319,12 @@ static void v_dma_ch6_one_time_write(void)
 	/* DMA1-6 (I2C1 Tx DMA)transfer complete ISR */
 	I2C_DMACmd(I2C1, DISABLE);
 	DMA_Cmd(DMA1_Channel6, DISABLE);
-	
+
         /* wait until BTF */
 	while (!(I2C1->SR1 & 0x04U))
 	{}
 	I2C_GenerateSTOP(I2C1, ENABLE);
-	
+
         /* wait until BUSY clear */
 	while (I2C1->SR2 & 0x02U)
 	{}
@@ -345,16 +344,19 @@ void DMA1_Channel7_IRQHandler(void)
     if (DMA_GetFlagStatus(DMA1_FLAG_TC7))
     {
         /* This function for case of one time read */
+
         v_dma_ch7_one_time_read();
         if(u8_one_time_rw == 0U)
         {
             /* TODO: should be optimised. */
+/*
             api_i2c_data.array[api_i2c_data.u8_device].data[0]= u8_rc_dma_buffer[0];
             api_i2c_data.array[api_i2c_data.u8_device].data[1]= u8_rc_dma_buffer[1];
             api_i2c_data.array[api_i2c_data.u8_device].data[2]= u8_rc_dma_buffer[2];
             api_i2c_data.array[api_i2c_data.u8_device].data[3]= u8_rc_dma_buffer[3];
             api_i2c_data.array[api_i2c_data.u8_device].data[4]= u8_rc_dma_buffer[4];
             api_i2c_data.array[api_i2c_data.u8_device].data[5]= u8_rc_dma_buffer[5];
+*/
             api_i2c_data.u8_device++;
             if(api_i2c_data.u8_device < MAX_DEV_NUM) /* Maximum device number = 3. */
             {
@@ -368,12 +370,12 @@ void DMA1_Channel7_IRQHandler(void)
         }
         DMA_ClearFlag(DMA1_FLAG_TC7);
     }
-	
+
     if (DMA_GetFlagStatus(DMA1_FLAG_GL7))
     {
 	DMA_ClearFlag( DMA1_FLAG_GL7);
     }
-    
+
     if (DMA_GetFlagStatus(DMA1_FLAG_HT7))
     {
 	DMA_ClearFlag( DMA1_FLAG_HT7);
@@ -389,9 +391,6 @@ static void v_dma_ch7_one_time_read(void)
         board_i2c_sensor_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
         board_i2c_sensor_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
         board_i2c_sensor_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
-    
-        /* Case of Gyro id reading. */
-        gu8_board_i2c_GyroId = u8_rc_dma_buffer[0];
 
         /* Disable DMA. */
         I2C_DMACmd(I2C1, DISABLE);

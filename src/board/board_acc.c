@@ -17,8 +17,9 @@ BOARD_ERROR be_board_acc_init(void)
 BOARD_ERROR be_board_acc_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint8_t u8_buffer[6] = {0U};
 
-    be_result = board_drv_adxl345_read();
+    be_result = board_drv_adxl345_read(u8_buffer);
 
     return(be_result);
 }
