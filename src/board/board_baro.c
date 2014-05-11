@@ -15,7 +15,25 @@ BOARD_ERROR be_board_baro_init(void)
 /* Function get correct pressure value from baro module. */
 uint32_t u32_board_baro_get_pressure(void)
 {
-     return(u32_board_drv_bmp085_get_pressure()); 
+    /* Test only. */
+
+        be_board_drv_bmp085_raw_temperature_start_read();
+        gv_board_sys_tick_delay(5U);
+        be_board_drv_bmp085_read_raw_temperature();
+        be_board_drv_bmp085_raw_pressure_start_read();
+        gv_board_sys_tick_delay(28U);
+        be_board_drv_bmp085_read_raw_pressure();
+
+        be_board_drv_bmp085_real_data_calculation();
+
+
+
+
+
+
+
+
+     return(u32_board_drv_bmp085_get_pressure());
 }
 
 /* Function calculate altitude from pressure. */
@@ -23,7 +41,7 @@ int32_t i32_board_baro_get_altitude(void)
 {
     float float_altitude;
     uint32_t u32_pressure;
-    
+
     u32_pressure =  u32_board_baro_get_pressure();
 
     /* altitude in cantimeters*/
