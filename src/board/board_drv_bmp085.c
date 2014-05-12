@@ -14,16 +14,6 @@ BOARD_ERROR be_board_drv_bmp085_init(void)
 
     be_result = be_board_drv_bmp085_callibration_read();
 
-
-/*
-    i2c_BMP085_UT_Start();
-
-    gv_board_sys_tick_delay(5U);
-
-    i2c_BMP085_UT_Read();
-
-
-*/
     return (be_result);
 }
 
@@ -68,23 +58,18 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
         be_board_drv_bmp085_raw_pressure_start_read();
         gv_board_sys_tick_delay(28U);
         be_board_drv_bmp085_read_raw_pressure();
-#if 0
-        bss_bmp85_state.i16_ac1 = 408;
-        bss_bmp85_state.i16_ac2 = -72;
-        bss_bmp85_state.i16_ac3 = -14387;
-        bss_bmp85_state.u16_ac4 = 32741U;
-        bss_bmp85_state.u16_ac5 = 32757U;
-        bss_bmp85_state.u16_ac6 = 23153U;
-        bss_bmp85_state.i16_b1  = 6190;
-        bss_bmp85_state.i16_b2  = 4;
-        bss_bmp85_state.i16_mb  = -32768;
-        bss_bmp85_state.i16_mc  = -8711;
-        bss_bmp85_state.i16_md  = 2868;
 
-        bss_bmp85_state.u16_raw_temperature = 27898U;
-        bss_bmp85_state.u32_raw_pressure    = 23843U;
-#endif
         be_board_drv_bmp085_real_data_calculation();
+        {
+            float float_altitude;
+            uint32_t u32_pressure;
+
+            u32_pressure =  bss_bmp85_state.u32_real_pressure;
+
+            /* altitude in centimeters*/
+            float_altitude = (1.0f - (float)pow((float)u32_pressure/101325.0, 0.190295)) * 4433000.0f;
+
+        }
 
         u16_counter--;
     }
@@ -133,11 +118,11 @@ BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    /* Write to control register " start of temperature convertion" command. */
-    be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_TEMPERATURE_MEASURE + (BMP085_OVERSAMPLING << 6));
+    /* Write to control register " start of pressure convertion" command. */
+    be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_PRESSURE_MEASURE + (BMP085_OVERSAMPLING << 6));
 
     /* Save to sensor structure estimated time of the end of pressure conversion. */
-    bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_TEMP_CONVERSION_TIME;
+    bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_PRESS_CONVERSION_TIME;
 
     /* Next step should be reading pressure value from baro sensor. */
     bss_bmp85_state.bsc_state = READ_UNCOMPENSATED_PRESS;
@@ -235,14 +220,14 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
             u32_pr_tmp = (u32_b7 / u32_b4) << 1;
 
         }
-/*OK*/        
+/*OK*/
         /* u32_tmp = bss_bmp85_state.u32_real_pressure / 256U; */
         u32_tmp = u32_pr_tmp / 256U;
 
         i32_x1 = (int32_t)u32_tmp;
         i32_x1 = i32_x1 * i32_x1;
         i32_x1 = (i32_x1 * SMD500_PARAM_MG) / 65536; /* SMD500_PARAM_MG = 3038. */
-/*OK*/        
+/*OK*/
         /* i32_x2 = ((int32_t)bss_bmp85_state.u32_real_pressure * SMD500_PARAM_MH) / 65536; */
         i32_x2 = ((int32_t)u32_pr_tmp * SMD500_PARAM_MH) / 65536;    /* SMD500_PARAM_MH -7357 */
         i32_tmp = (i32_x1 + i32_x2 + (int32_t)SMD500_PARAM_MI) / 16; /* SMD500_PARAM_MI  3791 */
@@ -250,7 +235,7 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
         /* Real_pressure in Pa*/
         /* bss_bmp85_state.u32_real_pressure += (uint32_t)i32_tmp; */
         bss_bmp85_state.u32_real_pressure = u32_pr_tmp + (uint32_t)i32_tmp;
-/*OK*/        
+/*OK*/
     }
     else
     {

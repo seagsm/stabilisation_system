@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-1873780339
+Checksum=-762193736
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -17,6 +17,8 @@ StopOnThrow=_ 0
 ShowArgs=0
 [Disassembly]
 MixedMode=1
+[struct_types]
+Fmt0=struct <Unnamed 41>-u32_raw_pressure	4	0
 [array_types]
 Fmt0=uint32_t[100]	4	0
 Fmt1=uint8_t[6]	4	0
