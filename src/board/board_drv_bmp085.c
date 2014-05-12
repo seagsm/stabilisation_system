@@ -223,7 +223,7 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
         i32_tmp = (int32_t)bss_bmp85_state.u32_raw_pressure;
         i32_tmp = i32_tmp - i32_b3;
         u32_b7 = ((uint32_t)i32_tmp) * (50000U / BMP085_OVERSAMPLING_POW);
-
+/*OK*/
         if (u32_b7 < 0x80000000)
         {
             /* bss_bmp85_state.u32_real_pressure = (u32_b7 << 1) / u32_b4; */
@@ -235,19 +235,22 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
             u32_pr_tmp = (u32_b7 / u32_b4) << 1;
 
         }
+/*OK*/        
         /* u32_tmp = bss_bmp85_state.u32_real_pressure / 256U; */
         u32_tmp = u32_pr_tmp / 256U;
 
         i32_x1 = (int32_t)u32_tmp;
-        i32_x1 *= i32_x1;
-        i32_x1 = (i32_x1 * SMD500_PARAM_MG) / 65536;
+        i32_x1 = i32_x1 * i32_x1;
+        i32_x1 = (i32_x1 * SMD500_PARAM_MG) / 65536; /* SMD500_PARAM_MG = 3038. */
+/*OK*/        
         /* i32_x2 = ((int32_t)bss_bmp85_state.u32_real_pressure * SMD500_PARAM_MH) / 65536; */
-        i32_x2 = ((int32_t)u32_pr_tmp * SMD500_PARAM_MH) / 65536;
-        i32_tmp = (i32_x1 + i32_x2 + (int32_t)SMD500_PARAM_MI) / 16;
+        i32_x2 = ((int32_t)u32_pr_tmp * SMD500_PARAM_MH) / 65536;    /* SMD500_PARAM_MH -7357 */
+        i32_tmp = (i32_x1 + i32_x2 + (int32_t)SMD500_PARAM_MI) / 16; /* SMD500_PARAM_MI  3791 */
 
         /* Real_pressure in Pa*/
         /* bss_bmp85_state.u32_real_pressure += (uint32_t)i32_tmp; */
         bss_bmp85_state.u32_real_pressure = u32_pr_tmp + (uint32_t)i32_tmp;
+/*OK*/        
     }
     else
     {
