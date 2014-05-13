@@ -63,23 +63,22 @@ typedef struct
   int16_t               i16_mb;
   int16_t               i16_mc;
   int16_t               i16_md;
-/*
-  union {uint16_t val; uint8_t raw[2]; } ut; //uncompensated T
-  union {uint32_t val; uint8_t raw[4]; } up; //uncompensated P
-*/
+  /* Temperature part. */ 
   int16_t               i16_real_temperature;
   uint16_t              u16_raw_temperature;
   uint8_t               u8_raw_temperature[2];
-
-  uint32_t               u32_real_pressure;
+  /* Pressure part */
+  uint32_t              u32_real_pressure;
   uint32_t              u32_raw_pressure;
   uint8_t               u8_raw_pressure[4];
 
+  /* System part. */
   BMP85_STATE_CONDITION bsc_state;
   uint64_t              u64_deadline;
+  
 } BMP85_STATE_STRUCTURE;
 
-
+extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 
 
@@ -92,8 +91,8 @@ BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void);
 BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void);
 BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void);
 BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void);
-
-
+void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state);
+BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void);
 
 
 

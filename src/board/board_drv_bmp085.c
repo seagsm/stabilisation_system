@@ -3,7 +3,7 @@
 
 #include "board_drv_bmp085.h"
 
-static BMP85_STATE_STRUCTURE  bss_bmp85_state;
+    BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 BOARD_ERROR be_board_drv_bmp085_init(void)
 {
@@ -48,7 +48,7 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
     bss_bmp85_state.i16_mc  = (( int16_t)u8_callibration_data[18] * 256) + (( int16_t)u8_callibration_data[19]);
     bss_bmp85_state.i16_md  = (( int16_t)u8_callibration_data[20] * 256) + (( int16_t)u8_callibration_data[21]);
 
-
+#if 0 
     /* For test reading only. */
     while(u16_counter > 0U)
     {
@@ -73,7 +73,7 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
 
         u16_counter--;
     }
-
+#endif
 
 
 return(be_result);
@@ -249,5 +249,20 @@ uint32_t u32_board_drv_bmp085_get_pressure(void)
 {
     return(bss_bmp85_state.u32_real_pressure);
 }
+
+BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void)
+{
+    return(bss_bmp85_state.bsc_state);
+}
+
+void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state)
+{
+    bss_bmp85_state.bsc_state = b85sc_state;
+}
+
+
+
+
+
 
 

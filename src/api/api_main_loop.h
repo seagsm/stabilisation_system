@@ -9,6 +9,7 @@
 #include "api_i2c_acquisition.h"
 #include "api_data_normalising.h"
 #include "api_cmd.h"
+#include "board_baro.h"
 
 #include "MadgwickAHRS.h"
 #include "api_end_device.h"

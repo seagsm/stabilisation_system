@@ -135,17 +135,17 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
         DMA_I2C_InitStructure.DMA_PeripheralBaseAddr = (u32)I2C1_DR_Address;
 
         /* DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; */	/* fixed local buffer for test. */
-        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)pBuffer; 		        /* pointer to output buffer. */
+        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)pBuffer;                 /* pointer to output buffer. */
 
-        DMA_I2C_InitStructure.DMA_DIR 				= DMA_DIR_PeripheralSRC; 		/* fixed for receive function */
-        DMA_I2C_InitStructure.DMA_BufferSize 		= (uint32_t)NumByteToRead; 		/* number byte for read. */
-        DMA_I2C_InitStructure.DMA_PeripheralInc     = DMA_PeripheralInc_Disable;	/* fixed */
-        DMA_I2C_InitStructure.DMA_MemoryInc         = DMA_MemoryInc_Enable; 		/* fixed */
-        DMA_I2C_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte; 	/*fixed */
-        DMA_I2C_InitStructure.DMA_MemoryDataSize 	= DMA_MemoryDataSize_Byte; 		/*fixed */
-        DMA_I2C_InitStructure.DMA_Mode 				= DMA_Mode_Normal; 				/* fixed */
-        DMA_I2C_InitStructure.DMA_Priority 			= DMA_Priority_VeryHigh; 		/* up to user */
-        DMA_I2C_InitStructure.DMA_M2M 				= DMA_M2M_Disable; 				/* fixed */
+        DMA_I2C_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralSRC;        /* fixed for receive function */
+        DMA_I2C_InitStructure.DMA_BufferSize            = (uint32_t)NumByteToRead;      /* number byte for read. */
+        DMA_I2C_InitStructure.DMA_PeripheralInc         = DMA_PeripheralInc_Disable;    /* fixed */
+        DMA_I2C_InitStructure.DMA_MemoryInc             = DMA_MemoryInc_Enable;         /* fixed */
+        DMA_I2C_InitStructure.DMA_PeripheralDataSize    = DMA_MemoryDataSize_Byte;      /*fixed */
+        DMA_I2C_InitStructure.DMA_MemoryDataSize        = DMA_MemoryDataSize_Byte;      /*fixed */
+        DMA_I2C_InitStructure.DMA_Mode                  = DMA_Mode_Normal;              /* fixed */
+        DMA_I2C_InitStructure.DMA_Priority              = DMA_Priority_VeryHigh;        /* up to user */
+        DMA_I2C_InitStructure.DMA_M2M                   = DMA_M2M_Disable;              /* fixed */
 
         DMA_Init(DMA1_Channel7, &DMA_I2C_InitStructure);
         DMA_ITConfig(DMA1_Channel7, DMA_IT_TC, ENABLE);
