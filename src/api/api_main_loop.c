@@ -14,13 +14,16 @@ static void v_api_main_loop_process(void)
     {
         /* Convertind data from raw data array to sensors raw data. */
         v_api_data_prepr_sensor_data_preprocessing();
-      
+
         if(bsc_board_baro_get_state() == CONVERSION_DONE)
         {
             /* Calculation of real pressure and real temperature.*/
             v_board_baro_data_compensation();
-            
+
             /* Pressure filtration and altitude calculation. */
+
+            /* Set BARO state machine start state. */
+            be_board_baro_set_state(START_CONVERSION);
         }
 
         /* Start data acquisition. */
@@ -117,10 +120,10 @@ BOARD_ERROR be_api_main_loop_init(void)
 BOARD_ERROR be_api_main_loop_start(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     /* Start main loop timer. It will cause timer interrupt. */
     be_result = be_board_main_loop_start();
-    
+
     return(be_result);
 }
 
@@ -135,7 +138,7 @@ void TIM1_UP_IRQHandler(void)
 
         /* Clear flags. */
         TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
-    
+
         /* Start main loop interrupt function.*/
         v_api_main_loop_process();
     }

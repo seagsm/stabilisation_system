@@ -31,6 +31,11 @@ BOARD_ERROR be_api_i2c_acquisition_init(void)
     bdp_i2c_devices[2].u16_w_sizeof     = MAGNETOMETER_WRITE_SIZE;
     bdp_i2c_devices[2].u16_r_sizeof     = MAGNETOMETER_READ_SIZE;
 
+    /* Set BARO state machine start state. */
+    be_result = be_board_baro_set_state(START_CONVERSION);
+
+
+
     return(be_result);
 }
 
@@ -55,14 +60,10 @@ BOARD_ERROR be_api_i2c_acquisition_start(void)
 
     /* Reset device number. */
     api_i2c_data.u8_device = 0U;
-    
+
     /* Reset data ready flag. */
     api_i2c_data.u8_ready  = 0U;
-    
-    /* Set BARO state machine start state. */
-    /* bss_bmp85_state.bsc_state = START_TEMP_CONVERSION; */ 
-    be_result = be_board_baro_set_state(START_CONVERSION);  
-      
+
     /* Start process by starting first writing. */
     be_result = be_api_i2c_write_process_start();
     return(be_result);
@@ -78,30 +79,66 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
 
     /* Write valid for GYRO, MAGN, ACC. */
     if(api_i2c_data.u8_device < 3U )
-    {  
+    {
         pu8_buffer              = &bdp_i2c_devices[api_i2c_data.u8_device].u8_w_data;       /* Pointer to variable with device write register number.*/
         u16_num_byte_to_write   =  bdp_i2c_devices[api_i2c_data.u8_device].u16_w_sizeof;    /* Number of byte for write. ( here always 1 ) */
         u8_device_address       =  bdp_i2c_devices[api_i2c_data.u8_device].u8_slave_address;/* Address of write device. */
-    
+
         /* Call write-init function. */
         be_result = be_board_i2c_write_start(pu8_buffer, u16_num_byte_to_write, u8_device_address);
     }
     else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
-    {  
+    {
         switch (bss_bmp85_state.bsc_state)
         {
             case START_TEMP_CONVERSION:
                 /* Start temperatire conversion in BARO sensor. */
-                be_board_drv_bmp085_raw_temperature_start_read();
+                be_board_drv_bmp085_raw_temperature_start_read(AUTO); /* -> WR_READ_UNCOMPENSATED_TEMP*/
+                break;
+            case WR_READ_UNCOMPENSATED_TEMP:
+                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
+                {
+                    /* Write data reading address. */
+                    be_board_drv_bmp085_write_data_address(RD_READ_UNCOMPENSATED_TEMP);
+                }
+                else
+                {   /* Baro conversion in progress yet, but we should start next acquisition frame. */
+                    api_i2c_data.u8_ready = 1U;
+                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
+                }
+
                 break;
             case START_PRESS_CONVERSION:
+                    /* Convert value to uint16. Can be used pointers conversion */
+                bss_bmp85_state.u16_raw_temperature = ((uint16_t)bss_bmp85_state.u8_raw_temperature[0] << 8) +
+                                                      ((uint16_t)bss_bmp85_state.u8_raw_temperature[1]);
                 /* Start pressure conversion in BARO sensor. */
-                be_board_drv_bmp085_raw_pressure_start_read();
+                be_board_drv_bmp085_raw_pressure_start_read(AUTO); /* -> WR_READ_UNCOMPENSATED_PRESS*/
                 break;
-            default:
+
+            case WR_READ_UNCOMPENSATED_PRESS:
+                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
+                {
+                    /* Write data reading address. */
+                    be_board_drv_bmp085_write_data_address(RD_READ_UNCOMPENSATED_PRESS);
+                }
+                else
+                {
+                 /* Baro conversion in progress yet, but we should start next acquisition frame. */
+                    api_i2c_data.u8_ready = 1U;
+                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
+                }
+                break;
+            case WAIT_FOR_DATA_READY:
+                /* Set conversion done state. */
+                be_board_baro_set_state(CONVERSION_DONE);
+                api_i2c_data.u8_ready = 1U;
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
+                break;
+          default:
                 be_result = BOARD_ERR_RANGE;
             break;
-       }  
+       }
     }
     return(be_result);
 }
@@ -116,7 +153,7 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
 
     /* Read valid for GYRO, MAGN, ACC. */
     if(api_i2c_data.u8_device < 3U )
-    {      
+    {
         pu8_buffer              = &api_i2c_data.array[api_i2c_data.u8_device].data[0];      /* Pointer of start of read buffer. */
         u16_num_byte_to_read    =  bdp_i2c_devices[api_i2c_data.u8_device].u16_r_sizeof;    /* Number of byte to read. ( here always 6 ) */
         u8_device_address       =  bdp_i2c_devices[api_i2c_data.u8_device].u8_slave_address;/* Address of read device. */
@@ -124,40 +161,36 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
         be_result = be_board_i2c_read_start(pu8_buffer, u16_num_byte_to_read, u8_device_address);
     }
     else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
-    {  
+    {
         switch (bss_bmp85_state.bsc_state)
         {
-            case READ_UNCOMPENSATED_TEMP:
-                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
-                {  
-                    /* Baro temperature conversion done. We can start reading process from BARO sensor. */
-                    be_board_drv_bmp085_read_raw_temperature();
-                }
-                else
-                {   /* Baro conversion in progress yet, but we should start next acquisition frame. */    
-                    api_i2c_data.u8_ready = 1U;
-                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                }
+            case WR_READ_UNCOMPENSATED_TEMP:
+                /* Baro conversion in progress yet, but we should start next acquisition frame. */
+                api_i2c_data.u8_ready = 1U;
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
                 break;
-            case READ_UNCOMPENSATED_PRESS:
-                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
-                {  
-                    /* Baro pressure conversion done. We can start reading process from BARO sensor. */
-                    be_board_drv_bmp085_read_raw_pressure();
-                }
-                else
-                {   /* Baro conversion in progress yet, but we should start next acquisition frame. */    
-                    api_i2c_data.u8_ready = 1U;
-                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                }
+
+            case RD_READ_UNCOMPENSATED_TEMP:
+                 be_board_drv_bmp085_read_data_from_address(bss_bmp85_state.u8_raw_temperature,2U, START_PRESS_CONVERSION);
+                break;
+            case WR_READ_UNCOMPENSATED_PRESS:
+                /* Baro conversion in progress yet, but we should start next acquisition frame. */
+                api_i2c_data.u8_ready = 1U;
+                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
+                break;
+
+            case RD_READ_UNCOMPENSATED_PRESS:
+                 be_board_drv_bmp085_read_data_from_address(bss_bmp85_state.u8_raw_pressure,3U, WAIT_FOR_DATA_READY);
+
+
                 break;
             default:
-                be_result = BOARD_ERR_RANGE;              
+                be_result = BOARD_ERR_RANGE;
             break;
-       }  
+       }
     }
-    
-    
+
+
     return(be_result);
 }
 

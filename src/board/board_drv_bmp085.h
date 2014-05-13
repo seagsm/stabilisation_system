@@ -39,13 +39,23 @@
 
 typedef enum
 {
-    START_TEMP_CONVERSION       = 0U,
-    READ_UNCOMPENSATED_TEMP     = 1U,
-    START_PRESS_CONVERSION      = 2U,
-    READ_UNCOMPENSATED_PRESS    = 3U,
-    CALCULATION                 = 4U,
-    COMPUTE_ALTITUDE            = 5U
+    START_TEMP_CONVERSION       = 0U, /* Write start temperature command to control register. */
+    WR_READ_UNCOMPENSATED_TEMP  = 1U, /* Write read address. */
+    RD_READ_UNCOMPENSATED_TEMP  = 2U, /* Read data from setted address. */
+    START_PRESS_CONVERSION      = 3U, /* Write start pressure command to control register. */
+    WR_READ_UNCOMPENSATED_PRESS = 4U, /* Write read address. */
+    RD_READ_UNCOMPENSATED_PRESS = 5U, /* Write read address. */
+    WAIT_FOR_DATA_READY         = 6U,
+    CALCULATION                 = 7U
 } BMP85_STATE_CONDITION;
+
+typedef enum
+{
+    ONE_TIME    = 0U,
+    AUTO        = 1U
+} BMP85_I2C_ACCESS_CONDITION;
+
+
 
 
 typedef struct
@@ -63,7 +73,7 @@ typedef struct
   int16_t               i16_mb;
   int16_t               i16_mc;
   int16_t               i16_md;
-  /* Temperature part. */ 
+  /* Temperature part. */
   int16_t               i16_real_temperature;
   uint16_t              u16_raw_temperature;
   uint8_t               u8_raw_temperature[2];
@@ -75,7 +85,7 @@ typedef struct
   /* System part. */
   BMP85_STATE_CONDITION bsc_state;
   uint64_t              u64_deadline;
-  
+
 } BMP85_STATE_STRUCTURE;
 
 extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
@@ -86,16 +96,15 @@ extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
 BOARD_ERROR be_board_drv_bmp085_init(void);
 uint32_t   u32_board_drv_bmp085_get_pressure(void);
 static BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
-BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(void);
-BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void);
-BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void);
-BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void);
+BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
+static BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
+BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
+static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
 BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void);
 void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state);
 BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void);
-
-
-
+BOARD_ERROR be_board_drv_bmp085_write_data_address(BMP85_STATE_CONDITION  b85sc_state);
+BOARD_ERROR be_board_drv_bmp085_read_data_from_address(uint8_t* pu8_buffer,uint16_t u16_number_byte_to_read, BMP85_STATE_CONDITION  b85sc_state);
 
 
 

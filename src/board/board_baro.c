@@ -36,10 +36,10 @@ int32_t i32_board_baro_get_altitude(void)
 BOARD_ERROR be_board_baro_set_state(BARO_STATE_CONDITION bsc_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     switch (bsc_state)
-    {    
-        case START_CONVERSION:    
+    {
+        case START_CONVERSION:
             v_board_drv_bmp085_set_state(START_TEMP_CONVERSION);
             break;
         case CONVERSION_DONE:
@@ -48,8 +48,8 @@ BOARD_ERROR be_board_baro_set_state(BARO_STATE_CONDITION bsc_state)
         default:
             be_result = BOARD_ERR_STATE;
         break;
-    } 
-    return (be_result); 
+    }
+    return (be_result);
 }
 
 
@@ -57,13 +57,13 @@ BARO_STATE_CONDITION bsc_board_baro_get_state(void)
 {
     BARO_STATE_CONDITION bsc_state = UNDEFINED_STATE;
     switch (b85sc_board_drv_bmp085_get_state())
-    {    
-        case START_TEMP_CONVERSION:    
+    {
+        case START_TEMP_CONVERSION:
             bsc_state = START_CONVERSION;
             break;
-        case READ_UNCOMPENSATED_TEMP:
+        case RD_READ_UNCOMPENSATED_TEMP:
         case START_PRESS_CONVERSION:
-        case READ_UNCOMPENSATED_PRESS:
+        case RD_READ_UNCOMPENSATED_PRESS:
             bsc_state = CONVERSION_INPROGRESS;
             break;
         case CALCULATION:
@@ -71,8 +71,8 @@ BARO_STATE_CONDITION bsc_board_baro_get_state(void)
             break;
         default:
            break;
-    } 
-    return (bsc_state); 
+    }
+    return (bsc_state);
 }
 
 void v_board_baro_data_compensation(void)

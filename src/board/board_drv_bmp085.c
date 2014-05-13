@@ -29,7 +29,7 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    uint16_t u16_counter = 60000U;
+    uint16_t u16_counter = 10U;
 
     gv_board_sys_tick_delay(10U);
 
@@ -48,16 +48,16 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
     bss_bmp85_state.i16_mc  = (( int16_t)u8_callibration_data[18] * 256) + (( int16_t)u8_callibration_data[19]);
     bss_bmp85_state.i16_md  = (( int16_t)u8_callibration_data[20] * 256) + (( int16_t)u8_callibration_data[21]);
 
-#if 0 
+#if 1
     /* For test reading only. */
     while(u16_counter > 0U)
     {
-        be_board_drv_bmp085_raw_temperature_start_read();
+        be_board_drv_bmp085_raw_temperature_start_read(ONE_TIME);
         gv_board_sys_tick_delay(5U);
-        be_board_drv_bmp085_read_raw_temperature();
-        be_board_drv_bmp085_raw_pressure_start_read();
+        be_board_drv_bmp085_read_raw_temperature(ONE_TIME);
+        be_board_drv_bmp085_raw_pressure_start_read(ONE_TIME);
         gv_board_sys_tick_delay(28U);
-        be_board_drv_bmp085_read_raw_pressure();
+        be_board_drv_bmp085_read_raw_pressure(ONE_TIME);
 
         be_board_drv_bmp085_real_data_calculation();
         {
@@ -80,29 +80,88 @@ return(be_result);
 }
 
 /* Function send command to sensor to start temperature measurement. */
-BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(void)
+BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    /* Write to control register " start of temperature convertion" command. */
-    be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_TEMPERATURE_MEASURE);
+    uint8_t u8_write_buffer[2U]= { 0U, 0U};
+
+    if(b85ac_mode == ONE_TIME)
+    {
+        /* Write to control register " start of temperature convertion" command in ONE_TIME mode. */
+        be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_TEMPERATURE_MEASURE);
+    }
+    else
+    {
+        /* Write to control register " start of temperature convertion" command in AUTO mode. */
+        u8_write_buffer[0U] = BMP085_CTRL_REG;                  /* Address of device register. */
+        u8_write_buffer[1U] = BMP085_START_TEMPERATURE_MEASURE; /* Data for writing to device register. */
+        be_result = be_board_i2c_write_start(u8_write_buffer, 2U, BMP085_ADDRESS);
+    }
 
     /* Save to sensor structure estimated time of the end of temperature conversion. */
     bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_TEMP_CONVERSION_TIME;
 
     /* Next step should be reading temperature value from baro sensor. */
-    bss_bmp85_state.bsc_state = READ_UNCOMPENSATED_TEMP;
-
+    bss_bmp85_state.bsc_state = WR_READ_UNCOMPENSATED_TEMP;
     return(be_result);
 }
 
-/* Function read result of temperature conversion from sensor. */
-BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void)
+
+
+
+
+
+
+/* Function send start address for reading. */
+BOARD_ERROR be_board_drv_bmp085_write_data_address(BMP85_STATE_CONDITION  b85sc_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    /* Read 2 bytes of raw temperature from ADC. Should be called 5ms later after start temperature conversion. */
-    be_result = board_i2c_read( BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 2U, bss_bmp85_state.u8_raw_temperature);
+    uint8_t u8_data = BMP085_ADC_OUT_MSB_REG;
+
+    be_result = be_board_i2c_write_start(&u8_data, 1U, BMP085_ADDRESS);
+     /* Next step should be reading temperature value from baro sensor. */
+    bss_bmp85_state.bsc_state = b85sc_state;
+    return(be_result);
+}
+
+/* Function read data from baro sensor. */
+BOARD_ERROR be_board_drv_bmp085_read_data_from_address(uint8_t* pu8_buffer,uint16_t u16_number_byte_to_read, BMP85_STATE_CONDITION  b85sc_state)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    be_result = be_board_i2c_read_start(pu8_buffer, u16_number_byte_to_read, BMP085_ADDRESS);
+     /* Next step should be reading temperature value from baro sensor. */
+    bss_bmp85_state.bsc_state = b85sc_state;
+    return(be_result);
+}
+
+
+
+
+
+
+
+
+/* Function read result of temperature conversion from sensor. */
+static BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(BMP85_I2C_ACCESS_CONDITION  b85ac_mode)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    if(b85ac_mode == ONE_TIME)
+    {
+        /* Read 2 bytes of raw temperature from ADC. Should be called 5ms later after start temperature conversion. */
+        be_result = board_i2c_read( BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 2U, bss_bmp85_state.u8_raw_temperature);
+    }
+    else
+    {
+
+            /* Call read-init function. */
+       /* be_result = be_board_i2c_read_start(pu8_buffer, u16_num_byte_to_read, u8_device_address);*/
+
+    }
+
 
     /* Convert value to uint16. Can be used pointers conversion */
     bss_bmp85_state.u16_raw_temperature = ((uint16_t)bss_bmp85_state.u8_raw_temperature[0] << 8) + (( uint16_t)bss_bmp85_state.u8_raw_temperature[1]);
@@ -114,30 +173,44 @@ BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void)
 }
 
 /* Function send command to sensor to start pressure measurement. */
-BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void)
+BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint8_t u8_write_buffer[2U]= { 0U, 0U};
 
-    /* Write to control register " start of pressure convertion" command. */
-    be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_PRESSURE_MEASURE + (BMP085_OVERSAMPLING << 6));
-
+    if(b85ac_mode == ONE_TIME)
+    {
+        /* Write to control register " start of pressure convertion" command. */
+        be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_PRESSURE_MEASURE + (BMP085_OVERSAMPLING << 6));
+    }
+    else
+    {
+        /* Write to control register " start of temperature convertion" command in AUTO mode. */
+        u8_write_buffer[0U] = BMP085_CTRL_REG;                  /* Address of device register. */
+        u8_write_buffer[1U] = BMP085_START_PRESSURE_MEASURE + (BMP085_OVERSAMPLING << 6); /* Data for writing to device register. */
+        be_result = be_board_i2c_write_start(u8_write_buffer, 2U, BMP085_ADDRESS);
+    }
     /* Save to sensor structure estimated time of the end of pressure conversion. */
     bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_PRESS_CONVERSION_TIME;
 
     /* Next step should be reading pressure value from baro sensor. */
-    bss_bmp85_state.bsc_state = READ_UNCOMPENSATED_PRESS;
+    bss_bmp85_state.bsc_state = WR_READ_UNCOMPENSATED_PRESS;
 
     return(be_result);
 }
 
 /* Function read result of pressure conversion from sensor. */
-BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void)
+static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(BMP85_I2C_ACCESS_CONDITION  b85ac_mode)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint32_t u32_tmp[3];
 
-    /* Read 3 bytes from sensor. */
-    be_result = board_i2c_read( BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 3U, bss_bmp85_state.u8_raw_pressure);
+    if(b85ac_mode == ONE_TIME)
+    {
+        /* Read 3 bytes from sensor. */
+        be_result = board_i2c_read( BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 3U, bss_bmp85_state.u8_raw_pressure);
+    }
+
 
     u32_tmp[0] = (uint32_t)bss_bmp85_state.u8_raw_pressure[0];
     u32_tmp[1] = (uint32_t)bss_bmp85_state.u8_raw_pressure[1];
