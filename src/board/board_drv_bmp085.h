@@ -130,14 +130,14 @@ typedef struct
 
 } BMP85_STATE_STRUCTURE;
 
-/* extern BMP85_STATE_STRUCTURE  bss_bmp85_state; */
+extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 
 
 
 BOARD_ERROR be_board_drv_bmp085_init(void);
-uint32_t   u32_board_drv_bmp085_get_pressure(void);
-
+uint32_t    u32_board_drv_bmp085_get_pressure(void);
+int16_t     i16_board_drv_bmp085_get_temperature(void);
 
 
 
@@ -152,8 +152,13 @@ static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void);
 BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void);
 static BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
 
+/* State machine. */
 BOARD_ERROR be_board_drv_bmp085_state_machine(void);
-/* Set, get condition. */
+
+/* System, get, set, condition. */
+BOARD_ERROR be_board_drv_bmp085_init(void);
+uint32_t    u32_board_drv_bmp085_get_pressure(void);
+int16_t     i16_board_drv_bmp085_get_temperature(void);
 void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state);
 BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void);
 

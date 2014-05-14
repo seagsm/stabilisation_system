@@ -6,10 +6,6 @@ static void v_api_main_loop_process(void)
 {
     static uint8_t u8_calibration = 0U;
 
-/*
-    static uint16_t u16_test_counter = 0U;
-    static uint16_t u16_flag_up_down = 0U;
-*/
     if(api_i2c_data.u8_ready == 1U)
     {
         /* Convertind data from raw data array to sensors raw data. */
@@ -19,7 +15,7 @@ static void v_api_main_loop_process(void)
         {
             /* Calculation of real pressure and real temperature.*/
             v_board_baro_data_compensation();
-
+            bss_bmp85_state.u32_real_pressure = ui32_api_filters_ma_pressure(bss_bmp85_state.u32_real_pressure);
             /* Pressure filtration and altitude calculation. */
 
             /* Set BARO state machine start state. */
@@ -49,7 +45,6 @@ static void v_api_main_loop_process(void)
         /* TODO: function name should be fixed. */
         /* Read and decode packets from UART1 RX buffer.*/
         api_cmd_reading_packet();
-
     }
     else
     {

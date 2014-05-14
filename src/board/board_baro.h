@@ -13,10 +13,11 @@ typedef enum
     START_CONVERSION            = 0U,
     CONVERSION_IN_PROGRESS      = 1U,
     CONVERSION_DONE             = 2U,
-    UNDEFINED_STATE             = 3U  
+    UNDEFINED_STATE             = 3U
 } BARO_STATE_CONDITION;
 
 BOARD_ERROR be_board_baro_init(void);
+int16_t i16_board_baro_get_temperature(void);
 uint32_t u32_board_baro_get_pressure(void);
 int32_t  i32_board_baro_get_altitude(void);
 

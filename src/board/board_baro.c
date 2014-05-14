@@ -12,6 +12,12 @@ BOARD_ERROR be_board_baro_init(void)
     return (be_result);
 }
 
+/* Function get correct temperature value from baro module. */
+int16_t i16_board_baro_get_temperature(void)
+{
+    return(i16_board_drv_bmp085_get_temperature());
+}
+
 /* Function get correct pressure value from baro module. */
 uint32_t u32_board_baro_get_pressure(void)
 {
@@ -62,12 +68,12 @@ BARO_STATE_CONDITION bsc_board_baro_get_state(void)
             bsc_state = START_CONVERSION;
             break;
         case START_READING_UNCOMPENSATED_TEMP:
-        case READ_UNCOMPENSATED_TEMP:         
-        case WAIT_FOR_TEMP_DATA_READY:        
-        case START_PRESS_CONVERSION:          
+        case READ_UNCOMPENSATED_TEMP:
+        case WAIT_FOR_TEMP_DATA_READY:
+        case START_PRESS_CONVERSION:
         case START_READING_UNCOMPENSATED_PRESS:
-        case READ_UNCOMPENSATED_PRESS:         
-        case WAIT_FOR_PRESS_DATA_READY:        
+        case READ_UNCOMPENSATED_PRESS:
+        case WAIT_FOR_PRESS_DATA_READY:
             bsc_state = CONVERSION_IN_PROGRESS;
             break;
         case CALCULATION:

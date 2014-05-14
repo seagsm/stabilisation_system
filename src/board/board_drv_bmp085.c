@@ -3,7 +3,7 @@
 
 #include "board_drv_bmp085.h"
 
-static BMP85_STATE_STRUCTURE  bss_bmp85_state;
+BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 BOARD_ERROR be_board_drv_bmp085_init(void)
 {
@@ -326,6 +326,11 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
     return(be_result);
 }
 
+
+int16_t i16_board_drv_bmp085_get_temperature(void)
+{
+    return(bss_bmp85_state.i16_real_temperature);
+}
 
 uint32_t u32_board_drv_bmp085_get_pressure(void)
 {

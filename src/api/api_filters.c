@@ -514,7 +514,27 @@ int32_t i32_api_filters_ma_rx_throttle(int32_t i32_new_sample)
     return (i32_y);
 }
 
+#define PRESSURE_ARRAY_SIZE 100U
+/* Middle average. */
+uint32_t ui32_api_filters_ma_pressure(uint32_t u32_new_sample)
+{
+    /* Input samples.  */
+    const uint16_t u16_samples = PRESSURE_ARRAY_SIZE;
+    static uint32_t u32_x[PRESSURE_ARRAY_SIZE];
+    static uint32_t u32_summ = 0U;
+    static uint16_t   u16_n = 0U;
+    uint32_t u32_y;
 
+    u32_summ = u32_summ - u32_x[u16_n] + u32_new_sample;
+    u32_x[u16_n] = u32_new_sample;
+    u16_n = u16_n + 1U;
+    if(u16_n >= PRESSURE_ARRAY_SIZE)
+    {
+        u16_n = 0U;
+    }
+    u32_y = u32_summ / u16_samples;
+    return (u32_y);
+}
 
 
 

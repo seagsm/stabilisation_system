@@ -463,7 +463,19 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
         case 0x0058U:
             board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Z);
             break;
-        /* Motors output. */
+
+        /* Baro sensor. */
+        case 0x0060U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)i16_board_baro_get_temperature());
+            break;
+        case 0x0061U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)u32_board_baro_get_pressure());
+            break;
+        case 0x0062U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)i32_board_baro_get_altitude());
+            break;
+
+            /* Motors output. */
         case 0x0161U:
             board_dma_send_answer_float(u16_data_id, float_api_common_motors[0]);
             break;
