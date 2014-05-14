@@ -209,7 +209,7 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint16
     DMA_Init(DMA1_Channel6, &DMA_I2C_InitStructure);
     DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
 
-    NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel6_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel                  = (unsigned)DMA1_Channel6_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= DMA1_Channel6_PRIORITY_GROUP;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority       = DMA1_Channel6_SUB_PRIORITY_GROUP;
     NVIC_InitStructure.NVIC_IRQChannelCmd               = ENABLE;

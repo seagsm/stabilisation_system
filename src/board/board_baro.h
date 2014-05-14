@@ -10,10 +10,10 @@
 
 typedef enum
 {
-    START_CONVERSION       = 0U,
-    CONVERSION_INPROGRESS  = 1U,
-    CONVERSION_DONE        = 2U,
-    UNDEFINED_STATE        = 3U  
+    START_CONVERSION            = 0U,
+    CONVERSION_IN_PROGRESS      = 1U,
+    CONVERSION_DONE             = 2U,
+    UNDEFINED_STATE             = 3U  
 } BARO_STATE_CONDITION;
 
 BOARD_ERROR be_board_baro_init(void);

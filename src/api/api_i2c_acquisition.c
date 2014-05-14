@@ -89,56 +89,8 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
     }
     else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
     {
-        switch (bss_bmp85_state.bsc_state)
-        {
-            case START_TEMP_CONVERSION:
-                /* Start temperatire conversion in BARO sensor. */
-                be_board_drv_bmp085_raw_temperature_start_read(AUTO); /* -> WR_READ_UNCOMPENSATED_TEMP*/
-                break;
-            case WR_READ_UNCOMPENSATED_TEMP:
-                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
-                {
-                    /* Write data reading address. */
-                    be_board_drv_bmp085_write_data_address(RD_READ_UNCOMPENSATED_TEMP);
-                }
-                else
-                {   /* Baro conversion in progress yet, but we should start next acquisition frame. */
-                    api_i2c_data.u8_ready = 1U;
-                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                }
-
-                break;
-            case START_PRESS_CONVERSION:
-                    /* Convert value to uint16. Can be used pointers conversion */
-                bss_bmp85_state.u16_raw_temperature = ((uint16_t)bss_bmp85_state.u8_raw_temperature[0] << 8) +
-                                                      ((uint16_t)bss_bmp85_state.u8_raw_temperature[1]);
-                /* Start pressure conversion in BARO sensor. */
-                be_board_drv_bmp085_raw_pressure_start_read(AUTO); /* -> WR_READ_UNCOMPENSATED_PRESS*/
-                break;
-
-            case WR_READ_UNCOMPENSATED_PRESS:
-                if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline )
-                {
-                    /* Write data reading address. */
-                    be_board_drv_bmp085_write_data_address(RD_READ_UNCOMPENSATED_PRESS);
-                }
-                else
-                {
-                 /* Baro conversion in progress yet, but we should start next acquisition frame. */
-                    api_i2c_data.u8_ready = 1U;
-                    GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                }
-                break;
-            case WAIT_FOR_DATA_READY:
-                /* Set conversion done state. */
-                be_board_baro_set_state(CONVERSION_DONE);
-                api_i2c_data.u8_ready = 1U;
-                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                break;
-          default:
-                be_result = BOARD_ERR_RANGE;
-            break;
-       }
+        /* Call baro state machine. */
+        be_result = be_board_drv_bmp085_state_machine();
     }
     return(be_result);
 }
@@ -162,35 +114,11 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
     }
     else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
     {
-        switch (bss_bmp85_state.bsc_state)
-        {
-            case WR_READ_UNCOMPENSATED_TEMP:
-                /* Baro conversion in progress yet, but we should start next acquisition frame. */
-                api_i2c_data.u8_ready = 1U;
-                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                break;
-
-            case RD_READ_UNCOMPENSATED_TEMP:
-                 be_board_drv_bmp085_read_data_from_address(bss_bmp85_state.u8_raw_temperature,2U, START_PRESS_CONVERSION);
-                break;
-            case WR_READ_UNCOMPENSATED_PRESS:
-                /* Baro conversion in progress yet, but we should start next acquisition frame. */
-                api_i2c_data.u8_ready = 1U;
-                GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-                break;
-
-            case RD_READ_UNCOMPENSATED_PRESS:
-                 be_board_drv_bmp085_read_data_from_address(bss_bmp85_state.u8_raw_pressure,3U, WAIT_FOR_DATA_READY);
-
-
-                break;
-            default:
-                be_result = BOARD_ERR_RANGE;
-            break;
-       }
+        /* End of baro state machine itteration. */
+        /* Set IMU data ready flag. Baro will be done at next frame. */
+        api_i2c_data.u8_ready = 1U;
+        GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
     }
-
-
     return(be_result);
 }
 

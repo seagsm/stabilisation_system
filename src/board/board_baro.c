@@ -61,10 +61,14 @@ BARO_STATE_CONDITION bsc_board_baro_get_state(void)
         case START_TEMP_CONVERSION:
             bsc_state = START_CONVERSION;
             break;
-        case RD_READ_UNCOMPENSATED_TEMP:
-        case START_PRESS_CONVERSION:
-        case RD_READ_UNCOMPENSATED_PRESS:
-            bsc_state = CONVERSION_INPROGRESS;
+        case START_READING_UNCOMPENSATED_TEMP:
+        case READ_UNCOMPENSATED_TEMP:         
+        case WAIT_FOR_TEMP_DATA_READY:        
+        case START_PRESS_CONVERSION:          
+        case START_READING_UNCOMPENSATED_PRESS:
+        case READ_UNCOMPENSATED_PRESS:         
+        case WAIT_FOR_PRESS_DATA_READY:        
+            bsc_state = CONVERSION_IN_PROGRESS;
             break;
         case CALCULATION:
             bsc_state = CONVERSION_DONE;

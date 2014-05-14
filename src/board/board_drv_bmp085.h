@@ -37,16 +37,58 @@
 #define SMD500_PARAM_MH                        -7357
 #define SMD500_PARAM_MI                         3791
 
+/*
+    This enum reflect algorithm of reading data from BARO sensor.
+Current state : 
+    START_TEMP_CONVERSION               -> Function start writing a "start TEMP conversion" command to sensor.
+                                           Setting next state - START_READING_UNCOMPENSATED_TEMP.
+                                           And setting deadline time for WAITING 5mS.
+                                           Cause DMA WRITE end interrupt.
+
+        When deadline come:                       
+    START_READING_UNCOMPENSATED_TEMP    -> Function start writing a read address of data to sensor.
+                                           Setting next state - READ_UNCOMPENSATED_TEMP.
+                                           Cause DMA WRITE end interrupt.
+ 
+    READ_UNCOMPENSATED_TEMP             -> Function start reading a raw temperature data from sensor.
+                                           Setting next state - WAIT_FOR_TEMP_DATA_READY.
+                                           Cause DMA READ end interrupt.
+
+    WAIT_FOR_TEMP_DATA_READY            -> Function copy raw temperature data to u16_temperature.
+                                           Setting next state - START_PRESS_CONVERSION.
+
+    START_PRESS_CONVERSION              -> Function start writing a "start PRESS conversion" command to sensor.
+                                           Setting next state -     START_READING_UNCOMPENSATED_PRESS.
+                                           And setting deadline time for WAITING 26mS. 
+                                           Cause DMA WRITE end interrupt.
+
+        When deadline come:                       
+    START_READING_UNCOMPENSATED_PRESS   -> Function start writing a read address of data to sensor.
+                                           Setting next state - READ_UNCOMPENSATED_PRESS.
+                                           Cause DMA WRITE end interrupt.
+   
+    
+    READ_UNCOMPENSATED_PRESS            -> Function start reading a raw PRESSURE data from sensor.
+                                           Setting next state - WAIT_FOR_PRESS_DATA_READY.
+                                           Cause DMA READ end interrupt.
+
+    WAIT_FOR_PRESS_DATA_READY           -> Function copy raw temperature data to u32_pressure.
+                                           Setting next state - CALCULATION .
+
+    CALCULATION                          End of script. In this state data ready for calculation. 
+*/
+
 typedef enum
 {
-    START_TEMP_CONVERSION       = 0U, /* Write start temperature command to control register. */
-    WR_READ_UNCOMPENSATED_TEMP  = 1U, /* Write read address. */
-    RD_READ_UNCOMPENSATED_TEMP  = 2U, /* Read data from setted address. */
-    START_PRESS_CONVERSION      = 3U, /* Write start pressure command to control register. */
-    WR_READ_UNCOMPENSATED_PRESS = 4U, /* Write read address. */
-    RD_READ_UNCOMPENSATED_PRESS = 5U, /* Write read address. */
-    WAIT_FOR_DATA_READY         = 6U,
-    CALCULATION                 = 7U
+    START_TEMP_CONVERSION               = 0U, /* Write start temperature command to control register. */
+    START_READING_UNCOMPENSATED_TEMP    = 1U, /* Write read address. */
+    READ_UNCOMPENSATED_TEMP             = 2U, /* Read data from setted address. */
+    WAIT_FOR_TEMP_DATA_READY            = 3U, /* Wait for temperature data read done. */
+    START_PRESS_CONVERSION              = 4U, /* Write start pressure command to control register. */
+    START_READING_UNCOMPENSATED_PRESS   = 5U, /* Write read address. */
+    READ_UNCOMPENSATED_PRESS            = 6U, /* Write read address. */
+    WAIT_FOR_PRESS_DATA_READY           = 7U, /* Wait for pressure data read done. */ 
+    CALCULATION                         = 8U
 } BMP85_STATE_CONDITION;
 
 typedef enum
@@ -88,23 +130,33 @@ typedef struct
 
 } BMP85_STATE_STRUCTURE;
 
-extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
+/* extern BMP85_STATE_STRUCTURE  bss_bmp85_state; */
 
 
 
 
 BOARD_ERROR be_board_drv_bmp085_init(void);
 uint32_t   u32_board_drv_bmp085_get_pressure(void);
-static BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
-BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
-static BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
-BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
-static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(BMP85_I2C_ACCESS_CONDITION  b85ac_mode);
+
+
+
+
+/* Temperature. */
+static BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(void);
+static BOARD_ERROR be_board_drv_bmp085_read_raw_temperature(void);
+/* Pressure. */
+static BOARD_ERROR be_board_drv_bmp085_raw_pressure_start_read(void);
+static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void);
+
+/* Calculation. */
 BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void);
+static BOARD_ERROR be_board_drv_bmp085_callibration_read(void);
+
+BOARD_ERROR be_board_drv_bmp085_state_machine(void);
+/* Set, get condition. */
 void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state);
 BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void);
-BOARD_ERROR be_board_drv_bmp085_write_data_address(BMP85_STATE_CONDITION  b85sc_state);
-BOARD_ERROR be_board_drv_bmp085_read_data_from_address(uint8_t* pu8_buffer,uint16_t u16_number_byte_to_read, BMP85_STATE_CONDITION  b85sc_state);
+
 
 
 
