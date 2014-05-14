@@ -87,7 +87,7 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
         /* Call write-init function. */
         be_result = be_board_i2c_write_start(pu8_buffer, u16_num_byte_to_write, u8_device_address);
     }
-    else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
+    else if(api_i2c_data.u8_device >= 3U ) /* Call baro state machine. */
     {
         /* Call baro state machine. */
         be_result = be_board_drv_bmp085_state_machine();
@@ -115,7 +115,6 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
     else if(api_i2c_data.u8_device == 3U ) /* Call baro state machine. */
     {
         /* End of baro state machine itteration. */
-        /* Set IMU data ready flag. Baro will be done at next frame. */
         api_i2c_data.u8_ready = 1U;
         GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
     }

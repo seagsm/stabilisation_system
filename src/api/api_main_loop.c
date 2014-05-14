@@ -40,27 +40,6 @@ static void v_api_main_loop_process(void)
             /* Convert raw sensor data to float. */
             v_api_data_normalising();
 
-/*
-            if(u16_flag_up_down == 0U )
-            {
-                u16_test_counter++;
-                b_float3d_api_data_norm_gyro_data.fl_X = 10.0f;
-                if(u16_test_counter >= 1000U)
-                {
-                    u16_flag_up_down = 1U;
-                }
-            }
-            else
-            {
-                u16_test_counter--;
-                b_float3d_api_data_norm_gyro_data.fl_X = -10.0f;
-                if(u16_test_counter < 1U)
-                {
-                    u16_flag_up_down = 0U;
-                }
-            }
-*/
-
             /* Start control frame. */
             v_api_main_loop_control_loop();
         }

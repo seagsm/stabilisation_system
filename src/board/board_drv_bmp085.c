@@ -3,14 +3,13 @@
 
 #include "board_drv_bmp085.h"
 
-static  BMP85_STATE_STRUCTURE  bss_bmp85_state;
+static BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 BOARD_ERROR be_board_drv_bmp085_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     gv_board_sys_tick_delay(10U);
-
 
     be_result = be_board_drv_bmp085_callibration_read();
 
@@ -55,6 +54,7 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
         be_board_drv_bmp085_raw_temperature_start_read();
         gv_board_sys_tick_delay(5U);
         be_board_drv_bmp085_read_raw_temperature();
+        gv_board_sys_tick_delay(50U);
         be_board_drv_bmp085_raw_pressure_start_read();
         gv_board_sys_tick_delay(28U);
         be_board_drv_bmp085_read_raw_pressure();
@@ -76,12 +76,12 @@ static BOARD_ERROR be_board_drv_bmp085_callibration_read(void)
 return(be_result);
 }
 
+static uint8_t u8_data[3] = {0U};
 
 BOARD_ERROR be_board_drv_bmp085_state_machine(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    uint8_t u8_data[3] = {0U};
-    
+
     switch(bss_bmp85_state.bsc_state)
     {
         case START_TEMP_CONVERSION:
@@ -89,16 +89,15 @@ BOARD_ERROR be_board_drv_bmp085_state_machine(void)
             u8_data[1] = BMP085_START_TEMPERATURE_MEASURE;
 /*wr*/      be_result = be_board_i2c_write_start(u8_data, 2U, BMP085_ADDRESS);
             /* Save to sensor structure estimated time of the end of temperature conversion. */
-            bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_TEMP_CONVERSION_TIME;            
+            bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_TEMP_CONVERSION_TIME;
             bss_bmp85_state.bsc_state = START_READING_UNCOMPENSATED_TEMP;
         break;
- 
+
         case START_READING_UNCOMPENSATED_TEMP:
             if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline)
-            {  
+            {
                 u8_data[0] = BMP085_ADC_OUT_MSB_REG; /* Set reading  start address. */
 /*wr*/          be_result = be_board_i2c_write_start(u8_data, 1U, BMP085_ADDRESS);
-          
                 bss_bmp85_state.bsc_state = READ_UNCOMPENSATED_TEMP;
             }
             else
@@ -106,37 +105,37 @@ BOARD_ERROR be_board_drv_bmp085_state_machine(void)
                 /* Set IMU data ready flag. Baro will be done at next frame. */
                 api_i2c_data.u8_ready = 1U;
                 GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-            }  
+            }
             break;
-        
+
         case READ_UNCOMPENSATED_TEMP:
 /*rd*/      be_result = be_board_i2c_read_start(bss_bmp85_state.u8_raw_temperature, 2U, BMP085_ADDRESS);
             bss_bmp85_state.bsc_state = WAIT_FOR_TEMP_DATA_READY;
             break;
-        
+
         case WAIT_FOR_TEMP_DATA_READY:
-            bss_bmp85_state.u16_raw_temperature = ((uint16_t)bss_bmp85_state.u8_raw_temperature[0] << 8) + 
+            bss_bmp85_state.u16_raw_temperature = ((uint16_t)bss_bmp85_state.u8_raw_temperature[0] << 8) +
                                                   ((uint16_t)bss_bmp85_state.u8_raw_temperature[1]);
-            
+
             bss_bmp85_state.bsc_state = START_PRESS_CONVERSION;
 
             /* Set IMU data ready flag. Baro will be done at next frame. */
             api_i2c_data.u8_ready = 1U;
             GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-            break;       
-/* pressure */        
+            break;
+/* pressure */
         case START_PRESS_CONVERSION:
             u8_data[0] = BMP085_CTRL_REG;
             u8_data[1] = BMP085_START_PRESSURE_MEASURE + (BMP085_OVERSAMPLING << 6);
 /*wr*/      be_result = be_board_i2c_write_start(u8_data, 2U, BMP085_ADDRESS);
             /* Save to sensor structure estimated time of the end of temperature conversion. */
-            bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_PRESS_CONVERSION_TIME;            
+            bss_bmp85_state.u64_deadline = gu64_read_system_time() + BMP085_PRESS_CONVERSION_TIME;
             bss_bmp85_state.bsc_state = START_READING_UNCOMPENSATED_PRESS;
-        break;            
-            
+        break;
+
         case START_READING_UNCOMPENSATED_PRESS:
             if(gu64_read_system_time() >= bss_bmp85_state.u64_deadline)
-            {  
+            {
                 u8_data[0] = BMP085_ADC_OUT_MSB_REG; /* Set reading start address. */
 /*wr*/          be_result = be_board_i2c_write_start(u8_data, 1U, BMP085_ADDRESS);
                 bss_bmp85_state.bsc_state = READ_UNCOMPENSATED_PRESS;
@@ -146,31 +145,31 @@ BOARD_ERROR be_board_drv_bmp085_state_machine(void)
                 /* Set IMU data ready flag. Baro will be done at next frame. */
                 api_i2c_data.u8_ready = 1U;
                 GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-            }  
-            break;            
-        
+            }
+            break;
+
         case READ_UNCOMPENSATED_PRESS:
 /*rd*/      be_result = be_board_i2c_read_start(bss_bmp85_state.u8_raw_pressure, 3U, BMP085_ADDRESS);
             bss_bmp85_state.bsc_state = WAIT_FOR_PRESS_DATA_READY;
-            break;            
- 
+            break;
+
         case WAIT_FOR_PRESS_DATA_READY:
             /* Convert 3 byte array to uint32_t raw pressure. */
-            bss_bmp85_state.u32_raw_pressure =  ((uint32_t)bss_bmp85_state.u8_raw_pressure[0] << 16) | 
-                                                ((uint32_t)bss_bmp85_state.u8_raw_pressure[1] <<  8) | 
+            bss_bmp85_state.u32_raw_pressure =  ((uint32_t)bss_bmp85_state.u8_raw_pressure[0] << 16) |
+                                                ((uint32_t)bss_bmp85_state.u8_raw_pressure[1] <<  8) |
                                                 ((uint32_t)bss_bmp85_state.u8_raw_pressure[2]);
-            
+
             bss_bmp85_state.u32_raw_pressure = bss_bmp85_state.u32_raw_pressure >> (8 - (int8_t)BMP085_OVERSAMPLING);
             bss_bmp85_state.bsc_state = CALCULATION;
 
             /* Set IMU data ready flag. Baro will be done at next frame. */
             api_i2c_data.u8_ready = 1U;
             GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
-            break;            
+            break;
         default:
             be_result = BOARD_ERR_STATE;
             break;
-    }  
+    }
     return(be_result);
 }
 
@@ -180,7 +179,7 @@ BOARD_ERROR be_board_drv_bmp085_state_machine(void)
 static BOARD_ERROR be_board_drv_bmp085_raw_temperature_start_read(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
- 
+
     /* Write to control register " start of temperature convertion" command in ONE_TIME mode. */
     be_result = board_i2c_write(BMP085_ADDRESS, BMP085_CTRL_REG, BMP085_START_TEMPERATURE_MEASURE);
     /* Save to sensor structure estimated time of the end of temperature conversion. */
@@ -222,17 +221,18 @@ static BOARD_ERROR be_board_drv_bmp085_read_raw_pressure(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint32_t u32_tmp[3] = {0U};
-    
+
     /* Read 3 bytes from sensor. */
     be_result = board_i2c_read( BMP085_ADDRESS, BMP085_ADC_OUT_MSB_REG, 3U, bss_bmp85_state.u8_raw_pressure);
-    
+
     u32_tmp[0] = (uint32_t)bss_bmp85_state.u8_raw_pressure[0];
     u32_tmp[1] = (uint32_t)bss_bmp85_state.u8_raw_pressure[1];
     u32_tmp[2] = (uint32_t)bss_bmp85_state.u8_raw_pressure[2];
-    
+
     /* Convert byte array to uint32_t. */
     bss_bmp85_state.u32_raw_pressure = ((u32_tmp[0] << 16) | (u32_tmp[1] << 8) | u32_tmp[2]) ;
     bss_bmp85_state.u32_raw_pressure = bss_bmp85_state.u32_raw_pressure >> (8 - (int8_t)BMP085_OVERSAMPLING);
+    bss_bmp85_state.bsc_state = CALCULATION;
     return(be_result);
 }
 
