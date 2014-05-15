@@ -21,8 +21,8 @@ void api_end_device_update(void)
     int32_t i32_Yaw;
 
     /* BARO */
-    uint8_t u8_baro_mode = 0U;
-    
+    static uint8_t u8_baro_mode = 0U;
+
     /* Copy PDF data. */
     i32_Pitch   = pid_api_pid_data[Pitch].i32_pid_output;
     i32_Roll    = pid_api_pid_data[Roll].i32_pid_output;
@@ -39,10 +39,10 @@ void api_end_device_update(void)
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* BARO ON/OFF */  /* Check the ch number. */
-    if( bc_channel_value_structure.u16_channel_6_value >= API_BARO_MODE_ON)
+    if( bc_channel_value_structure.u16_channel_5_value <= API_BARO_MODE_ON)
     {
         if(u8_baro_mode == 0U)
-        {  
+        {
             u8_baro_mode = 1U;
             bp_baro_pid.i32_AltHold = bp_baro_pid.i32_EstAlt;
             bp_baro_pid.i32_errorAltitudeI = 0;
@@ -50,18 +50,22 @@ void api_end_device_update(void)
             bp_baro_pid.i32_ThrHold = i32_throttle;
         }
     }
-    
-    /* If baro stabilisation is ON. */  
-    if(u8_baro_mode == 1U) 
+    else
+    {
+        u8_baro_mode = 0U;
+    }
+
+    /* If baro stabilisation is ON. */
+    if(u8_baro_mode == 1U)
     {   /* Change AltHold and Throttle Hold. */
         if(abs_t(i32_throttle - bp_baro_pid.i32_ThrHold) > ALT_BARO_HOLD_THROTTLE_NEUTRAL_ZONE)
         {
             u8_baro_mode = 0U;
-        }  
+        }
         /* Calculate baro stabilised throuttle. */
         i32_throttle = bp_baro_pid.i32_ThrHold + bp_baro_pid.i32_BaroPID;
     }
- 
+
     float_api_common_variables[1] = (float)i32_throttle;
 
     if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
