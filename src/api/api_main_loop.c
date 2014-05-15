@@ -92,6 +92,8 @@ BOARD_ERROR be_api_main_loop_init(void)
 
     /* Init PIDs elements. */
     api_pid_init();
+    /* Init PID elements of BARO. */
+    api_baro_PID_init();
 
     return(be_result);
 }

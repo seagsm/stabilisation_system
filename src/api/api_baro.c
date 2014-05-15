@@ -5,7 +5,7 @@
 
 BARO_PID  bp_baro_pid;
 
-void api_baro_init(void)
+void api_baro_PID_init(void)
 {
     bp_baro_pid.i32_p_gain = 16;
     bp_baro_pid.i32_i_gain = 15;

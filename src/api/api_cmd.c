@@ -348,11 +348,31 @@ static BOARD_ERROR be_api_CMD_data_write_i32(uint16_t u16_data_id, int32_t i32_d
             pid_api_pid_data[Yaw].i32_i_max      = i32_data_load;
             board_dma_send_WRITE_OK();
             break;
+        /* BARO */           
+        case 0x0065U:
+            bp_baro_pid.i32_p_gain              = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;  
+        case 0x0066U:
+            bp_baro_pid.i32_i_gain              = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;  
+        case 0x0067U:
+            bp_baro_pid.i32_i_max               = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;  
+        case 0x0068U:
+            bp_baro_pid.i32_i_min               = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;  
+        case 0x0069U:
+            bp_baro_pid.i32_d_gain              = i32_data_load;
+            board_dma_send_WRITE_OK();
+            break;  
         default:
             be_result = BOARD_ERR_ID;
             break;
     }
-
     return(be_result);
 }
 
@@ -480,6 +500,22 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
         case 0x0064U:
             board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_EstAlt);
             break;            
+        case 0x0065U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_p_gain);
+            break;  
+        case 0x0066U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_gain);
+            break;  
+        case 0x0067U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_max);
+            break;  
+        case 0x0068U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_min);
+            break;  
+        case 0x0069U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_d_gain);
+            break;  
+
             
             /* Motors output. */
         case 0x0161U:

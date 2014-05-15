@@ -29,7 +29,7 @@ typedef struct
 
 extern BARO_PID  bp_baro_pid;
 
-void api_baro_init(void); 
+void api_baro_PID_init(void); 
 void api_baro_altitude_estimation(void);
 
 
