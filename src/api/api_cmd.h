@@ -8,6 +8,7 @@
 #include "api_CRC.h"
 #include "api_pid.h"
 #include "board_baro.h"
+#include "api_baro.h"
 
 #define API_CMD_MAX_SIZE_OF_LINE_BUFFER 32U
 

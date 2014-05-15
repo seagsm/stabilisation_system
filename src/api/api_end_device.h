@@ -8,6 +8,7 @@
 #include "board_ppm.h"
 #include "board_pwm.h"
 #include "api_common.h"
+#include "api_baro.h"
 
 #define API_END_DEVICE_MIN_THROTTLE 1200
 

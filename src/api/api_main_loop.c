@@ -15,8 +15,14 @@ static void v_api_main_loop_process(void)
         {
             /* Calculation of real pressure and real temperature.*/
             v_board_baro_data_compensation();
-            bss_bmp85_state.u32_real_pressure = ui32_api_filters_ma_pressure(bss_bmp85_state.u32_real_pressure);
+ 
             /* Pressure filtration and altitude calculation. */
+
+            /* Filter pressure using MA filter*/
+            u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
+            
+            /* Altitude estimation and BaroPid output calculation. */
+            api_baro_altitude_estimation();
 
             /* Set BARO state machine start state. */
             be_board_baro_set_state(START_CONVERSION);

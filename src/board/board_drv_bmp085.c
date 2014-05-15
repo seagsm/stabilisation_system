@@ -3,7 +3,7 @@
 
 #include "board_drv_bmp085.h"
 
-BMP85_STATE_STRUCTURE  bss_bmp85_state;
+static BMP85_STATE_STRUCTURE  bss_bmp85_state;
 
 BOARD_ERROR be_board_drv_bmp085_init(void)
 {
@@ -20,7 +20,7 @@ BOARD_ERROR be_board_drv_bmp085_init(void)
     If this array has size 8 bytes and less, it can be defined like local array  inside function.
     If I do size of that array more that 8 byte, it make troubles with DMA.
     If array defined like global, it work good. I did not found reason yet.
-    I just defined it like global.
+    I just defined it like a global. So, it would be better to make all arrays for DMA like a global.
 */
 static  uint8_t u8_callibration_data[BMP085_PROM_DATA_LEN] = {0U};
 
@@ -348,6 +348,14 @@ void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state)
 }
 
 
+uint32_t u32_board_drv_bmp085_get_filtered_pressure(void)
+{
+    return(bss_bmp85_state.u32_filtered_pressure);
+}
+void v_board_drv_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure)
+{
+    bss_bmp85_state.u32_filtered_pressure = u32_filtered_pressure;
+}
 
 
 

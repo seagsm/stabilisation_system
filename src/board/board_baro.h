@@ -25,6 +25,7 @@ BOARD_ERROR be_board_baro_set_state(BARO_STATE_CONDITION bsc_state);
 BARO_STATE_CONDITION bsc_board_baro_get_state(void);
 void v_board_baro_data_compensation(void);
 
-
+uint32_t u32_board_baro_get_filtered_pressure(void);
+void u32_board_baro_set_filtered_pressure(uint32_t u32_filtered_pressure);
 
 #endif

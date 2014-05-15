@@ -39,16 +39,12 @@
 #define YAW_D_GAIN          0
 #define YAW_D_GAIN_DYN      0
 
-
-
-
 enum
 {
   Roll  = 0,
   Pitch = 1,
   Yaw   = 2
 };
-
 
 typedef struct
 {
@@ -78,7 +74,6 @@ typedef struct
 
 
 extern PID_element pid_api_pid_data[3];
-
 
         void api_pid_init(void);
         void api_pid_update_frame(void);

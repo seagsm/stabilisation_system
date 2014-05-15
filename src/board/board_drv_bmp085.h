@@ -123,14 +123,15 @@ typedef struct
   uint32_t              u32_real_pressure;
   uint32_t              u32_raw_pressure;
   uint8_t               u8_raw_pressure[4];
-
+  uint32_t              u32_filtered_pressure;
+  
   /* System part. */
   BMP85_STATE_CONDITION bsc_state;
   uint64_t              u64_deadline;
 
 } BMP85_STATE_STRUCTURE;
 
-extern BMP85_STATE_STRUCTURE  bss_bmp85_state;
+/* extern BMP85_STATE_STRUCTURE  bss_bmp85_state; */ 
 
 
 
@@ -161,6 +162,9 @@ uint32_t    u32_board_drv_bmp085_get_pressure(void);
 int16_t     i16_board_drv_bmp085_get_temperature(void);
 void v_board_drv_bmp085_set_state(BMP85_STATE_CONDITION b85sc_state);
 BMP85_STATE_CONDITION b85sc_board_drv_bmp085_get_state(void);
+
+uint32_t u32_board_drv_bmp085_get_filtered_pressure(void);
+void v_board_drv_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure);
 
 
 

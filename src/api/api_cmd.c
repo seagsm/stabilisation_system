@@ -472,9 +472,15 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
             board_dma_send_answer_int32(u16_data_id, (int32_t)u32_board_baro_get_pressure());
             break;
         case 0x0062U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)i32_board_baro_get_altitude());
+            board_dma_send_answer_int32(u16_data_id, i32_board_baro_get_altitude());
             break;
-
+        case 0x0063U:
+            board_dma_send_answer_int32(u16_data_id, (int32_t)u32_board_baro_get_filtered_pressure());
+            break;
+        case 0x0064U:
+            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_EstAlt);
+            break;            
+            
             /* Motors output. */
         case 0x0161U:
             board_dma_send_answer_float(u16_data_id, float_api_common_motors[0]);

@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.40.3.54103</state>
+          <state>6.40.5.54273</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1843,6 +1843,12 @@
     <name>src</name>
     <group>
       <name>api</name>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_baro.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_baro.h</name>
+      </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_body_angle_calculation.c</name>
       </file>
