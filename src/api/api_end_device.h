@@ -12,6 +12,10 @@
 
 #define API_END_DEVICE_MIN_THROTTLE 1200
 
+#define API_END_DEVICE_HEAD_HOLD_MODE_ON 1500
+
+#define API_END_DEVICE_HEAD_HOLD_P_PID    20
+#define API_END_DEVICE_HEAD_HOLDING        1 /* On / Off head holding mode. */
 void api_end_device_update(void);
 
 
