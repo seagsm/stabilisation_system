@@ -3,6 +3,7 @@
 
 #include "api_end_device.h"
 
+/* Value of current HEAD HOLD direction. This value is using in PDF YAW filter. */
 int32_t i32_head_hold     = 0;
 
 /*This function calculate value of PPM (PWM) for all end device. (Motors, servos for tricopter configuration.) */
@@ -11,6 +12,7 @@ void api_end_device_update(void)
     /* Motors. */
     int32_t i32_motor[3];
     int32_t i32_throttle;
+
     /* Direction. */
     int32_t i32_servo;
     int32_t i32_rc_chanel_yaw_value;
@@ -20,9 +22,10 @@ void api_end_device_update(void)
     int32_t i32_Roll;
     int32_t i32_Yaw;
     static uint8_t u8_head_hold_mode = 0U;
-    int32_t i32_heading       = 0;
-    int32_t i32_heading_error = 0;
-    float f_head_angle        = 0.0f;
+    int32_t i32_heading              = 0;
+    int32_t i32_heading_error        = 0;
+    float f_head_angle               = 0.0f;
+
     /* BARO */
     static uint8_t u8_baro_mode = 0U;
 
@@ -36,9 +39,7 @@ void api_end_device_update(void)
         For some condition without it possible problems during start of motors.
     */
     i32_throttle = (int32_t)bc_channel_value_structure.u16_channel_3_value;
-
     float_api_common_variables[0] = (float)i32_throttle;
-
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* Turn on BaroAltHold. BARO ON/OFF */
@@ -60,11 +61,13 @@ void api_end_device_update(void)
 
     /* If baro stabilisation is ON. */
     if(u8_baro_mode == 1U)
-    {   /* Change AltHold and Throttle Hold. */
+    {
+        /* Change AltHold and Throttle Hold. */
         if(abs_t(i32_throttle - bp_baro_pid.i32_ThrHold) > ALT_BARO_HOLD_THROTTLE_NEUTRAL_ZONE)
         {
             u8_baro_mode = 0U;
         }
+
         /* Calculate baro stabilised throuttle. */
         i32_throttle = bp_baro_pid.i32_ThrHold + bp_baro_pid.i32_BaroPID;
     }
@@ -88,12 +91,13 @@ void api_end_device_update(void)
         i32_motor[2] = constrain_i32(i32_motor[2],API_END_DEVICE_MIN_THROTTLE,BOARD_PPM_MAX_VALUE);
     }
 
-
-    /* Get current YAW channel value. */
-
+    /* Get current RC YAW channel value. */
     i32_rc_chanel_yaw_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
-    /* i32_rc_chanel_yaw_value =  i32_rc_chanel_yaw_value - (int32_t)BOARD_PPM_ZERO_VALUE; */
+
+    /* Calc aproximation value. */
     i32_rc_chanel_yaw_value = api_rx_channels_approximation(i32_rc_chanel_yaw_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+
+    /* Get MA filtered value. It give some small delay. */
     i32_rc_chanel_yaw_value = i32_api_filters_ma_rx_yaw(i32_rc_chanel_yaw_value);
 
 
@@ -106,6 +110,7 @@ void api_end_device_update(void)
       {
         u8_head_hold_mode = 1U;
         f_head_angle      = fl_api_body_angle_wind_angles[Yaw];
+
         /* Save current head position( direction). */
         i32_head_hold     = (int32_t)f_head_angle;
       }
@@ -120,29 +125,18 @@ void api_end_device_update(void)
     i32_heading  = (int32_t)f_head_angle;
 
     /* Try to calculate RC Yaw compensation or set new head holding position. */
-    if ((abs_t(i32_rc_chanel_yaw_value) < 70) && u8_head_hold_mode)
+    if ((abs_t(i32_rc_chanel_yaw_value) < 30) && u8_head_hold_mode)
     {
         /* Calc head error. */
         i32_heading_error = i32_heading - i32_head_hold;
 
-        /* Fit it to +- 180 degree. */
-/*
-        if (i32_heading_error <= -180)
-        {
-            i32_heading_error = i32_heading_error + 360;
-        }
-        if (i32_heading_error >= +180)
-        {
-            i32_heading_error = i32_heading_error - 360;
-        }
-*/
-        /* If body position is enough flate:*/
+        /* If body position is enough in horisontal level:*/
         if (abs_t((int32_t)fl_api_body_angle_wind_angles[Roll]) < 25)
         {
             if(abs_t((int32_t)fl_api_body_angle_wind_angles[Pitch]) < 25)
             {
                 /* Calc compensation for Yaw value*/
-                i32_rc_chanel_yaw_value = i32_rc_chanel_yaw_value - i32_heading_error * API_END_DEVICE_HEAD_HOLD_P_PID/30;  /* 18 deg */
+                i32_rc_chanel_yaw_value = i32_rc_chanel_yaw_value - i32_heading_error * API_END_DEVICE_HEAD_HOLD_P_PID/30;
             }
         }
     }
@@ -150,8 +144,8 @@ void api_end_device_update(void)
     {   /* Set new head hold possition. */
         i32_head_hold = i32_heading;
     }
-
 #endif
+
     /* Calculate compensation of RC YAW with PDF filter.*/
     i32_servo = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw;
     i32_servo = constrain_i32(i32_servo,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
@@ -161,7 +155,6 @@ void api_end_device_update(void)
     timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);
     timer2_PWM_duty_CH3((uint16_t)i32_motor[2]);
     timer2_PWM_duty_CH4((uint16_t)i32_servo);
-
 }
 
 

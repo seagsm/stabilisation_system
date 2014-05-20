@@ -1,6 +1,7 @@
 
-#include "api_pid.h"
 
+
+#include "api_pid.h"
 #include "api_flash.h"
 
 PID_element pid_api_pid_data[3];
@@ -78,7 +79,6 @@ static void api_pid_init_Yaw(void)
     pid_api_pid_data[Yaw].i32_d_angle_speed    = 0;
 }
 
-
 /* Pseudo derivative filter. */
 static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, int32_t i32_angle_position, int32_t i32_angle_speed)
 {
@@ -153,23 +153,17 @@ void api_pid_update_frame(void)
 
     /* Calculation of Pitch PDF frame. */
 
-    /* Convert channel value to int32. */
+    /* Convert RC Pitch channel value to int32. */
     i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_2_value;      /* value between 1000 - 2000  */
-/*
-    TEST
- */
-    /* i32_rc_chanel_value = 1500; */
-
 
     /* Get deviation from ZERO value. */
-    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE; */  /* value between -500 + 500  */
-    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
 
-    /* Convert body inclination from degree to 0.1 degree. ( 10degree = 100(0.1degree))*/
+    /* Get body Pitch angle. Convert body inclination from degree to 0.1 degree. ( 10degree = 100(0.1degree)). */
     f_body_angle        = fl_api_body_angle_wind_angles[Pitch] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;        /* value between -1800 + 1800 */
 
-    /* Convert body angle speed from degree/sec to 0.1 degree/sec. */
+    /* Get body angle Pitch speed. Convert body angle speed from degree/sec to 0.1 degree/sec. */
     f_body_angle_speed  = b_float3d_api_data_norm_gyro_data.fl_Y * 10.0f; /* value between -5000 + 5000  , it could be used RAW data from Gyro. */
     i32_body_angle_speed= (int32_t)f_body_angle_speed;
 
@@ -177,21 +171,16 @@ void api_pid_update_frame(void)
     api_pid_update_PDF( &pid_api_pid_data[Pitch], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed);
 
     /* Calculation of Roll PDF frame. */
+    /* Get current value of Roll RC channel. */
     i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_4_value;
-
-/*
-    TEST
- */
-   /*  i32_rc_chanel_value =1500; */
-
-    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE;*/
     i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
 
+    /* Get body Roll angle. */
     f_body_angle        = fl_api_body_angle_wind_angles[Roll] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;
 
+    /* Get body angle Roll speed. */
     f_body_angle_speed  = b_float3d_api_data_norm_gyro_data.fl_X * 10.0f;
-
     i32_body_angle_speed= (int32_t)f_body_angle_speed;
 
     /* update Roll frame. */
@@ -199,21 +188,15 @@ void api_pid_update_frame(void)
 
     /* Calculation of Yaw PDF frame. */
 
-/* i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_1_value; */
-
-    /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE; */
-
-/* i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); */
-
+    /* Get current body angle. */
     f_body_angle        = fl_api_body_angle_wind_angles[Yaw] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;
 
-
+    /* Get body angle YAW speed. */
     f_body_angle_speed  = b_float3d_api_data_norm_gyro_data.fl_Z * 10.0f;
-
     i32_body_angle_speed= (int32_t)f_body_angle_speed;
 
     /* update Yaw frame. */
-    /* api_pid_update_PDF( &pid_api_pid_data[Yaw], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed); */
+    /*  (i32_head_hold * 10) / 2 is set point. It is strange, but it is for compatibility. */
     api_pid_update_PDF( &pid_api_pid_data[Yaw], (i32_head_hold * 10) / 2, i32_body_angle, i32_body_angle_speed);
 }
