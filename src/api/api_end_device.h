@@ -16,6 +16,10 @@
 
 #define API_END_DEVICE_HEAD_HOLD_P_PID    20
 #define API_END_DEVICE_HEAD_HOLDING        1 /* On / Off head holding mode. */
+
+
+extern int32_t i32_head_hold;
+
 void api_end_device_update(void);
 
 

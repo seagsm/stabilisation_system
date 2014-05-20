@@ -3,7 +3,7 @@
 
 #include "api_end_device.h"
 
-
+int32_t i32_head_hold     = 0;
 
 /*This function calculate value of PPM (PWM) for all end device. (Motors, servos for tricopter configuration.) */
 void api_end_device_update(void)
@@ -20,7 +20,6 @@ void api_end_device_update(void)
     int32_t i32_Roll;
     int32_t i32_Yaw;
     static uint8_t u8_head_hold_mode = 0U;
-    static int32_t i32_head_hold     = 0;
     int32_t i32_heading       = 0;
     int32_t i32_heading_error = 0;
     float f_head_angle        = 0.0f;
@@ -91,8 +90,12 @@ void api_end_device_update(void)
 
 
     /* Get current YAW channel value. */
+
     i32_rc_chanel_yaw_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
-    i32_rc_chanel_yaw_value =  i32_rc_chanel_yaw_value - (int32_t)BOARD_PPM_ZERO_VALUE;
+    /* i32_rc_chanel_yaw_value =  i32_rc_chanel_yaw_value - (int32_t)BOARD_PPM_ZERO_VALUE; */
+    i32_rc_chanel_yaw_value = api_rx_channels_approximation(i32_rc_chanel_yaw_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+    i32_rc_chanel_yaw_value = i32_api_filters_ma_rx_yaw(i32_rc_chanel_yaw_value);
+
 
 #if API_END_DEVICE_HEAD_HOLDING
  /* HEAD HOLDING. */
@@ -123,6 +126,7 @@ void api_end_device_update(void)
         i32_heading_error = i32_heading - i32_head_hold;
 
         /* Fit it to +- 180 degree. */
+/*
         if (i32_heading_error <= -180)
         {
             i32_heading_error = i32_heading_error + 360;
@@ -131,6 +135,7 @@ void api_end_device_update(void)
         {
             i32_heading_error = i32_heading_error - 360;
         }
+*/
         /* If body position is enough flate:*/
         if (abs_t((int32_t)fl_api_body_angle_wind_angles[Roll]) < 25)
         {

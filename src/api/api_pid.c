@@ -198,18 +198,22 @@ void api_pid_update_frame(void)
     api_pid_update_PDF( &pid_api_pid_data[Roll], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed);
 
     /* Calculation of Yaw PDF frame. */
-    i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
+
+/* i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_1_value; */
 
     /* i32_rc_chanel_value = i32_rc_chanel_value - BOARD_PPM_ZERO_VALUE; */
-    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+
+/* i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); */
 
     f_body_angle        = fl_api_body_angle_wind_angles[Yaw] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;
+
 
     f_body_angle_speed  = b_float3d_api_data_norm_gyro_data.fl_Z * 10.0f;
 
     i32_body_angle_speed= (int32_t)f_body_angle_speed;
 
     /* update Yaw frame. */
-    api_pid_update_PDF( &pid_api_pid_data[Yaw], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed);
+    /* api_pid_update_PDF( &pid_api_pid_data[Yaw], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed); */
+    api_pid_update_PDF( &pid_api_pid_data[Yaw], (i32_head_hold * 10) / 2, i32_body_angle, i32_body_angle_speed);
 }

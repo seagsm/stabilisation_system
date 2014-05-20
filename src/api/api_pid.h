@@ -7,6 +7,7 @@
 #include "board_ppm.h"
 #include "api_body_angle_calculation.h"
 #include "api_rx_channels.h"
+#include "api_end_device.h"
 
 /* in 0.1 degree , 1000 = 100degree, 450 = 45 degree. */
 #define MAX_ANGLE_INCLINATION 450
@@ -30,7 +31,7 @@
 #define ROLL_D_GAIN         60
 #define ROLL_D_GAIN_DYN     0
 /* Yaw */
-#define YAW_P_GAIN          0
+#define YAW_P_GAIN          30
 #define YAW_P_GAIN_DYN      100
 #define YAW_I_GAIN          0
 #define YAW_I_GAIN_DYN      0
