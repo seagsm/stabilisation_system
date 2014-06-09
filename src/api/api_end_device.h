@@ -17,6 +17,9 @@
 
 #define API_END_DEVICE_HEAD_HOLDING         1   /* On/Off head holding mode. */
 
+#define API_END_DEVICE_TRICOPTER            0   /* define TRICOPTER mode. */
+
+#define API_END_DEVICE_FLIGHT_SAURCER       1   /* define SAUCER mode. */
 
 extern int32_t i32_head_hold;
 
