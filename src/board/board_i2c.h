@@ -146,16 +146,7 @@ typedef enum i2c_state
 #define u8	uint8_t
 #define u16	uint16_t
 
-
-/* extern vu8 vu8_master_reception_complete; */
-
-
-extern uint8_t gu8_board_i2c_GyroId;
-
 extern BOARD_U16_3X_DATA board_i2c_sensor_data;
-
-
-
 
 BOARD_ERROR be_board_i2c_init(void);
 static void board_i2c_unstick(void);

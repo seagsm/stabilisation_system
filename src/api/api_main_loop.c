@@ -4,19 +4,53 @@
 
 static void v_api_main_loop_process(void)
 {
+    static uint8_t u8_calibration = 0U;
+
     if(api_i2c_data.u8_ready == 1U)
     {
         /* Convertind data from raw data array to sensors raw data. */
         v_api_data_prepr_sensor_data_preprocessing();
 
+        if(bsc_board_baro_get_state() == CONVERSION_DONE)
+        {
+            /* Calculation of real pressure and real temperature.*/
+            v_board_baro_data_compensation();
+ 
+            /* Pressure filtration and altitude calculation. */
+
+            /* Filter pressure using MA filter*/
+            u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
+            
+            /* Altitude estimation and BaroPid output calculation. */
+            api_baro_altitude_estimation();
+
+            /* Set BARO state machine start state. */
+            be_board_baro_set_state(START_CONVERSION);
+        }
+
         /* Start data acquisition. */
         be_api_i2c_acquisition_start();
 
-        /* Convert raw sensor data to float. */
-        v_api_data_normalising();
+        /* Calibration gyro. */
+        if(u8_calibration == 0U)
+        {
+            /* callibration function will be called CALIBRATION_COUNT time to calculate callibration values. */
+            u8_calibration = v_api_data_normalising_gyro_calibration();
+        }
+        else
+        {
+            /* Convert raw sensor data to float. */
+            v_api_data_normalising();
 
-        /* Start control frame. */
-        v_api_main_loop_control_loop();
+            /* Start control frame. */
+            v_api_main_loop_control_loop();
+        }
+        /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
+        be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
+
+        /* TODO: function name should be fixed. */
+        /* Read and decode packets from UART1 RX buffer.*/
+        api_cmd_reading_packet();
     }
     else
     {
@@ -58,6 +92,8 @@ BOARD_ERROR be_api_main_loop_init(void)
 
     /* Init PIDs elements. */
     api_pid_init();
+    /* Init PID elements of BARO. */
+    api_baro_PID_init();
 
     return(be_result);
 }
@@ -67,7 +103,9 @@ BOARD_ERROR be_api_main_loop_start(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
+    /* Start main loop timer. It will cause timer interrupt. */
     be_result = be_board_main_loop_start();
+
     return(be_result);
 }
 
@@ -82,6 +120,7 @@ void TIM1_UP_IRQHandler(void)
 
         /* Clear flags. */
         TIM_ClearITPendingBit(TIM1, TIM_IT_Update);
+
         /* Start main loop interrupt function.*/
         v_api_main_loop_process();
     }

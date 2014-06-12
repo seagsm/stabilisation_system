@@ -28,9 +28,6 @@ static uint8_t u8_rc_dma_buffer[6];
 /* Flag of one time operation. Should be 0 for multitime functions. */
 static uint8_t u8_one_time_rw = 0U;
 
-/* Global.Used in gyrodetect function. */
-uint8_t gu8_board_i2c_GyroId;
-
 /* Global.Used for one time sensor data reading. */
 BOARD_U16_3X_DATA board_i2c_sensor_data;
 
@@ -137,16 +134,18 @@ static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(
         DMA_DeInit(DMA1_Channel7);
         DMA_I2C_InitStructure.DMA_PeripheralBaseAddr = (u32)I2C1_DR_Address;
 
-        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; 		/* fixed local buffer for test. */
-        DMA_I2C_InitStructure.DMA_DIR 				= DMA_DIR_PeripheralSRC; 		/* fixed for receive function */
-        DMA_I2C_InitStructure.DMA_BufferSize 		= (uint32_t)NumByteToRead; 		/* number byte for read. */
-        DMA_I2C_InitStructure.DMA_PeripheralInc     = DMA_PeripheralInc_Disable;	/* fixed */
-        DMA_I2C_InitStructure.DMA_MemoryInc         = DMA_MemoryInc_Enable; 		/* fixed */
-        DMA_I2C_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte; 	/*fixed */
-        DMA_I2C_InitStructure.DMA_MemoryDataSize 	= DMA_MemoryDataSize_Byte; 		/*fixed */
-        DMA_I2C_InitStructure.DMA_Mode 				= DMA_Mode_Normal; 				/* fixed */
-        DMA_I2C_InitStructure.DMA_Priority 			= DMA_Priority_VeryHigh; 		/* up to user */
-        DMA_I2C_InitStructure.DMA_M2M 				= DMA_M2M_Disable; 				/* fixed */
+        /* DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)u8_rc_dma_buffer; */	/* fixed local buffer for test. */
+        DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	= (u32)pBuffer;                 /* pointer to output buffer. */
+
+        DMA_I2C_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralSRC;        /* fixed for receive function */
+        DMA_I2C_InitStructure.DMA_BufferSize            = (uint32_t)NumByteToRead;      /* number byte for read. */
+        DMA_I2C_InitStructure.DMA_PeripheralInc         = DMA_PeripheralInc_Disable;    /* fixed */
+        DMA_I2C_InitStructure.DMA_MemoryInc             = DMA_MemoryInc_Enable;         /* fixed */
+        DMA_I2C_InitStructure.DMA_PeripheralDataSize    = DMA_MemoryDataSize_Byte;      /*fixed */
+        DMA_I2C_InitStructure.DMA_MemoryDataSize        = DMA_MemoryDataSize_Byte;      /*fixed */
+        DMA_I2C_InitStructure.DMA_Mode                  = DMA_Mode_Normal;              /* fixed */
+        DMA_I2C_InitStructure.DMA_Priority              = DMA_Priority_VeryHigh;        /* up to user */
+        DMA_I2C_InitStructure.DMA_M2M                   = DMA_M2M_Disable;              /* fixed */
 
         DMA_Init(DMA1_Channel7, &DMA_I2C_InitStructure);
         DMA_ITConfig(DMA1_Channel7, DMA_IT_TC, ENABLE);
@@ -192,47 +191,48 @@ static BOARD_ERROR be_board_i2c_DMA_master_buffer_write(uint8_t* pBuffer, uint16
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
 
-	    /* I2C1 TX DMA Channel configuration */
-		DMA_DeInit(DMA1_Channel6);
+    /* I2C1 TX DMA Channel configuration */
+    DMA_DeInit(DMA1_Channel6);
 
-		DMA_I2C_InitStructure.DMA_PeripheralBaseAddr    = (uint32_t)I2C1_DR_Address;
-		DMA_I2C_InitStructure.DMA_MemoryBaseAddr 	    = (uint32_t)pBuffer;   		/* This parameter will be configured durig communication */
-        DMA_I2C_InitStructure.DMA_DIR                   = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
-		DMA_I2C_InitStructure.DMA_BufferSize 		    = NumByteToWrite;           /* This parameter will be configured durig communication */
-		DMA_I2C_InitStructure.DMA_PeripheralInc 		= DMA_PeripheralInc_Disable;
-		DMA_I2C_InitStructure.DMA_MemoryInc 			= DMA_MemoryInc_Enable;
-		DMA_I2C_InitStructure.DMA_PeripheralDataSize    = DMA_MemoryDataSize_Byte;
-		DMA_I2C_InitStructure.DMA_MemoryDataSize 	    = DMA_MemoryDataSize_Byte;
-		DMA_I2C_InitStructure.DMA_Mode 				    = DMA_Mode_Normal;
-		DMA_I2C_InitStructure.DMA_Priority 			    = DMA_Priority_VeryHigh;
-		DMA_I2C_InitStructure.DMA_M2M 				    = DMA_M2M_Disable;
+    DMA_I2C_InitStructure.DMA_PeripheralBaseAddr        = (uint32_t)I2C1_DR_Address;
+    DMA_I2C_InitStructure.DMA_MemoryBaseAddr            = (uint32_t)pBuffer;            /* This parameter will be configured durig communication */
+    DMA_I2C_InitStructure.DMA_DIR                       = DMA_DIR_PeripheralDST;        /* This parameter will be configured durig communication */
+    DMA_I2C_InitStructure.DMA_BufferSize                = NumByteToWrite;               /* This parameter will be configured durig communication */
+    DMA_I2C_InitStructure.DMA_PeripheralInc 		= DMA_PeripheralInc_Disable;
+    DMA_I2C_InitStructure.DMA_MemoryInc                 = DMA_MemoryInc_Enable;
+    DMA_I2C_InitStructure.DMA_PeripheralDataSize        = DMA_MemoryDataSize_Byte;
+    DMA_I2C_InitStructure.DMA_MemoryDataSize 	        = DMA_MemoryDataSize_Byte;
+    DMA_I2C_InitStructure.DMA_Mode                      = DMA_Mode_Normal;
+    DMA_I2C_InitStructure.DMA_Priority                  = DMA_Priority_VeryHigh;
+    DMA_I2C_InitStructure.DMA_M2M                       = DMA_M2M_Disable;
 
-	    DMA_Init(DMA1_Channel6, &DMA_I2C_InitStructure);
-	    DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
+    DMA_Init(DMA1_Channel6, &DMA_I2C_InitStructure);
+    DMA_ITConfig(DMA1_Channel6, DMA_IT_TC, ENABLE);
 
-		NVIC_InitStructure.NVIC_IRQChannel = (unsigned)DMA1_Channel6_IRQn;
-		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = DMA1_Channel6_PRIORITY_GROUP;
-		NVIC_InitStructure.NVIC_IRQChannelSubPriority           = DMA1_Channel6_SUB_PRIORITY_GROUP;
-		NVIC_InitStructure.NVIC_IRQChannelCmd                   = ENABLE;
-		NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel                  = (unsigned)DMA1_Channel6_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority= DMA1_Channel6_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority       = DMA1_Channel6_SUB_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelCmd               = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
-        /*initialize static parameter*/
-        vu8_master_direction = Transmitter;
-        vu8_master_transition_complete = 0U;
+    /*initialize static parameter*/
+    vu8_master_direction = Transmitter;
+    vu8_master_transition_complete = 0U;
 
-        /*initialize static parameter according to input parameter*/
-        u8_slave_addr = SlaveAddress;
+    /*initialize static parameter according to input parameter*/
+    u8_slave_addr = SlaveAddress;
 
-		I2C_AcknowledgeConfig(I2C1, ENABLE);
-		I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, ENABLE);
+    I2C_AcknowledgeConfig(I2C1, ENABLE);
+    I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF | I2C_IT_ERR, ENABLE);
 
-		/* Send START condition */
-		if(I2C1->CR1 & 0x200U)
-		{
-			I2C1->CR1 &= 0xFDFFU;
-		}
-		I2C_GenerateSTART(I2C1, ENABLE);
-		return(be_result);
+    /* Send START condition */
+    if(I2C1->CR1 & 0x200U)
+    {
+        I2C1->CR1 &= 0xFDFFU;
+    }
+    I2C_GenerateSTART(I2C1, ENABLE);
+
+    return(be_result);
 }
 
 /**
@@ -251,46 +251,46 @@ static void board_i2c_lowlevel_init(void)
     /* I2C1 clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
     /* I2C1 SDA and SCL configuration */
-    GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_6 | GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Pin         = GPIO_Pin_6 | GPIO_Pin_7;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
-	I2C_DeInit(I2C1);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+    I2C_DeInit(I2C1);
 
-    GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed       = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_OD;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     /* I2C1 and I2C2 configuration */
-	I2C_DeInit(I2C1);
-    I2C_InitStructure.I2C_Mode 					= I2C_Mode_I2C;
-    I2C_InitStructure.I2C_DutyCycle 			= I2C_DutyCycle_2;
-    I2C_InitStructure.I2C_OwnAddress1 			= OwnAddress1;
-    I2C_InitStructure.I2C_Ack 					= I2C_Ack_Enable;
+    I2C_DeInit(I2C1);
+    I2C_InitStructure.I2C_Mode                  = I2C_Mode_I2C;
+    I2C_InitStructure.I2C_DutyCycle             = I2C_DutyCycle_2;
+    I2C_InitStructure.I2C_OwnAddress1           = OwnAddress1;
+    I2C_InitStructure.I2C_Ack                   = I2C_Ack_Enable;
     I2C_InitStructure.I2C_AcknowledgedAddress 	= I2C_AcknowledgedAddress_7bit;
-    I2C_InitStructure.I2C_ClockSpeed 			= ClockSpeed;
-	I2C_Cmd(I2C1, ENABLE);
+    I2C_InitStructure.I2C_ClockSpeed            = ClockSpeed;
+    I2C_Cmd(I2C1, ENABLE);
     I2C_Init(I2C1, &I2C_InitStructure);
 
-	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_EV_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_EV_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_EV_SUB_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-	NVIC_InitStructure.NVIC_IRQChannel = (unsigned)I2C1_ER_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_ER_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_ER_SUB_PRIORITY_GROUP;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel                      = (unsigned)I2C1_EV_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_EV_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_EV_SUB_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelCmd                   = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel                      = (unsigned)I2C1_ER_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority    = I2C1_ER_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority           = I2C1_ER_SUB_PRIORITY_GROUP;
+    NVIC_InitStructure.NVIC_IRQChannelCmd                   = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
     /* Enable the DMA1 clock */
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 }
 
 /* DMA I2C1 DMA_CHANNEL_6 interrupt. End of transmission data to slave. */
 void DMA1_Channel6_IRQHandler(void)
 {
-	if (DMA_GetFlagStatus(DMA1_FLAG_TC6))
-	{
+    if (DMA_GetFlagStatus(DMA1_FLAG_TC6))
+    {
         /* This function for case of one time write. */
         v_dma_ch6_one_time_write();
         if(u8_one_time_rw == 0U)
@@ -298,39 +298,42 @@ void DMA1_Channel6_IRQHandler(void)
             /* start read function. */
             be_api_i2c_read_process_start();
         }
-
         DMA_ClearFlag(DMA1_FLAG_TC6);
-	}
-	if(DMA_GetFlagStatus(DMA1_FLAG_GL6))
-	{
-		DMA_ClearFlag( DMA1_FLAG_GL6);
-	}
-	if(DMA_GetFlagStatus(DMA1_FLAG_HT6))
-	{
-		DMA_ClearFlag( DMA1_FLAG_HT6);
-	}
+    }
+
+    if(DMA_GetFlagStatus(DMA1_FLAG_GL6))
+    {
+	DMA_ClearFlag( DMA1_FLAG_GL6);
+    }
+
+    if(DMA_GetFlagStatus(DMA1_FLAG_HT6))
+    {
+	DMA_ClearFlag( DMA1_FLAG_HT6);
+    }
 }
 
 static void v_dma_ch6_one_time_write(void)
 {
-		if (I2C1->SR2 & 0x01U) /* master send DMA finish, check process later */
-		{
-			/* DMA1-6 (I2C1 Tx DMA)transfer complete ISR */
-			I2C_DMACmd(I2C1, DISABLE);
-			DMA_Cmd(DMA1_Channel6, DISABLE);
-			/* wait until BTF */
-			while (!(I2C1->SR1 & 0x04U))
-			{}
-			I2C_GenerateSTOP(I2C1, ENABLE);
-			/* wait until BUSY clear */
-			while (I2C1->SR2 & 0x02U)
-			{}
-			vu8_master_transition_complete = 1U;
-		}
-		else /* slave send DMA finish */
-		{
+    if (I2C1->SR2 & 0x01U) /* master send DMA finish, check process later */
+    {
+	/* DMA1-6 (I2C1 Tx DMA)transfer complete ISR */
+	I2C_DMACmd(I2C1, DISABLE);
+	DMA_Cmd(DMA1_Channel6, DISABLE);
 
-		}
+        /* wait until BTF */
+	while (!(I2C1->SR1 & 0x04U))
+	{}
+	I2C_GenerateSTOP(I2C1, ENABLE);
+
+        /* wait until BUSY clear */
+	while (I2C1->SR2 & 0x02U)
+	{}
+	vu8_master_transition_complete = 1U;
+    }
+    else /* slave send DMA finish */
+    {
+
+    }
 }
 
 
@@ -338,19 +341,22 @@ static void v_dma_ch6_one_time_write(void)
 /* DMA I2C1 DMA_CHANNEL_7 interrupt. End of receive data from slave. */
 void DMA1_Channel7_IRQHandler(void)
 {
-	if (DMA_GetFlagStatus(DMA1_FLAG_TC7))
-	{
+    if (DMA_GetFlagStatus(DMA1_FLAG_TC7))
+    {
         /* This function for case of one time read */
+
         v_dma_ch7_one_time_read();
         if(u8_one_time_rw == 0U)
         {
             /* TODO: should be optimised. */
+/*
             api_i2c_data.array[api_i2c_data.u8_device].data[0]= u8_rc_dma_buffer[0];
             api_i2c_data.array[api_i2c_data.u8_device].data[1]= u8_rc_dma_buffer[1];
             api_i2c_data.array[api_i2c_data.u8_device].data[2]= u8_rc_dma_buffer[2];
             api_i2c_data.array[api_i2c_data.u8_device].data[3]= u8_rc_dma_buffer[3];
             api_i2c_data.array[api_i2c_data.u8_device].data[4]= u8_rc_dma_buffer[4];
             api_i2c_data.array[api_i2c_data.u8_device].data[5]= u8_rc_dma_buffer[5];
+*/
             api_i2c_data.u8_device++;
             if(api_i2c_data.u8_device < MAX_DEV_NUM) /* Maximum device number = 3. */
             {
@@ -362,40 +368,40 @@ void DMA1_Channel7_IRQHandler(void)
                 GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
             }
         }
-		DMA_ClearFlag(DMA1_FLAG_TC7);
-	}
-	if (DMA_GetFlagStatus(DMA1_FLAG_GL7))
-	{
-		DMA_ClearFlag( DMA1_FLAG_GL7);
-	}
-	if (DMA_GetFlagStatus(DMA1_FLAG_HT7))
-	{
-		DMA_ClearFlag( DMA1_FLAG_HT7);
-	}
+        DMA_ClearFlag(DMA1_FLAG_TC7);
+    }
+
+    if (DMA_GetFlagStatus(DMA1_FLAG_GL7))
+    {
+	DMA_ClearFlag( DMA1_FLAG_GL7);
+    }
+
+    if (DMA_GetFlagStatus(DMA1_FLAG_HT7))
+    {
+	DMA_ClearFlag( DMA1_FLAG_HT7);
+    }
 }
 
 static void v_dma_ch7_one_time_read(void)
 {
     if (I2C1->SR2 & 0x01U) /* master receive DMA finish */
-	{
+    {
         /*TODO: Should be optimised. */
         /* Case of one time sansor data reading. */
         board_i2c_sensor_data.u16_X = (((uint16_t)  u8_rc_dma_buffer[0]) << 8U) + ((uint16_t)u8_rc_dma_buffer[1]);
         board_i2c_sensor_data.u16_Y = (((uint16_t)  u8_rc_dma_buffer[2]) << 8U) + ((uint16_t)u8_rc_dma_buffer[3]);
         board_i2c_sensor_data.u16_Z = (((uint16_t)  u8_rc_dma_buffer[4]) << 8U) + ((uint16_t)u8_rc_dma_buffer[5]);
-        /* Case of Gyro id reading. */
-        gu8_board_i2c_GyroId = u8_rc_dma_buffer[0];
 
         /* Disable DMA. */
         I2C_DMACmd(I2C1, DISABLE);
 
         /* Stop I2C communuation. */
-		I2C_GenerateSTOP(I2C1, ENABLE);
+	I2C_GenerateSTOP(I2C1, ENABLE);
 
         /* Set data read ready flag. */
-		vu8_master_reception_complete = 1U;
+	vu8_master_reception_complete = 1U;
         PV_flag_1 = 0U;
-	}
+    }
 }
 
 /* I2C event interrupt. Used for I2C DMA reading. */
@@ -433,23 +439,23 @@ void I2C1_EV_IRQHandler(void)
 
         case I2C_EVENT_MASTER_BYTE_RECEIVED: /* EV7 */
 			/* MSL BUSY RXNE 0x30040 */
-			break;
+            break;
 
         /* Master Transmitter events */
-		case I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED: /* EV8 just after EV6 */
+	case I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED: /* EV8 just after EV6 */
             /* BUSY, MSL, ADDR, TXE and TRA 0x70082 */
 
             I2C_ITConfig(I2C1, I2C_IT_EVT | I2C_IT_BUF, DISABLE);
-			I2C_DMACmd(I2C1, ENABLE);
-			DMA_Cmd(DMA1_Channel6, ENABLE);
-			break;
+            I2C_DMACmd(I2C1, ENABLE);
+            DMA_Cmd(DMA1_Channel6, ENABLE);
+            break;
 
-		case I2C_EVENT_M_BYTE_TRANSMITTING: /* EV8 I2C_EVENT_MASTER_BYTE_TRANSMITTING*/
+        case I2C_EVENT_M_BYTE_TRANSMITTING: /* EV8 I2C_EVENT_MASTER_BYTE_TRANSMITTING*/
             break;
 
         case I2C_EVENT_M_BYTE_TRANSMITTED: /* EV8-2 */
-			/*TRA, BUSY, MSL, TXE and BTF 0x70084 */
-			break;
+            /*TRA, BUSY, MSL, TXE and BTF 0x70084 */
+            break;
 
         default:
             break;
@@ -460,13 +466,13 @@ void I2C1_EV_IRQHandler(void)
 void I2C1_ER_IRQHandler(void)
 {
     if(I2C_GetFlagStatus(I2C1, I2C_FLAG_AF))
-	{
+    {
         if(I2C1->SR2 & 0x01U)
-		{
-			/*!! receive over */
-			I2C_GenerateSTOP(I2C1, ENABLE);
-			PV_flag_1 = 0U;
-		}
+	{
+            /*!! receive over */
+            I2C_GenerateSTOP(I2C1, ENABLE);
+            PV_flag_1 = 0U;
+	}
         I2C_ClearFlag(I2C1, I2C_FLAG_AF);
 	}
 

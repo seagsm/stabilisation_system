@@ -22,15 +22,51 @@ BOARD_ERROR be_api_body_angle_calculation(void)
     /* Convert period from tick to seconds. */
     fl_api_body_angle_sample_period = fl_api_body_angle_sample_period / 1000.0f;
 
+/*
+    b_float3d_api_data_norm_acce_data.fl_X = float_api_filters_iir_acc_x(b_float3d_api_data_norm_acce_data.fl_X);
+    b_float3d_api_data_norm_acce_data.fl_Y = float_api_filters_iir_acc_y(b_float3d_api_data_norm_acce_data.fl_Y);
+    b_float3d_api_data_norm_acce_data.fl_Z = float_api_filters_iir_acc_z(b_float3d_api_data_norm_acce_data.fl_Z);
+*/
+/*
+    b_float3d_api_data_norm_acce_data.fl_X = float_api_filters_iir_acc_x_1Hz(b_float3d_api_data_norm_acce_data.fl_X);
+    b_float3d_api_data_norm_acce_data.fl_Y = float_api_filters_iir_acc_y_1Hz(b_float3d_api_data_norm_acce_data.fl_Y);
+    b_float3d_api_data_norm_acce_data.fl_Z = float_api_filters_iir_acc_z_1Hz(b_float3d_api_data_norm_acce_data.fl_Z);
+*/
+
+
+    b_float3d_api_data_norm_acce_data.fl_X = float_api_filters_ma_acc_x(b_float3d_api_data_norm_acce_data.fl_X);
+    b_float3d_api_data_norm_acce_data.fl_Y = float_api_filters_ma_acc_y(b_float3d_api_data_norm_acce_data.fl_Y);
+    b_float3d_api_data_norm_acce_data.fl_Z = float_api_filters_ma_acc_z(b_float3d_api_data_norm_acce_data.fl_Z);
+
+    b_float3d_api_common_out_acce_data.fl_X = b_float3d_api_data_norm_acce_data.fl_X;
+    b_float3d_api_common_out_acce_data.fl_Y = b_float3d_api_data_norm_acce_data.fl_Y;
+    b_float3d_api_common_out_acce_data.fl_Z = b_float3d_api_data_norm_acce_data.fl_Z;
+
+
+    b_float3d_api_data_norm_gyro_data.fl_X = float_api_filters_iir_gyro_x(b_float3d_api_data_norm_gyro_data.fl_X);
+    b_float3d_api_data_norm_gyro_data.fl_Y = float_api_filters_iir_gyro_y(b_float3d_api_data_norm_gyro_data.fl_Y);
+    b_float3d_api_data_norm_gyro_data.fl_Z = float_api_filters_iir_gyro_z(b_float3d_api_data_norm_gyro_data.fl_Z);
+
     /* Calculation of body quaternion. */
+#if 0
     be_result = madgwick_AccGyro(
-                                    b_float3d_api_data_norm_gyro_data.fl_X,
-                                    b_float3d_api_data_norm_gyro_data.fl_Y,
-                                    b_float3d_api_data_norm_gyro_data.fl_Z,
+                                    deg2rad(b_float3d_api_data_norm_gyro_data.fl_X),
+                                    deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y),
+                                    deg2rad(b_float3d_api_data_norm_gyro_data.fl_Z),
                                     b_float3d_api_data_norm_acce_data.fl_X,
                                     b_float3d_api_data_norm_acce_data.fl_Y,
                                     b_float3d_api_data_norm_acce_data.fl_Z
                                 );
+#else
+    be_result = mahony_update_AccGyro(
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_X),
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_Y),
+                                        deg2rad(b_float3d_api_data_norm_gyro_data.fl_Z),
+                                        b_float3d_api_data_norm_acce_data.fl_X,
+                                        b_float3d_api_data_norm_acce_data.fl_Y,
+                                        b_float3d_api_data_norm_acce_data.fl_Z
+                                     );
+#endif
 
     /* Calculation of body wind angles. */
     be_result |= be_api_body_angle_QuaternionToWindAngles();

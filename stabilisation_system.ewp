@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>6.40.3.54103</state>
+          <state>6.40.5.54273</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -197,11 +197,11 @@
         </option>
         <option>
           <name>CCListAssFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCListAssSource</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCEnableRemarks</name>
@@ -274,7 +274,7 @@
         </option>
         <option>
           <name>CCCompilerRuntimeInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IFpuProcessor</name>
@@ -1844,10 +1844,22 @@
     <group>
       <name>api</name>
       <file>
+        <name>$PROJ_DIR$\src\api\api_baro.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_baro.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_body_angle_calculation.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_body_angle_calculation.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_cmd.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_cmd.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_common.c</name>
@@ -1880,6 +1892,18 @@
         <name>$PROJ_DIR$\src\api\api_end_device.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_filters.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_filters.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_flash.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_flash.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.c</name>
       </file>
       <file>
@@ -1892,10 +1916,19 @@
         <name>$PROJ_DIR$\src\api\api_main_loop.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_packet_structure.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_pid.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_pid.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_rx_channels.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_rx_channels.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>
@@ -1905,15 +1938,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MahonyAHRS.c</name>
-        <excluded>
-          <configuration>Debug</configuration>
-        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MahonyAHRS.h</name>
-        <excluded>
-          <configuration>Debug</configuration>
-        </excluded>
       </file>
     </group>
     <group>
@@ -1931,6 +1958,12 @@
         <name>$PROJ_DIR$\src\board\board_adc.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_baro.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_baro.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_dma.c</name>
       </file>
       <file>
@@ -1943,6 +1976,12 @@
         <name>$PROJ_DIR$\src\board\board_drv_adxl345.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_drv_bmp085.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_drv_bmp085.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_drv_hmc5883.c</name>
       </file>
       <file>
@@ -1953,6 +1992,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_drv_l3g4200d.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_flash.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_flash.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_gpio.c</name>

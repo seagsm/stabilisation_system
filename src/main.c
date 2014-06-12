@@ -14,8 +14,6 @@
 #include <stm32f10x_tim.h>
 #include <misc.h>
 
-
-
 int main( void)
 {
     BOARD_SYSTEM_STATE  bss_state;
@@ -28,6 +26,7 @@ int main( void)
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
+    
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)
@@ -74,7 +73,7 @@ int main( void)
                 GPIO_ResetBits( GPIOB, GPIO_Pin_1);
 
             /*    gv_board_dma_send_packet(); */
-                board_dma_send_buff();
+            /*    board_dma_send_buff(); */
 
                 GPIO_SetBits( GPIOB, GPIO_Pin_1);
                 gv_board_sys_tick_fast_delay(50U);

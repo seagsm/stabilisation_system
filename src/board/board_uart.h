@@ -11,28 +11,28 @@
 /**
  * Definition for USART1.
  */
-#define BOARD_USART1_TX_GPIO_PORT           GPIOA
-#define BOARD_USART1_TX_PIN                 GPIO_Pin_9
-#define BOARD_USART1_RX_GPIO_PORT           GPIOA
-#define BOARD_USART1_RX_PIN                 GPIO_Pin_10
-#define BOARD_USART1_IRQn                   USART1_IRQn
+#define BOARD_USART1_TX_GPIO_PORT       GPIOA
+#define BOARD_USART1_TX_PIN             GPIO_Pin_9
+#define BOARD_USART1_RX_GPIO_PORT       GPIOA
+#define BOARD_USART1_RX_PIN             GPIO_Pin_10
+#define BOARD_USART1_IRQn               USART1_IRQn
 
 /**
  * Definition for USART3
  */
-#define BOARD_USART3_TX_GPIO_PORT           GPIOB
-#define BOARD_USART3_TX_PIN                 GPIO_Pin_10
-#define BOARD_USART3_RX_GPIO_PORT           GPIOB
-#define BOARD_USART3_RX_PIN                 GPIO_Pin_11
-#define BOARD_USART3_IRQn                   USART3_IRQn
+#define BOARD_USART3_TX_GPIO_PORT       GPIOB
+#define BOARD_USART3_TX_PIN             GPIO_Pin_10
+#define BOARD_USART3_RX_GPIO_PORT       GPIOB
+#define BOARD_USART3_RX_PIN             GPIO_Pin_11
+#define BOARD_USART3_IRQn               USART3_IRQn
 
 
 /* Before use printf a suitable com port should be initialised. */
-#define TERMINAL_OUTPUT     USART1
-#define USART1_BAUD_RATE    115200U
+#define TERMINAL_OUTPUT                 USART1
+#define USART1_BAUD_RATE                115200U
 
-#define GPS_SERIAL_PORT     USART3
-#define USART3_BAUD_RATE    9600U
+#define GPS_SERIAL_PORT                 USART3
+#define USART3_BAUD_RATE                9600U
 
 
 

@@ -8,12 +8,14 @@
 #include "board_i2c.h"
 
 
-/* Address */
-#define USE_ACCEL_RT_BIAS   1
+
+#define USE_ACCEL_LOCAL_BUFFER      1
+#define USE_ACCEL_RT_BIAS_CALIBRATION   0   /* set to 1 for accel calibration (useless)*/
+
 /* #define ADXL345_ADDRESS 0x53U*/
 #define ADXL345_ADDRESS 0xA7U
-/* Registers */
 
+/* Registers */
 #define ADXL345_OFSX        0x1EU
 #define ADXL345_OFSY        0x1FU
 #define ADXL345_OFSZ        0x20U
@@ -46,24 +48,7 @@
 extern BOARD_FLOAT_3X_DATA accelRTBias;
 
 
-
-/*
-extern uint8_t accelCalibrating;
-
-extern BOARD_I32_3X_DATA accelSum100Hz;
-
-extern BOARD_I32_3X_DATA accelSum200Hz;
-
-extern BOARD_I32_3X_DATA accelSummedSamples100Hz;
-
-extern BOARD_I32_3X_DATA accelSummedSamples200Hz;
-
-extern BOARD_I16_3X_DATA rawAccel;
-*/
-
-
-
-BOARD_ERROR  board_drv_adxl345_read(void);
+BOARD_ERROR  board_drv_adxl345_read(uint8_t* pu8_buffer );
 
 static void computeAccelRTBias(void);
 

@@ -2,7 +2,6 @@
 #include "MadgwickAHRS.h"
 
 
-
 static float madgwick_Beta = 0.1f;
 
 void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
@@ -14,6 +13,7 @@ void madgwick_update_AccGyroMag(float gx, float gy, float gz, float ax, float ay
     float q2 = fl_api_body_angle_quaternion[1];
     float q3 = fl_api_body_angle_quaternion[2];
     float q4 = fl_api_body_angle_quaternion[3];
+    
     float norm;
     float hx, hy, _2bx, _2bz;
     float s1, s2, s3, s4;

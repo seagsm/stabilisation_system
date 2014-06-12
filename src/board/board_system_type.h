@@ -37,6 +37,15 @@ typedef struct
 
 typedef struct
 {
+    float fl_q0;
+    float fl_q1;
+    float fl_q2;
+    float fl_q3;
+} BOARD_QUAT;
+
+
+typedef struct
+{
     uint8_t   u8_slave_address;
     uint16_t  u16_r_sizeof;
     uint16_t  u16_w_sizeof;
@@ -59,7 +68,11 @@ typedef enum
     BOARD_ERR_ERROR     = 1U,
     BOARD_ERR_FULL      = 2U,
     BOARD_ERR_EMPTY     = 3U,
-    BOARD_ERR_BUSY      = 4U
+    BOARD_ERR_BUSY      = 4U,
+    BOARD_ERR_OVERLOAD  = 5U,
+    BOARD_ERR_RANGE     = 6U,
+    BOARD_ERR_ID        = 7U,
+    BOARD_ERR_STATE     = 8U  
 }   BOARD_ERROR; /* variable tag be_xxx */
 
 typedef struct

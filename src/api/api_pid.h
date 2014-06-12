@@ -6,33 +6,33 @@
 #include "api_common.h"
 #include "board_ppm.h"
 #include "api_body_angle_calculation.h"
-
-
+#include "api_rx_channels.h"
+#include "api_end_device.h"
 
 /* in 0.1 degree , 1000 = 100degree, 450 = 45 degree. */
 #define MAX_ANGLE_INCLINATION 450
 
 /* Pitch */
-#define PITCH_P_GAIN        70
-#define PITCH_P_GAIN_DYN    0
+#define PITCH_P_GAIN        19
+#define PITCH_P_GAIN_DYN    80
 #define PITCH_I_GAIN        0
 #define PITCH_I_GAIN_DYN    0
 #define PITCH_I_MIN        -10000
 #define PITCH_I_MAX         10000
-#define PITCH_D_GAIN        0
+#define PITCH_D_GAIN        60
 #define PITCH_D_GAIN_DYN    0
 /* ROll */
-#define ROLL_P_GAIN         70
-#define ROLL_P_GAIN_DYN     0
+#define ROLL_P_GAIN         19
+#define ROLL_P_GAIN_DYN     80
 #define ROLL_I_GAIN         0
 #define ROLL_I_GAIN_DYN     0
 #define ROLL_I_MIN         -10000
 #define ROLL_I_MAX          10000
-#define ROLL_D_GAIN         0
+#define ROLL_D_GAIN         60
 #define ROLL_D_GAIN_DYN     0
 /* Yaw */
-#define YAW_P_GAIN          70
-#define YAW_P_GAIN_DYN      0
+#define YAW_P_GAIN          30
+#define YAW_P_GAIN_DYN      100
 #define YAW_I_GAIN          0
 #define YAW_I_GAIN_DYN      0
 #define YAW_I_MIN          -10000
@@ -40,16 +40,12 @@
 #define YAW_D_GAIN          0
 #define YAW_D_GAIN_DYN      0
 
-
-
-
 enum
 {
-  Pitch = 0,
-  Roll  = 1,
+  Roll  = 0,
+  Pitch = 1,
   Yaw   = 2
 };
-
 
 typedef struct
 {
@@ -79,7 +75,6 @@ typedef struct
 
 
 extern PID_element pid_api_pid_data[3];
-
 
         void api_pid_init(void);
         void api_pid_update_frame(void);

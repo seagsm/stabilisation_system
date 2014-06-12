@@ -39,3 +39,17 @@ uint16_t gu16_api_CRC16_alg(uint16_t u16_start, uint16_t length)
             }
             return u16_code;
 }
+
+/* This function calc CRC summ for u8_tx_data_packet from board_dma.h */
+uint8_t gu8_api_CRC8(uint16_t u16_start, uint16_t length)
+{
+    uint8_t u8_crc = 0U;
+    uint16_t u16_i = 0U;
+
+    for (u16_i = u16_start; u16_i < length; u16_i++)
+    {
+        u8_crc = u8_crc + u8_tx_data_packet[u16_i];
+    }
+    u8_crc = 0xFFU - u8_crc;
+    return(u8_crc);
+}

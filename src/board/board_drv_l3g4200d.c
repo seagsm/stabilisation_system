@@ -6,6 +6,7 @@ BOARD_ERROR be_board_drv_l3g4200d_detect(void)
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t u8_device_id;
 
+
     /**/
     volatile uint32_t u32_i = 0xFFFFFFU;
 
@@ -14,7 +15,7 @@ BOARD_ERROR be_board_drv_l3g4200d_detect(void)
 
 /*    while(vu8_master_reception_complete == 0U)*/
 /*    {}*/
-     u8_device_id =  gu8_board_i2c_GyroId;
+/*     u8_device_id =  gu8_board_i2c_GyroId; */
     if (u8_device_id != L3G4200D_ID)
     {
       be_result = BOARD_ERR_ERROR;
