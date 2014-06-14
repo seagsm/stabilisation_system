@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "board_system_type.h"
+#include "board_system_config.h"
 #include "api_pid.h"
 #include "board_ppm.h"
 #include "board_pwm.h"
@@ -17,9 +18,16 @@
 
 #define API_END_DEVICE_HEAD_HOLDING         1   /* On/Off head holding mode. */
 
-#define API_END_DEVICE_TRICOPTER            0   /* define TRICOPTER mode. */
 
-#define API_END_DEVICE_FLIGHT_SAURCER       1   /* define SAUCER mode. */
+#if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
+    #define API_END_DEVICE_TRICOPTER            1   /* define TRICOPTER mode. */
+    #define API_END_DEVICE_FLIGHT_SAURCER       0   /* define SAUCER mode. */
+#endif
+
+#if BOARD_SYSTEM_CONFIG_FLIGHT_SAURCER_MODE
+    #define API_END_DEVICE_TRICOPTER            0  /* define TRICOPTER mode. */
+    #define API_END_DEVICE_FLIGHT_SAURCER       1   /* define SAUCER mode. */
+#endif
 
 extern int32_t i32_head_hold;
 

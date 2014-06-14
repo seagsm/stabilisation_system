@@ -3,33 +3,55 @@
 
 #include "board_pwm.h"
 
-
-
-
 BOARD_ERROR be_board_pwm_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
+#if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
+    /* For tricopter CH 1,2,3 connected to motors and should be init by minimal value of PPM. */
     be_TIMER2_PWM_channel_init(CHANEL_1,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
     be_TIMER2_PWM_channel_init(CHANEL_2,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
     be_TIMER2_PWM_channel_init(CHANEL_3,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
+    /* but CH4 connected to YAW servo and should be init by midle PPM value. */
     be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+#endif
 
+#if BOARD_SYSTEM_CONFIG_FLIGHT_SAURCER_MODE
+    /* For saucer  CH 1,2,3 4 connected to direction servos and should be init by midle value of PPM. */
+    be_TIMER2_PWM_channel_init(CHANEL_1,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    be_TIMER2_PWM_channel_init(CHANEL_2,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    be_TIMER2_PWM_channel_init(CHANEL_3,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+#endif
     /* Start TIMER2. */
     TIM_Cmd(TIM2, ENABLE);
 
+#if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
+    /* In tricopter mode it is not using. */
     be_TIMER3_PWM_channel_init(CHANEL_1,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
     be_TIMER3_PWM_channel_init(CHANEL_2,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
     /* PB0 */
     be_TIMER3_PWM_channel_init(CHANEL_3,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
     /* PB1 */
     /*  be_TIMER3_PWM_channel_init(4,PWM_PERIOD_TIMER2,PWM_DUTY_INITIAL_TIMER2); // Pin connected to led.*/
-    /* Start TIMER4. */
+#endif
+
+#if BOARD_SYSTEM_CONFIG_FLIGHT_SAURCER_MODE
+    /* In saucer mode CH1 connected to MOTOR and should be init by minimum value of PPM. */
+    be_TIMER3_PWM_channel_init(CHANEL_1,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
+    /* Not used. */
+    be_TIMER3_PWM_channel_init(CHANEL_2,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
+    /* PB0 */
+    /* In saucer mode CH3 connected to YAW servos and should be init by midle value of PPM. */
+    be_TIMER3_PWM_channel_init(CHANEL_3,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL_MIDDLE);
+    /* PB1 */
+    /*  be_TIMER3_PWM_channel_init(4,PWM_PERIOD_TIMER2,PWM_DUTY_INITIAL_TIMER2); // Pin connected to led.*/
+#endif
+    /* Start TIMER3. */
     TIM_Cmd(TIM3, ENABLE);
 
     return(be_result);
 }
-
 
 static BOARD_ERROR be_TIMER2_PWM_channel_init(
                                                 uint16_t u16_ch_number,  /* CH number. */

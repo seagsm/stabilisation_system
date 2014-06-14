@@ -5,6 +5,7 @@
 
 #include "stm32f10x.h"
 #include "board_system_type.h"
+#include "board_system_config.h"
 #include "board_NVIC.h"
 
 

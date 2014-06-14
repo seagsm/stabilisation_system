@@ -73,6 +73,7 @@ void api_end_device_update(void)
         i32_throttle = bp_baro_pid.i32_ThrHold + bp_baro_pid.i32_BaroPID;
     }
 
+    /* for test only*/
     float_api_common_variables[1] = (float)i32_throttle;
 
     if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
@@ -167,6 +168,8 @@ void api_end_device_update(void)
     int32_t i32_motor;
     int32_t i32_throttle;
 
+    /* RC input. */
+    int32_t i32_rc_chanel_value;
 
     /* Direction. */
     int32_t i32_servo_yaw;
@@ -238,16 +241,35 @@ void api_end_device_update(void)
 
     i32_motor = i32_throttle;
    /* Saucer configuration. */
+    if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
+    {
+        /* Convert RC Pitch channel value to int32. */
+        i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_2_value;      /* value between 1000 - 2000  */
+        /* Get deviation from ZERO value. */
+        i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
+        /* Set value of Pitch servos. */
+        i32_servo_forward   = (int32_t)BOARD_PPM_ZERO_VALUE + i32_rc_chanel_value;
+        i32_servo_backward  = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_value;
 
-    i32_servo_forward   = (int32_t)BOARD_PPM_ZERO_VALUE + i32_Pitch;
-    i32_servo_backward  = (int32_t)BOARD_PPM_ZERO_VALUE - i32_Pitch;
-    i32_servo_left      = (int32_t)BOARD_PPM_ZERO_VALUE + i32_Roll;
-    i32_servo_right     = (int32_t)BOARD_PPM_ZERO_VALUE - i32_Roll;
+        /* Get current value of Roll RC channel. */
+        i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_4_value;
+        i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+        /* Set value of Roll servos. */
+        i32_servo_left      = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_value;
+        i32_servo_right     = (int32_t)BOARD_PPM_ZERO_VALUE + i32_rc_chanel_value;
+    }
+    else
+    {
+        i32_servo_forward   = (int32_t)BOARD_PPM_ZERO_VALUE + i32_Pitch;
+        i32_servo_backward  = (int32_t)BOARD_PPM_ZERO_VALUE - i32_Pitch;
+        i32_servo_left      = (int32_t)BOARD_PPM_ZERO_VALUE - i32_Roll;
+        i32_servo_right     = (int32_t)BOARD_PPM_ZERO_VALUE + i32_Roll;
+    }
 
-    i32_servo_forward   = constrain_i32(i32_servo_forward,  BOARD_PPM_MIN_VALUE, BOARD_PPM_MAX_VALUE);
-    i32_servo_backward  = constrain_i32(i32_servo_backward, BOARD_PPM_MIN_VALUE, BOARD_PPM_MAX_VALUE);
-    i32_servo_left      = constrain_i32(i32_servo_left,     BOARD_PPM_MIN_VALUE, BOARD_PPM_MAX_VALUE);
-    i32_servo_right     = constrain_i32(i32_servo_right,    BOARD_PPM_MIN_VALUE, BOARD_PPM_MAX_VALUE);
+    i32_servo_forward   = constrain_i32(i32_servo_forward,  1370, 1900);
+    i32_servo_backward  = constrain_i32(i32_servo_backward, 1370, 1900);
+    i32_servo_left      = constrain_i32(i32_servo_left,     1370, 1900);
+    i32_servo_right     = constrain_i32(i32_servo_right,    1370, 2000);
 
 
     /* Get current RC YAW channel value. */
@@ -306,7 +328,7 @@ void api_end_device_update(void)
 #endif
 
     /* Calculate compensation of RC YAW with PDF filter.*/
-    i32_servo_yaw = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw;
+    i32_servo_yaw = (int32_t)BOARD_PPM_ZERO_VALUE + i32_rc_chanel_yaw_value - i32_Yaw;
     i32_servo_yaw = constrain_i32(i32_servo_yaw, BOARD_PPM_MIN_VALUE, BOARD_PPM_MAX_VALUE);
 
     /* Drive end devices. */
@@ -315,8 +337,11 @@ void api_end_device_update(void)
     timer2_PWM_duty_CH3((uint16_t)i32_servo_left);
     timer2_PWM_duty_CH4((uint16_t)i32_servo_right);
 
-    timer3_PWM_duty_CH3((uint16_t)i32_motor);
-    timer3_PWM_duty_CH4((uint16_t)i32_servo_yaw);
+    timer3_PWM_duty_CH1((uint16_t)i32_motor);
+    timer3_PWM_duty_CH3((uint16_t)i32_servo_yaw);
+    /* timer3_PWM_duty_CH3((uint16_t)i32_servo_right);*/
+
+
 }
 
 

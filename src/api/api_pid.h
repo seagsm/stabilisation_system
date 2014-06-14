@@ -12,6 +12,8 @@
 /* in 0.1 degree , 1000 = 100degree, 450 = 45 degree. */
 #define MAX_ANGLE_INCLINATION 450
 
+#if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
+
 /* Pitch */
 #define PITCH_P_GAIN        19
 #define PITCH_P_GAIN_DYN    80
@@ -39,6 +41,40 @@
 #define YAW_I_MAX           10000
 #define YAW_D_GAIN          0
 #define YAW_D_GAIN_DYN      0
+
+#endif
+
+#if BOARD_SYSTEM_CONFIG_FLIGHT_SAURCER_MODE
+
+/* Pitch */
+#define PITCH_P_GAIN        90
+#define PITCH_P_GAIN_DYN    180
+#define PITCH_I_GAIN        0
+#define PITCH_I_GAIN_DYN    0
+#define PITCH_I_MIN        -10000
+#define PITCH_I_MAX         10000
+#define PITCH_D_GAIN        60
+#define PITCH_D_GAIN_DYN    0
+/* ROll */
+#define ROLL_P_GAIN         90
+#define ROLL_P_GAIN_DYN     180
+#define ROLL_I_GAIN         0
+#define ROLL_I_GAIN_DYN     0
+#define ROLL_I_MIN         -10000
+#define ROLL_I_MAX          10000
+#define ROLL_D_GAIN         60
+#define ROLL_D_GAIN_DYN     0
+/* Yaw */
+#define YAW_P_GAIN          70
+#define YAW_P_GAIN_DYN      150
+#define YAW_I_GAIN          0
+#define YAW_I_GAIN_DYN      0
+#define YAW_I_MIN          -10000
+#define YAW_I_MAX           10000
+#define YAW_D_GAIN          0
+#define YAW_D_GAIN_DYN      0
+
+#endif
 
 enum
 {
