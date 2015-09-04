@@ -36,6 +36,10 @@ int32_t constrain_i32(int32_t i32_x,int32_t i32_y,int32_t i32_z)
     {
         i32_x = i32_z;
     }
+    else
+    {
+
+    }
     return(i32_x);
 }
 

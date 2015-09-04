@@ -467,24 +467,24 @@ typedef struct
   * @{
   */
 
-#define RCC_AHBPeriph_DMA1               ((uint32_t)0x00000001)
-#define RCC_AHBPeriph_DMA2               ((uint32_t)0x00000002)
-#define RCC_AHBPeriph_SRAM               ((uint32_t)0x00000004)
-#define RCC_AHBPeriph_FLITF              ((uint32_t)0x00000010)
-#define RCC_AHBPeriph_CRC                ((uint32_t)0x00000040)
+#define RCC_AHBPeriph_DMA1               ((uint32_t)0x00000001U)
+#define RCC_AHBPeriph_DMA2               ((uint32_t)0x00000002U)
+#define RCC_AHBPeriph_SRAM               ((uint32_t)0x00000004U)
+#define RCC_AHBPeriph_FLITF              ((uint32_t)0x00000010U)
+#define RCC_AHBPeriph_CRC                ((uint32_t)0x00000040U)
 
 #ifndef STM32F10X_CL
- #define RCC_AHBPeriph_FSMC              ((uint32_t)0x00000100)
- #define RCC_AHBPeriph_SDIO              ((uint32_t)0x00000400)
- #define IS_RCC_AHB_PERIPH(PERIPH) ((((PERIPH) & 0xFFFFFAA8) == 0x00U) && ((PERIPH) != 0x00U))
+ #define RCC_AHBPeriph_FSMC              ((uint32_t)0x00000100U)
+ #define RCC_AHBPeriph_SDIO              ((uint32_t)0x00000400U)
+ #define IS_RCC_AHB_PERIPH(PERIPH) ((((PERIPH) & 0xFFFFFAA8U) == 0x00U) && ((PERIPH) != 0x00U))
 #else
- #define RCC_AHBPeriph_OTG_FS            ((uint32_t)0x00001000)
- #define RCC_AHBPeriph_ETH_MAC           ((uint32_t)0x00004000)
- #define RCC_AHBPeriph_ETH_MAC_Tx        ((uint32_t)0x00008000)
- #define RCC_AHBPeriph_ETH_MAC_Rx        ((uint32_t)0x00010000)
+ #define RCC_AHBPeriph_OTG_FS            ((uint32_t)0x00001000U)
+ #define RCC_AHBPeriph_ETH_MAC           ((uint32_t)0x00004000U)
+ #define RCC_AHBPeriph_ETH_MAC_Tx        ((uint32_t)0x00008000U)
+ #define RCC_AHBPeriph_ETH_MAC_Rx        ((uint32_t)0x00010000U)
 
- #define IS_RCC_AHB_PERIPH(PERIPH) ((((PERIPH) & 0xFFFE2FA8) == 0x00U) && ((PERIPH) != 0x00U))
- #define IS_RCC_AHB_PERIPH_RESET(PERIPH) ((((PERIPH) & 0xFFFFAFFF) == 0x00U) && ((PERIPH) != 0x00U))
+ #define IS_RCC_AHB_PERIPH(PERIPH) ((((PERIPH) & 0xFFFE2FA8U) == 0x00U) && ((PERIPH) != 0x00U))
+ #define IS_RCC_AHB_PERIPH_RESET(PERIPH) ((((PERIPH) & 0xFFFFAFFFU) == 0x00U) && ((PERIPH) != 0x00U))
 #endif /* STM32F10X_CL */
 /**
   * @}
@@ -494,29 +494,29 @@ typedef struct
   * @{
   */
 
-#define RCC_APB2Periph_AFIO              ((uint32_t)0x00000001)
-#define RCC_APB2Periph_GPIOA             ((uint32_t)0x00000004)
-#define RCC_APB2Periph_GPIOB             ((uint32_t)0x00000008)
-#define RCC_APB2Periph_GPIOC             ((uint32_t)0x00000010)
-#define RCC_APB2Periph_GPIOD             ((uint32_t)0x00000020)
-#define RCC_APB2Periph_GPIOE             ((uint32_t)0x00000040)
-#define RCC_APB2Periph_GPIOF             ((uint32_t)0x00000080)
-#define RCC_APB2Periph_GPIOG             ((uint32_t)0x00000100)
-#define RCC_APB2Periph_ADC1              ((uint32_t)0x00000200)
-#define RCC_APB2Periph_ADC2              ((uint32_t)0x00000400)
-#define RCC_APB2Periph_TIM1              ((uint32_t)0x00000800)
-#define RCC_APB2Periph_SPI1              ((uint32_t)0x00001000)
-#define RCC_APB2Periph_TIM8              ((uint32_t)0x00002000)
-#define RCC_APB2Periph_USART1            ((uint32_t)0x00004000)
-#define RCC_APB2Periph_ADC3              ((uint32_t)0x00008000)
-#define RCC_APB2Periph_TIM15             ((uint32_t)0x00010000)
-#define RCC_APB2Periph_TIM16             ((uint32_t)0x00020000)
-#define RCC_APB2Periph_TIM17             ((uint32_t)0x00040000)
-#define RCC_APB2Periph_TIM9              ((uint32_t)0x00080000)
-#define RCC_APB2Periph_TIM10             ((uint32_t)0x00100000)
-#define RCC_APB2Periph_TIM11             ((uint32_t)0x00200000)
+#define RCC_APB2Periph_AFIO              ((uint32_t)0x00000001U)
+#define RCC_APB2Periph_GPIOA             ((uint32_t)0x00000004U)
+#define RCC_APB2Periph_GPIOB             ((uint32_t)0x00000008U)
+#define RCC_APB2Periph_GPIOC             ((uint32_t)0x00000010U)
+#define RCC_APB2Periph_GPIOD             ((uint32_t)0x00000020U)
+#define RCC_APB2Periph_GPIOE             ((uint32_t)0x00000040U)
+#define RCC_APB2Periph_GPIOF             ((uint32_t)0x00000080U)
+#define RCC_APB2Periph_GPIOG             ((uint32_t)0x00000100U)
+#define RCC_APB2Periph_ADC1              ((uint32_t)0x00000200U)
+#define RCC_APB2Periph_ADC2              ((uint32_t)0x00000400U)
+#define RCC_APB2Periph_TIM1              ((uint32_t)0x00000800U)
+#define RCC_APB2Periph_SPI1              ((uint32_t)0x00001000U)
+#define RCC_APB2Periph_TIM8              ((uint32_t)0x00002000U)
+#define RCC_APB2Periph_USART1            ((uint32_t)0x00004000U)
+#define RCC_APB2Periph_ADC3              ((uint32_t)0x00008000U)
+#define RCC_APB2Periph_TIM15             ((uint32_t)0x00010000U)
+#define RCC_APB2Periph_TIM16             ((uint32_t)0x00020000U)
+#define RCC_APB2Periph_TIM17             ((uint32_t)0x00040000U)
+#define RCC_APB2Periph_TIM9              ((uint32_t)0x00080000U)
+#define RCC_APB2Periph_TIM10             ((uint32_t)0x00100000U)
+#define RCC_APB2Periph_TIM11             ((uint32_t)0x00200000U)
 
-#define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFC00002) == 0x00U) && ((PERIPH) != 0x00U))
+#define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFC00002U) == 0x00U) && ((PERIPH) != 0x00U))
 /**
   * @}
   */
@@ -525,33 +525,33 @@ typedef struct
   * @{
   */
 
-#define RCC_APB1Periph_TIM2              ((uint32_t)0x00000001)
-#define RCC_APB1Periph_TIM3              ((uint32_t)0x00000002)
-#define RCC_APB1Periph_TIM4              ((uint32_t)0x00000004)
-#define RCC_APB1Periph_TIM5              ((uint32_t)0x00000008)
-#define RCC_APB1Periph_TIM6              ((uint32_t)0x00000010)
-#define RCC_APB1Periph_TIM7              ((uint32_t)0x00000020)
-#define RCC_APB1Periph_TIM12             ((uint32_t)0x00000040)
-#define RCC_APB1Periph_TIM13             ((uint32_t)0x00000080)
-#define RCC_APB1Periph_TIM14             ((uint32_t)0x00000100)
-#define RCC_APB1Periph_WWDG              ((uint32_t)0x00000800)
-#define RCC_APB1Periph_SPI2              ((uint32_t)0x00004000)
-#define RCC_APB1Periph_SPI3              ((uint32_t)0x00008000)
-#define RCC_APB1Periph_USART2            ((uint32_t)0x00020000)
-#define RCC_APB1Periph_USART3            ((uint32_t)0x00040000)
-#define RCC_APB1Periph_UART4             ((uint32_t)0x00080000)
-#define RCC_APB1Periph_UART5             ((uint32_t)0x00100000)
-#define RCC_APB1Periph_I2C1              ((uint32_t)0x00200000)
-#define RCC_APB1Periph_I2C2              ((uint32_t)0x00400000)
-#define RCC_APB1Periph_USB               ((uint32_t)0x00800000)
-#define RCC_APB1Periph_CAN1              ((uint32_t)0x02000000)
-#define RCC_APB1Periph_CAN2              ((uint32_t)0x04000000)
-#define RCC_APB1Periph_BKP               ((uint32_t)0x08000000)
-#define RCC_APB1Periph_PWR               ((uint32_t)0x10000000)
-#define RCC_APB1Periph_DAC               ((uint32_t)0x20000000)
-#define RCC_APB1Periph_CEC               ((uint32_t)0x40000000)
+#define RCC_APB1Periph_TIM2              ((uint32_t)0x00000001U)
+#define RCC_APB1Periph_TIM3              ((uint32_t)0x00000002U)
+#define RCC_APB1Periph_TIM4              ((uint32_t)0x00000004U)
+#define RCC_APB1Periph_TIM5              ((uint32_t)0x00000008U)
+#define RCC_APB1Periph_TIM6              ((uint32_t)0x00000010U)
+#define RCC_APB1Periph_TIM7              ((uint32_t)0x00000020U)
+#define RCC_APB1Periph_TIM12             ((uint32_t)0x00000040U)
+#define RCC_APB1Periph_TIM13             ((uint32_t)0x00000080U)
+#define RCC_APB1Periph_TIM14             ((uint32_t)0x00000100U)
+#define RCC_APB1Periph_WWDG              ((uint32_t)0x00000800U)
+#define RCC_APB1Periph_SPI2              ((uint32_t)0x00004000U)
+#define RCC_APB1Periph_SPI3              ((uint32_t)0x00008000U)
+#define RCC_APB1Periph_USART2            ((uint32_t)0x00020000U)
+#define RCC_APB1Periph_USART3            ((uint32_t)0x00040000U)
+#define RCC_APB1Periph_UART4             ((uint32_t)0x00080000U)
+#define RCC_APB1Periph_UART5             ((uint32_t)0x00100000U)
+#define RCC_APB1Periph_I2C1              ((uint32_t)0x00200000U)
+#define RCC_APB1Periph_I2C2              ((uint32_t)0x00400000U)
+#define RCC_APB1Periph_USB               ((uint32_t)0x00800000U)
+#define RCC_APB1Periph_CAN1              ((uint32_t)0x02000000U)
+#define RCC_APB1Periph_CAN2              ((uint32_t)0x04000000U)
+#define RCC_APB1Periph_BKP               ((uint32_t)0x08000000U)
+#define RCC_APB1Periph_PWR               ((uint32_t)0x10000000U)
+#define RCC_APB1Periph_DAC               ((uint32_t)0x20000000U)
+#define RCC_APB1Periph_CEC               ((uint32_t)0x40000000U)
 
-#define IS_RCC_APB1_PERIPH(PERIPH) ((((PERIPH) & 0x81013600) == 0x00U) && ((PERIPH) != 0x00U))
+#define IS_RCC_APB1_PERIPH(PERIPH) ((((PERIPH) & 0x81013600U) == 0x00U) && ((PERIPH) != 0x00U))
 
 /**
   * @}
@@ -561,21 +561,21 @@ typedef struct
   * @{
   */
 
-#define RCC_MCO_NoClock                  ((uint8_t)0x00)
-#define RCC_MCO_SYSCLK                   ((uint8_t)0x04)
-#define RCC_MCO_HSI                      ((uint8_t)0x05)
-#define RCC_MCO_HSE                      ((uint8_t)0x06)
-#define RCC_MCO_PLLCLK_Div2              ((uint8_t)0x07)
+#define RCC_MCO_NoClock                  ((uint8_t)0x00U)
+#define RCC_MCO_SYSCLK                   ((uint8_t)0x04U)
+#define RCC_MCO_HSI                      ((uint8_t)0x05U)
+#define RCC_MCO_HSE                      ((uint8_t)0x06U)
+#define RCC_MCO_PLLCLK_Div2              ((uint8_t)0x07U)
 
 #ifndef STM32F10X_CL
  #define IS_RCC_MCO(MCO) (((MCO) == RCC_MCO_NoClock) || ((MCO) == RCC_MCO_HSI) || \
                           ((MCO) == RCC_MCO_SYSCLK)  || ((MCO) == RCC_MCO_HSE) || \
                           ((MCO) == RCC_MCO_PLLCLK_Div2))
 #else
- #define RCC_MCO_PLL2CLK                 ((uint8_t)0x08)
- #define RCC_MCO_PLL3CLK_Div2            ((uint8_t)0x09)
- #define RCC_MCO_XT1                     ((uint8_t)0x0A)
- #define RCC_MCO_PLL3CLK                 ((uint8_t)0x0B)
+ #define RCC_MCO_PLL2CLK                 ((uint8_t)0x08U)
+ #define RCC_MCO_PLL3CLK_Div2            ((uint8_t)0x09U)
+ #define RCC_MCO_XT1                     ((uint8_t)0x0AU)
+ #define RCC_MCO_PLL3CLK                 ((uint8_t)0x0BU)
 
  #define IS_RCC_MCO(MCO) (((MCO) == RCC_MCO_NoClock) || ((MCO) == RCC_MCO_HSI) || \
                           ((MCO) == RCC_MCO_SYSCLK)  || ((MCO) == RCC_MCO_HSE) || \
@@ -592,17 +592,17 @@ typedef struct
   * @{
   */
 
-#define RCC_FLAG_HSIRDY                  ((uint8_t)0x21)
-#define RCC_FLAG_HSERDY                  ((uint8_t)0x31)
-#define RCC_FLAG_PLLRDY                  ((uint8_t)0x39)
-#define RCC_FLAG_LSERDY                  ((uint8_t)0x41)
-#define RCC_FLAG_LSIRDY                  ((uint8_t)0x61)
-#define RCC_FLAG_PINRST                  ((uint8_t)0x7A)
-#define RCC_FLAG_PORRST                  ((uint8_t)0x7B)
-#define RCC_FLAG_SFTRST                  ((uint8_t)0x7C)
-#define RCC_FLAG_IWDGRST                 ((uint8_t)0x7D)
-#define RCC_FLAG_WWDGRST                 ((uint8_t)0x7E)
-#define RCC_FLAG_LPWRRST                 ((uint8_t)0x7F)
+#define RCC_FLAG_HSIRDY                  ((uint8_t)0x21U)
+#define RCC_FLAG_HSERDY                  ((uint8_t)0x31U)
+#define RCC_FLAG_PLLRDY                  ((uint8_t)0x39U)
+#define RCC_FLAG_LSERDY                  ((uint8_t)0x41U)
+#define RCC_FLAG_LSIRDY                  ((uint8_t)0x61U)
+#define RCC_FLAG_PINRST                  ((uint8_t)0x7AU)
+#define RCC_FLAG_PORRST                  ((uint8_t)0x7BU)
+#define RCC_FLAG_SFTRST                  ((uint8_t)0x7CU)
+#define RCC_FLAG_IWDGRST                 ((uint8_t)0x7DU)
+#define RCC_FLAG_WWDGRST                 ((uint8_t)0x7EU)
+#define RCC_FLAG_LPWRRST                 ((uint8_t)0x7FU)
 
 #ifndef STM32F10X_CL
  #define IS_RCC_FLAG(FLAG) (((FLAG) == RCC_FLAG_HSIRDY) || ((FLAG) == RCC_FLAG_HSERDY) || \
@@ -612,8 +612,8 @@ typedef struct
                             ((FLAG) == RCC_FLAG_IWDGRST)|| ((FLAG) == RCC_FLAG_WWDGRST)|| \
                             ((FLAG) == RCC_FLAG_LPWRRST))
 #else
- #define RCC_FLAG_PLL2RDY                ((uint8_t)0x3B)
- #define RCC_FLAG_PLL3RDY                ((uint8_t)0x3D)
+ #define RCC_FLAG_PLL2RDY                ((uint8_t)0x3BU)
+ #define RCC_FLAG_PLL3RDY                ((uint8_t)0x3DU)
  #define IS_RCC_FLAG(FLAG) (((FLAG) == RCC_FLAG_HSIRDY) || ((FLAG) == RCC_FLAG_HSERDY) || \
                             ((FLAG) == RCC_FLAG_PLLRDY) || ((FLAG) == RCC_FLAG_LSERDY) || \
                             ((FLAG) == RCC_FLAG_PLL2RDY) || ((FLAG) == RCC_FLAG_PLL3RDY) || \

@@ -268,8 +268,8 @@ void api_end_device_update(void)
 
     i32_servo_forward   = constrain_i32(i32_servo_forward,  1370, 1900);
     i32_servo_backward  = constrain_i32(i32_servo_backward, 1370, 1900);
-    i32_servo_left      = constrain_i32(i32_servo_left,     1370, 1900);
-    i32_servo_right     = constrain_i32(i32_servo_right,    1370, 2000);
+    i32_servo_left      = constrain_i32(i32_servo_left,     1200, 1850);
+    i32_servo_right     = constrain_i32(i32_servo_right,    1200, 1850);
 
 
     /* Get current RC YAW channel value. */

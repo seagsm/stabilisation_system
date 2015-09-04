@@ -55,12 +55,12 @@
 /* --------------------- WWDG registers bit mask ------------------------ */
 
 /* CR register bit mask */
-#define CR_WDGA_Set       ((uint32_t)0x00000080)
+#define CR_WDGA_Set       ((uint32_t)0x00000080U)
 
 /* CFR register bit mask */
-#define CFR_WDGTB_Mask    ((uint32_t)0xFFFFFE7F)
-#define CFR_W_Mask        ((uint32_t)0xFFFFFF80)
-#define BIT_Mask          ((uint8_t)0x7F)
+#define CFR_WDGTB_Mask    ((uint32_t)0xFFFFFE7FU)
+#define CFR_W_Mask        ((uint32_t)0xFFFFFF80U)
+#define BIT_Mask          ((uint8_t)0x7FU)
 
 /**
   * @}

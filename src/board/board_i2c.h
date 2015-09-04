@@ -10,68 +10,68 @@
 
 
 /* I2C SPE mask */
-#define CR1_PE_Set              ((uint16_t)0x0001)
-#define CR1_PE_Reset            ((uint16_t)0xFFFE)
+#define CR1_PE_Set              ((uint16_t)0x0001U)
+#define CR1_PE_Reset            ((uint16_t)0xFFFEU)
 
 /* I2C START mask */
-#define CR1_START_Set           ((uint16_t)0x0100)
-#define CR1_START_Reset         ((uint16_t)0xFEFF)
+#define CR1_START_Set           ((uint16_t)0x0100U)
+#define CR1_START_Reset         ((uint16_t)0xFEFFU)
 
-#define CR1_POS_Set           ((uint16_t)0x0800)
-#define CR1_POS_Reset         ((uint16_t)0xF7FF)
+#define CR1_POS_Set           ((uint16_t)0x0800U)
+#define CR1_POS_Reset         ((uint16_t)0xF7FFU)
 
 /* I2C STOP mask */
-#define CR1_STOP_Set            ((uint16_t)0x0200)
-#define CR1_STOP_Reset          ((uint16_t)0xFDFF)
+#define CR1_STOP_Set            ((uint16_t)0x0200U)
+#define CR1_STOP_Reset          ((uint16_t)0xFDFFU)
 
 /* I2C ACK mask */
-#define CR1_ACK_Set             ((uint16_t)0x0400)
-#define CR1_ACK_Reset           ((uint16_t)0xFBFF)
+#define CR1_ACK_Set             ((uint16_t)0x0400U)
+#define CR1_ACK_Reset           ((uint16_t)0xFBFFU)
 
 /* I2C ENARP mask */
-#define CR1_ENARP_Set           ((uint16_t)0x0010)
-#define CR1_ENARP_Reset         ((uint16_t)0xFFEF)
+#define CR1_ENARP_Set           ((uint16_t)0x0010U)
+#define CR1_ENARP_Reset         ((uint16_t)0xFFEFU)
 
 /* I2C NOSTRETCH mask */
-#define CR1_NOSTRETCH_Set       ((uint16_t)0x0080)
-#define CR1_NOSTRETCH_Reset     ((uint16_t)0xFF7F)
+#define CR1_NOSTRETCH_Set       ((uint16_t)0x0080U)
+#define CR1_NOSTRETCH_Reset     ((uint16_t)0xFF7FU)
 
 /* I2C registers Masks */
-#define CR1_CLEAR_Mask          ((uint16_t)0xFBF5)
+#define CR1_CLEAR_Mask          ((uint16_t)0xFBF5U)
 
 /* I2C DMAEN mask */
-#define CR2_DMAEN_Set           ((uint16_t)0x0800)
-#define CR2_DMAEN_Reset         ((uint16_t)0xF7FF)
+#define CR2_DMAEN_Set           ((uint16_t)0x0800U)
+#define CR2_DMAEN_Reset         ((uint16_t)0xF7FFU)
 
 /* I2C LAST mask */
-#define CR2_LAST_Set            ((uint16_t)0x1000)
-#define CR2_LAST_Reset          ((uint16_t)0xEFFF)
+#define CR2_LAST_Set            ((uint16_t)0x1000U)
+#define CR2_LAST_Reset          ((uint16_t)0xEFFFU)
 
 /* I2C FREQ mask */
-#define CR2_FREQ_Reset          ((uint16_t)0xFFC0)
+#define CR2_FREQ_Reset          ((uint16_t)0xFFC0U)
 
 /* I2C ADD0 mask */
-#define OAR1_ADD0_Set           ((uint16_t)0x0001)
-#define OAR1_ADD0_Reset         ((uint16_t)0xFFFE)
+#define OAR1_ADD0_Set           ((uint16_t)0x0001U)
+#define OAR1_ADD0_Reset         ((uint16_t)0xFFFEU)
 
 /* I2C ENDUAL mask */
-#define OAR2_ENDUAL_Set         ((uint16_t)0x0001)
-#define OAR2_ENDUAL_Reset       ((uint16_t)0xFFFE)
+#define OAR2_ENDUAL_Set         ((uint16_t)0x0001U)
+#define OAR2_ENDUAL_Reset       ((uint16_t)0xFFFEU)
 
 /* I2C ADD2 mask */
-#define OAR2_ADD2_Reset         ((uint16_t)0xFF01)
+#define OAR2_ADD2_Reset         ((uint16_t)0xFF01U)
 
 /* I2C F/S mask */
-#define CCR_FS_Set              ((uint16_t)0x8000)
+#define CCR_FS_Set              ((uint16_t)0x8000U)
 
 /* I2C CCR mask */
-#define CCR_CCR_Set             ((uint16_t)0x0FFF)
+#define CCR_CCR_Set             ((uint16_t)0x0FFFU)
 
 /* I2C FLAG mask */
-#define FLAG_Mask               ((uint32_t)0x00FFFFFF)
+#define FLAG_Mask               ((uint32_t)0x00FFFFFFU)
 
 /* I2C Interrupt Enable mask */
-#define ITEN_Mask               ((uint32_t)0x07000000)
+#define ITEN_Mask               ((uint32_t)0x07000000U)
 
 
 #define I2C_IT_BUF                      ((uint16_t)0x0400)

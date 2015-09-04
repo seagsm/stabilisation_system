@@ -7,9 +7,9 @@
 /* Before start Update we shoud set Ki and Kp. */
 /* Each update we should set SamplePeriod      */
 
-  static float mahony_Ki = 0.0;
+  static float mahony_Ki = 0.0f;
   /* float mahony_Kp = 0.1; */ /* it was exelent stable, but -+1 degree stabilisation during 1 60 seconds */
-  static float mahony_Kp = 0.1;
+  static float mahony_Kp = 0.1f;
 
   static float eInt[3];
 

@@ -52,6 +52,10 @@ static BOARD_ERROR be_board_system_init_unlock(void)
         GPIO_ResetBits( GPIOB, GPIO_Pin_1);
         gv_board_sys_tick_delay(600U);
     }
+    else
+    {
+
+    }
     return(be_result);
 }
 

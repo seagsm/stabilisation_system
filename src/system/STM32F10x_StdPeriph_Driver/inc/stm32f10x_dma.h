@@ -109,8 +109,8 @@ typedef struct
   * @{
   */
 
-#define DMA_DIR_PeripheralDST              ((uint32_t)0x00000010)
-#define DMA_DIR_PeripheralSRC              ((uint32_t)0x00000000)
+#define DMA_DIR_PeripheralDST              ((uint32_t)0x00000010U)
+#define DMA_DIR_PeripheralSRC              ((uint32_t)0x00000000U)
 #define IS_DMA_DIR(DIR) (((DIR) == DMA_DIR_PeripheralDST) || \
                          ((DIR) == DMA_DIR_PeripheralSRC))
 /**
@@ -121,8 +121,8 @@ typedef struct
   * @{
   */
 
-#define DMA_PeripheralInc_Enable           ((uint32_t)0x00000040)
-#define DMA_PeripheralInc_Disable          ((uint32_t)0x00000000)
+#define DMA_PeripheralInc_Enable           ((uint32_t)0x00000040U)
+#define DMA_PeripheralInc_Disable          ((uint32_t)0x00000000U)
 #define IS_DMA_PERIPHERAL_INC_STATE(STATE) (((STATE) == DMA_PeripheralInc_Enable) || \
                                             ((STATE) == DMA_PeripheralInc_Disable))
 /**
@@ -133,8 +133,8 @@ typedef struct
   * @{
   */
 
-#define DMA_MemoryInc_Enable               ((uint32_t)0x00000080)
-#define DMA_MemoryInc_Disable              ((uint32_t)0x00000000)
+#define DMA_MemoryInc_Enable               ((uint32_t)0x00000080U)
+#define DMA_MemoryInc_Disable              ((uint32_t)0x00000000U)
 #define IS_DMA_MEMORY_INC_STATE(STATE) (((STATE) == DMA_MemoryInc_Enable) || \
                                         ((STATE) == DMA_MemoryInc_Disable))
 /**
@@ -145,9 +145,9 @@ typedef struct
   * @{
   */
 
-#define DMA_PeripheralDataSize_Byte        ((uint32_t)0x00000000)
-#define DMA_PeripheralDataSize_HalfWord    ((uint32_t)0x00000100)
-#define DMA_PeripheralDataSize_Word        ((uint32_t)0x00000200)
+#define DMA_PeripheralDataSize_Byte        ((uint32_t)0x00000000U)
+#define DMA_PeripheralDataSize_HalfWord    ((uint32_t)0x00000100U)
+#define DMA_PeripheralDataSize_Word        ((uint32_t)0x00000200U)
 #define IS_DMA_PERIPHERAL_DATA_SIZE(SIZE) (((SIZE) == DMA_PeripheralDataSize_Byte) || \
                                            ((SIZE) == DMA_PeripheralDataSize_HalfWord) || \
                                            ((SIZE) == DMA_PeripheralDataSize_Word))
@@ -159,9 +159,9 @@ typedef struct
   * @{
   */
 
-#define DMA_MemoryDataSize_Byte            ((uint32_t)0x00000000)
-#define DMA_MemoryDataSize_HalfWord        ((uint32_t)0x00000400)
-#define DMA_MemoryDataSize_Word            ((uint32_t)0x00000800)
+#define DMA_MemoryDataSize_Byte            ((uint32_t)0x00000000U)
+#define DMA_MemoryDataSize_HalfWord        ((uint32_t)0x00000400U)
+#define DMA_MemoryDataSize_Word            ((uint32_t)0x00000800U)
 #define IS_DMA_MEMORY_DATA_SIZE(SIZE) (((SIZE) == DMA_MemoryDataSize_Byte) || \
                                        ((SIZE) == DMA_MemoryDataSize_HalfWord) || \
                                        ((SIZE) == DMA_MemoryDataSize_Word))
@@ -173,8 +173,8 @@ typedef struct
   * @{
   */
 
-#define DMA_Mode_Circular                  ((uint32_t)0x00000020)
-#define DMA_Mode_Normal                    ((uint32_t)0x00000000)
+#define DMA_Mode_Circular                  ((uint32_t)0x00000020U)
+#define DMA_Mode_Normal                    ((uint32_t)0x00000000U)
 #define IS_DMA_MODE(MODE) (((MODE) == DMA_Mode_Circular) || ((MODE) == DMA_Mode_Normal))
 /**
   * @}
@@ -184,10 +184,10 @@ typedef struct
   * @{
   */
 
-#define DMA_Priority_VeryHigh              ((uint32_t)0x00003000)
-#define DMA_Priority_High                  ((uint32_t)0x00002000)
-#define DMA_Priority_Medium                ((uint32_t)0x00001000)
-#define DMA_Priority_Low                   ((uint32_t)0x00000000)
+#define DMA_Priority_VeryHigh              ((uint32_t)0x00003000U)
+#define DMA_Priority_High                  ((uint32_t)0x00002000U)
+#define DMA_Priority_Medium                ((uint32_t)0x00001000U)
+#define DMA_Priority_Low                   ((uint32_t)0x00000000U)
 #define IS_DMA_PRIORITY(PRIORITY) (((PRIORITY) == DMA_Priority_VeryHigh) || \
                                    ((PRIORITY) == DMA_Priority_High) || \
                                    ((PRIORITY) == DMA_Priority_Medium) || \
@@ -200,8 +200,8 @@ typedef struct
   * @{
   */
 
-#define DMA_M2M_Enable                     ((uint32_t)0x00004000)
-#define DMA_M2M_Disable                    ((uint32_t)0x00000000)
+#define DMA_M2M_Enable                     ((uint32_t)0x00004000U)
+#define DMA_M2M_Disable                    ((uint32_t)0x00000000U)
 #define IS_DMA_M2M_STATE(STATE) (((STATE) == DMA_M2M_Enable) || ((STATE) == DMA_M2M_Disable))
 
 /**
@@ -212,62 +212,62 @@ typedef struct
   * @{
   */
 
-#define DMA_IT_TC                          ((uint32_t)0x00000002)
-#define DMA_IT_HT                          ((uint32_t)0x00000004)
-#define DMA_IT_TE                          ((uint32_t)0x00000008)
+#define DMA_IT_TC                          ((uint32_t)0x00000002U)
+#define DMA_IT_HT                          ((uint32_t)0x00000004U)
+#define DMA_IT_TE                          ((uint32_t)0x00000008U)
 #define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1U) == 0x00U) && ((IT) != 0x00U))
 
-#define DMA1_IT_GL1                        ((uint32_t)0x00000001)
-#define DMA1_IT_TC1                        ((uint32_t)0x00000002)
-#define DMA1_IT_HT1                        ((uint32_t)0x00000004)
-#define DMA1_IT_TE1                        ((uint32_t)0x00000008)
-#define DMA1_IT_GL2                        ((uint32_t)0x00000010)
-#define DMA1_IT_TC2                        ((uint32_t)0x00000020)
-#define DMA1_IT_HT2                        ((uint32_t)0x00000040)
-#define DMA1_IT_TE2                        ((uint32_t)0x00000080)
-#define DMA1_IT_GL3                        ((uint32_t)0x00000100)
-#define DMA1_IT_TC3                        ((uint32_t)0x00000200)
-#define DMA1_IT_HT3                        ((uint32_t)0x00000400)
-#define DMA1_IT_TE3                        ((uint32_t)0x00000800)
-#define DMA1_IT_GL4                        ((uint32_t)0x00001000)
-#define DMA1_IT_TC4                        ((uint32_t)0x00002000)
-#define DMA1_IT_HT4                        ((uint32_t)0x00004000)
-#define DMA1_IT_TE4                        ((uint32_t)0x00008000)
-#define DMA1_IT_GL5                        ((uint32_t)0x00010000)
-#define DMA1_IT_TC5                        ((uint32_t)0x00020000)
-#define DMA1_IT_HT5                        ((uint32_t)0x00040000)
-#define DMA1_IT_TE5                        ((uint32_t)0x00080000)
-#define DMA1_IT_GL6                        ((uint32_t)0x00100000)
-#define DMA1_IT_TC6                        ((uint32_t)0x00200000)
-#define DMA1_IT_HT6                        ((uint32_t)0x00400000)
-#define DMA1_IT_TE6                        ((uint32_t)0x00800000)
-#define DMA1_IT_GL7                        ((uint32_t)0x01000000)
-#define DMA1_IT_TC7                        ((uint32_t)0x02000000)
-#define DMA1_IT_HT7                        ((uint32_t)0x04000000)
-#define DMA1_IT_TE7                        ((uint32_t)0x08000000)
+#define DMA1_IT_GL1                        ((uint32_t)0x00000001U)
+#define DMA1_IT_TC1                        ((uint32_t)0x00000002U)
+#define DMA1_IT_HT1                        ((uint32_t)0x00000004U)
+#define DMA1_IT_TE1                        ((uint32_t)0x00000008U)
+#define DMA1_IT_GL2                        ((uint32_t)0x00000010U)
+#define DMA1_IT_TC2                        ((uint32_t)0x00000020U)
+#define DMA1_IT_HT2                        ((uint32_t)0x00000040U)
+#define DMA1_IT_TE2                        ((uint32_t)0x00000080U)
+#define DMA1_IT_GL3                        ((uint32_t)0x00000100U)
+#define DMA1_IT_TC3                        ((uint32_t)0x00000200U)
+#define DMA1_IT_HT3                        ((uint32_t)0x00000400U)
+#define DMA1_IT_TE3                        ((uint32_t)0x00000800U)
+#define DMA1_IT_GL4                        ((uint32_t)0x00001000U)
+#define DMA1_IT_TC4                        ((uint32_t)0x00002000U)
+#define DMA1_IT_HT4                        ((uint32_t)0x00004000U)
+#define DMA1_IT_TE4                        ((uint32_t)0x00008000U)
+#define DMA1_IT_GL5                        ((uint32_t)0x00010000U)
+#define DMA1_IT_TC5                        ((uint32_t)0x00020000U)
+#define DMA1_IT_HT5                        ((uint32_t)0x00040000U)
+#define DMA1_IT_TE5                        ((uint32_t)0x00080000U)
+#define DMA1_IT_GL6                        ((uint32_t)0x00100000U)
+#define DMA1_IT_TC6                        ((uint32_t)0x00200000U)
+#define DMA1_IT_HT6                        ((uint32_t)0x00400000U)
+#define DMA1_IT_TE6                        ((uint32_t)0x00800000U)
+#define DMA1_IT_GL7                        ((uint32_t)0x01000000U)
+#define DMA1_IT_TC7                        ((uint32_t)0x02000000U)
+#define DMA1_IT_HT7                        ((uint32_t)0x04000000U)
+#define DMA1_IT_TE7                        ((uint32_t)0x08000000U)
 
-#define DMA2_IT_GL1                        ((uint32_t)0x10000001)
-#define DMA2_IT_TC1                        ((uint32_t)0x10000002)
-#define DMA2_IT_HT1                        ((uint32_t)0x10000004)
-#define DMA2_IT_TE1                        ((uint32_t)0x10000008)
-#define DMA2_IT_GL2                        ((uint32_t)0x10000010)
-#define DMA2_IT_TC2                        ((uint32_t)0x10000020)
-#define DMA2_IT_HT2                        ((uint32_t)0x10000040)
-#define DMA2_IT_TE2                        ((uint32_t)0x10000080)
-#define DMA2_IT_GL3                        ((uint32_t)0x10000100)
-#define DMA2_IT_TC3                        ((uint32_t)0x10000200)
-#define DMA2_IT_HT3                        ((uint32_t)0x10000400)
-#define DMA2_IT_TE3                        ((uint32_t)0x10000800)
-#define DMA2_IT_GL4                        ((uint32_t)0x10001000)
-#define DMA2_IT_TC4                        ((uint32_t)0x10002000)
-#define DMA2_IT_HT4                        ((uint32_t)0x10004000)
-#define DMA2_IT_TE4                        ((uint32_t)0x10008000)
-#define DMA2_IT_GL5                        ((uint32_t)0x10010000)
-#define DMA2_IT_TC5                        ((uint32_t)0x10020000)
-#define DMA2_IT_HT5                        ((uint32_t)0x10040000)
-#define DMA2_IT_TE5                        ((uint32_t)0x10080000)
+#define DMA2_IT_GL1                        ((uint32_t)0x10000001U)
+#define DMA2_IT_TC1                        ((uint32_t)0x10000002U)
+#define DMA2_IT_HT1                        ((uint32_t)0x10000004U)
+#define DMA2_IT_TE1                        ((uint32_t)0x10000008U)
+#define DMA2_IT_GL2                        ((uint32_t)0x10000010U)
+#define DMA2_IT_TC2                        ((uint32_t)0x10000020U)
+#define DMA2_IT_HT2                        ((uint32_t)0x10000040U)
+#define DMA2_IT_TE2                        ((uint32_t)0x10000080U)
+#define DMA2_IT_GL3                        ((uint32_t)0x10000100U)
+#define DMA2_IT_TC3                        ((uint32_t)0x10000200U)
+#define DMA2_IT_HT3                        ((uint32_t)0x10000400U)
+#define DMA2_IT_TE3                        ((uint32_t)0x10000800U)
+#define DMA2_IT_GL4                        ((uint32_t)0x10001000U)
+#define DMA2_IT_TC4                        ((uint32_t)0x10002000U)
+#define DMA2_IT_HT4                        ((uint32_t)0x10004000U)
+#define DMA2_IT_TE4                        ((uint32_t)0x10008000U)
+#define DMA2_IT_GL5                        ((uint32_t)0x10010000U)
+#define DMA2_IT_TC5                        ((uint32_t)0x10020000U)
+#define DMA2_IT_HT5                        ((uint32_t)0x10040000U)
+#define DMA2_IT_TE5                        ((uint32_t)0x10080000U)
 
-#define IS_DMA_CLEAR_IT(IT) (((((IT) & 0xF0000000) == 0x00U) || (((IT) & 0xEFF00000U) == 0x00U)) && ((IT) != 0x00U))
+#define IS_DMA_CLEAR_IT(IT) (((((IT) & 0xF0000000U) == 0x00U) || (((IT) & 0xEFF00000U) == 0x00U)) && ((IT) != 0x00U))
 
 #define IS_DMA_GET_IT(IT) (((IT) == DMA1_IT_GL1) || ((IT) == DMA1_IT_TC1) || \
                            ((IT) == DMA1_IT_HT1) || ((IT) == DMA1_IT_TE1) || \
@@ -301,55 +301,55 @@ typedef struct
 /** @defgroup DMA_flags_definition
   * @{
   */
-#define DMA1_FLAG_GL1                      ((uint32_t)0x00000001)
-#define DMA1_FLAG_TC1                      ((uint32_t)0x00000002)
-#define DMA1_FLAG_HT1                      ((uint32_t)0x00000004)
-#define DMA1_FLAG_TE1                      ((uint32_t)0x00000008)
-#define DMA1_FLAG_GL2                      ((uint32_t)0x00000010)
-#define DMA1_FLAG_TC2                      ((uint32_t)0x00000020)
-#define DMA1_FLAG_HT2                      ((uint32_t)0x00000040)
-#define DMA1_FLAG_TE2                      ((uint32_t)0x00000080)
-#define DMA1_FLAG_GL3                      ((uint32_t)0x00000100)
-#define DMA1_FLAG_TC3                      ((uint32_t)0x00000200)
-#define DMA1_FLAG_HT3                      ((uint32_t)0x00000400)
-#define DMA1_FLAG_TE3                      ((uint32_t)0x00000800)
-#define DMA1_FLAG_GL4                      ((uint32_t)0x00001000)
-#define DMA1_FLAG_TC4                      ((uint32_t)0x00002000)
-#define DMA1_FLAG_HT4                      ((uint32_t)0x00004000)
-#define DMA1_FLAG_TE4                      ((uint32_t)0x00008000)
-#define DMA1_FLAG_GL5                      ((uint32_t)0x00010000)
-#define DMA1_FLAG_TC5                      ((uint32_t)0x00020000)
-#define DMA1_FLAG_HT5                      ((uint32_t)0x00040000)
-#define DMA1_FLAG_TE5                      ((uint32_t)0x00080000)
-#define DMA1_FLAG_GL6                      ((uint32_t)0x00100000)
-#define DMA1_FLAG_TC6                      ((uint32_t)0x00200000)
-#define DMA1_FLAG_HT6                      ((uint32_t)0x00400000)
-#define DMA1_FLAG_TE6                      ((uint32_t)0x00800000)
-#define DMA1_FLAG_GL7                      ((uint32_t)0x01000000)
-#define DMA1_FLAG_TC7                      ((uint32_t)0x02000000)
-#define DMA1_FLAG_HT7                      ((uint32_t)0x04000000)
-#define DMA1_FLAG_TE7                      ((uint32_t)0x08000000)
+#define DMA1_FLAG_GL1                      ((uint32_t)0x00000001U)
+#define DMA1_FLAG_TC1                      ((uint32_t)0x00000002U)
+#define DMA1_FLAG_HT1                      ((uint32_t)0x00000004U)
+#define DMA1_FLAG_TE1                      ((uint32_t)0x00000008U)
+#define DMA1_FLAG_GL2                      ((uint32_t)0x00000010U)
+#define DMA1_FLAG_TC2                      ((uint32_t)0x00000020U)
+#define DMA1_FLAG_HT2                      ((uint32_t)0x00000040U)
+#define DMA1_FLAG_TE2                      ((uint32_t)0x00000080U)
+#define DMA1_FLAG_GL3                      ((uint32_t)0x00000100U)
+#define DMA1_FLAG_TC3                      ((uint32_t)0x00000200U)
+#define DMA1_FLAG_HT3                      ((uint32_t)0x00000400U)
+#define DMA1_FLAG_TE3                      ((uint32_t)0x00000800U)
+#define DMA1_FLAG_GL4                      ((uint32_t)0x00001000U)
+#define DMA1_FLAG_TC4                      ((uint32_t)0x00002000U)
+#define DMA1_FLAG_HT4                      ((uint32_t)0x00004000U)
+#define DMA1_FLAG_TE4                      ((uint32_t)0x00008000U)
+#define DMA1_FLAG_GL5                      ((uint32_t)0x00010000U)
+#define DMA1_FLAG_TC5                      ((uint32_t)0x00020000U)
+#define DMA1_FLAG_HT5                      ((uint32_t)0x00040000U)
+#define DMA1_FLAG_TE5                      ((uint32_t)0x00080000U)
+#define DMA1_FLAG_GL6                      ((uint32_t)0x00100000U)
+#define DMA1_FLAG_TC6                      ((uint32_t)0x00200000U)
+#define DMA1_FLAG_HT6                      ((uint32_t)0x00400000U)
+#define DMA1_FLAG_TE6                      ((uint32_t)0x00800000U)
+#define DMA1_FLAG_GL7                      ((uint32_t)0x01000000U)
+#define DMA1_FLAG_TC7                      ((uint32_t)0x02000000U)
+#define DMA1_FLAG_HT7                      ((uint32_t)0x04000000U)
+#define DMA1_FLAG_TE7                      ((uint32_t)0x08000000U)
 
-#define DMA2_FLAG_GL1                      ((uint32_t)0x10000001)
-#define DMA2_FLAG_TC1                      ((uint32_t)0x10000002)
-#define DMA2_FLAG_HT1                      ((uint32_t)0x10000004)
-#define DMA2_FLAG_TE1                      ((uint32_t)0x10000008)
-#define DMA2_FLAG_GL2                      ((uint32_t)0x10000010)
-#define DMA2_FLAG_TC2                      ((uint32_t)0x10000020)
-#define DMA2_FLAG_HT2                      ((uint32_t)0x10000040)
-#define DMA2_FLAG_TE2                      ((uint32_t)0x10000080)
-#define DMA2_FLAG_GL3                      ((uint32_t)0x10000100)
-#define DMA2_FLAG_TC3                      ((uint32_t)0x10000200)
-#define DMA2_FLAG_HT3                      ((uint32_t)0x10000400)
-#define DMA2_FLAG_TE3                      ((uint32_t)0x10000800)
-#define DMA2_FLAG_GL4                      ((uint32_t)0x10001000)
-#define DMA2_FLAG_TC4                      ((uint32_t)0x10002000)
-#define DMA2_FLAG_HT4                      ((uint32_t)0x10004000)
-#define DMA2_FLAG_TE4                      ((uint32_t)0x10008000)
-#define DMA2_FLAG_GL5                      ((uint32_t)0x10010000)
-#define DMA2_FLAG_TC5                      ((uint32_t)0x10020000)
-#define DMA2_FLAG_HT5                      ((uint32_t)0x10040000)
-#define DMA2_FLAG_TE5                      ((uint32_t)0x10080000)
+#define DMA2_FLAG_GL1                      ((uint32_t)0x10000001U)
+#define DMA2_FLAG_TC1                      ((uint32_t)0x10000002U)
+#define DMA2_FLAG_HT1                      ((uint32_t)0x10000004U)
+#define DMA2_FLAG_TE1                      ((uint32_t)0x10000008U)
+#define DMA2_FLAG_GL2                      ((uint32_t)0x10000010U)
+#define DMA2_FLAG_TC2                      ((uint32_t)0x10000020U)
+#define DMA2_FLAG_HT2                      ((uint32_t)0x10000040U)
+#define DMA2_FLAG_TE2                      ((uint32_t)0x10000080U)
+#define DMA2_FLAG_GL3                      ((uint32_t)0x10000100U)
+#define DMA2_FLAG_TC3                      ((uint32_t)0x10000200U)
+#define DMA2_FLAG_HT3                      ((uint32_t)0x10000400U)
+#define DMA2_FLAG_TE3                      ((uint32_t)0x10000800U)
+#define DMA2_FLAG_GL4                      ((uint32_t)0x10001000U)
+#define DMA2_FLAG_TC4                      ((uint32_t)0x10002000U)
+#define DMA2_FLAG_HT4                      ((uint32_t)0x10004000U)
+#define DMA2_FLAG_TE4                      ((uint32_t)0x10008000U)
+#define DMA2_FLAG_GL5                      ((uint32_t)0x10010000U)
+#define DMA2_FLAG_TC5                      ((uint32_t)0x10020000U)
+#define DMA2_FLAG_HT5                      ((uint32_t)0x10040000U)
+#define DMA2_FLAG_TE5                      ((uint32_t)0x10080000U)
 
 #define IS_DMA_CLEAR_FLAG(FLAG) (((((FLAG) & 0xF0000000U) == 0x00U) || (((FLAG) & 0xEFF00000U) == 0x00U)) && ((FLAG) != 0x00U))
 

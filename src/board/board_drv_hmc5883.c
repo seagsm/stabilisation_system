@@ -3,8 +3,8 @@
 #include "board_drv_hmc5883.h"
 
 
-static BOARD_FLOAT_3X_DATA bf3d_mag_scale_factor;
-static BOARD_U16_3X_DATA       b3d_raw_magnitometer;
+static BOARD_FLOAT_3X_DATA  bf3d_mag_scale_factor;
+static BOARD_U16_3X_DATA    b3d_raw_magnitometer;
 
 BOARD_ERROR be_board_drv_hmc5883_read(void)
 {

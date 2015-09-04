@@ -118,58 +118,58 @@
 /* ---------------------- RCC registers bit mask ------------------------ */
 
 /* CR register bit mask */
-#define CR_HSEBYP_Reset           ((uint32_t)0xFFFBFFFF)
-#define CR_HSEBYP_Set             ((uint32_t)0x00040000)
-#define CR_HSEON_Reset            ((uint32_t)0xFFFEFFFF)
-#define CR_HSEON_Set              ((uint32_t)0x00010000)
-#define CR_HSITRIM_Mask           ((uint32_t)0xFFFFFF07)
+#define CR_HSEBYP_Reset           ((uint32_t)0xFFFBFFFFU)
+#define CR_HSEBYP_Set             ((uint32_t)0x00040000U)
+#define CR_HSEON_Reset            ((uint32_t)0xFFFEFFFFU)
+#define CR_HSEON_Set              ((uint32_t)0x00010000U)
+#define CR_HSITRIM_Mask           ((uint32_t)0xFFFFFF07U)
 
 /* CFGR register bit mask */
 #if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL) || defined (STM32F10X_CL)
- #define CFGR_PLL_Mask            ((uint32_t)0xFFC2FFFF)
+ #define CFGR_PLL_Mask            ((uint32_t)0xFFC2FFFFU)
 #else
- #define CFGR_PLL_Mask            ((uint32_t)0xFFC0FFFF)
+ #define CFGR_PLL_Mask            ((uint32_t)0xFFC0FFFFU)
 #endif /* STM32F10X_CL */
 
-#define CFGR_PLLMull_Mask         ((uint32_t)0x003C0000)
-#define CFGR_PLLSRC_Mask          ((uint32_t)0x00010000)
-#define CFGR_PLLXTPRE_Mask        ((uint32_t)0x00020000)
-#define CFGR_SWS_Mask             ((uint32_t)0x0000000C)
-#define CFGR_SW_Mask              ((uint32_t)0xFFFFFFFC)
-#define CFGR_HPRE_Reset_Mask      ((uint32_t)0xFFFFFF0F)
-#define CFGR_HPRE_Set_Mask        ((uint32_t)0x000000F0)
-#define CFGR_PPRE1_Reset_Mask     ((uint32_t)0xFFFFF8FF)
-#define CFGR_PPRE1_Set_Mask       ((uint32_t)0x00000700)
-#define CFGR_PPRE2_Reset_Mask     ((uint32_t)0xFFFFC7FF)
-#define CFGR_PPRE2_Set_Mask       ((uint32_t)0x00003800)
-#define CFGR_ADCPRE_Reset_Mask    ((uint32_t)0xFFFF3FFF)
-#define CFGR_ADCPRE_Set_Mask      ((uint32_t)0x0000C000)
+#define CFGR_PLLMull_Mask         ((uint32_t)0x003C0000U)
+#define CFGR_PLLSRC_Mask          ((uint32_t)0x00010000U)
+#define CFGR_PLLXTPRE_Mask        ((uint32_t)0x00020000U)
+#define CFGR_SWS_Mask             ((uint32_t)0x0000000CU)
+#define CFGR_SW_Mask              ((uint32_t)0xFFFFFFFCU)
+#define CFGR_HPRE_Reset_Mask      ((uint32_t)0xFFFFFF0FU)
+#define CFGR_HPRE_Set_Mask        ((uint32_t)0x000000F0U)
+#define CFGR_PPRE1_Reset_Mask     ((uint32_t)0xFFFFF8FFU)
+#define CFGR_PPRE1_Set_Mask       ((uint32_t)0x00000700U)
+#define CFGR_PPRE2_Reset_Mask     ((uint32_t)0xFFFFC7FFU)
+#define CFGR_PPRE2_Set_Mask       ((uint32_t)0x00003800U)
+#define CFGR_ADCPRE_Reset_Mask    ((uint32_t)0xFFFF3FFFU)
+#define CFGR_ADCPRE_Set_Mask      ((uint32_t)0x0000C000U)
 
 /* CSR register bit mask */
-#define CSR_RMVF_Set              ((uint32_t)0x01000000)
+#define CSR_RMVF_Set              ((uint32_t)0x01000000U)
 
 #if defined (STM32F10X_LD_VL) || defined (STM32F10X_MD_VL) || defined (STM32F10X_HD_VL) || defined (STM32F10X_CL)
 /* CFGR2 register bit mask */
- #define CFGR2_PREDIV1SRC         ((uint32_t)0x00010000)
- #define CFGR2_PREDIV1            ((uint32_t)0x0000000F)
+ #define CFGR2_PREDIV1SRC         ((uint32_t)0x00010000U)
+ #define CFGR2_PREDIV1            ((uint32_t)0x0000000FU)
 #endif
 #ifdef STM32F10X_CL
- #define CFGR2_PREDIV2            ((uint32_t)0x000000F0)
- #define CFGR2_PLL2MUL            ((uint32_t)0x00000F00)
- #define CFGR2_PLL3MUL            ((uint32_t)0x0000F000)
+ #define CFGR2_PREDIV2            ((uint32_t)0x000000F0U)
+ #define CFGR2_PLL2MUL            ((uint32_t)0x00000F00U)
+ #define CFGR2_PLL3MUL            ((uint32_t)0x0000F000U)
 #endif /* STM32F10X_CL */
 
 /* RCC Flag Mask */
-#define FLAG_Mask                 ((uint8_t)0x1F)
+#define FLAG_Mask                 ((uint8_t)0x1FU)
 
 /* CIR register byte 2 (Bits[15:8]) base address */
-#define CIR_BYTE2_ADDRESS         ((uint32_t)0x40021009)
+#define CIR_BYTE2_ADDRESS         ((uint32_t)0x40021009U)
 
 /* CIR register byte 3 (Bits[23:16]) base address */
-#define CIR_BYTE3_ADDRESS         ((uint32_t)0x4002100A)
+#define CIR_BYTE3_ADDRESS         ((uint32_t)0x4002100AU)
 
 /* CFGR register byte 4 (Bits[31:24]) base address */
-#define CFGR_BYTE4_ADDRESS        ((uint32_t)0x40021007)
+#define CFGR_BYTE4_ADDRESS        ((uint32_t)0x40021007U)
 
 /* BDCR register base address */
 #define BDCR_ADDRESS              (PERIPH_BASE + BDCR_OFFSET)
@@ -217,27 +217,27 @@ static __I uint8_t ADCPrescTable[4] = {2U, 4U, 6U, 8U};
 void RCC_DeInit(void)
 {
   /* Set HSION bit */
-  RCC->CR |= (uint32_t)0x00000001;
+  RCC->CR |= (uint32_t)0x00000001U;
 
   /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
 #ifndef STM32F10X_CL
-  RCC->CFGR &= (uint32_t)0xF8FF0000;
+  RCC->CFGR &= (uint32_t)0xF8FF0000U;
 #else
-  RCC->CFGR &= (uint32_t)0xF0FF0000;
+  RCC->CFGR &= (uint32_t)0xF0FF0000U;
 #endif /* STM32F10X_CL */
 
   /* Reset HSEON, CSSON and PLLON bits */
-  RCC->CR &= (uint32_t)0xFEF6FFFF;
+  RCC->CR &= (uint32_t)0xFEF6FFFFU;
 
   /* Reset HSEBYP bit */
-  RCC->CR &= (uint32_t)0xFFFBFFFF;
+  RCC->CR &= (uint32_t)0xFFFBFFFFU;
 
   /* Reset PLLSRC, PLLXTPRE, PLLMUL and USBPRE/OTGFSPRE bits */
-  RCC->CFGR &= (uint32_t)0xFF80FFFF;
+  RCC->CFGR &= (uint32_t)0xFF80FFFFU;
 
 #ifdef STM32F10X_CL
   /* Reset PLL2ON and PLL3ON bits */
-  RCC->CR &= (uint32_t)0xEBFFFFFF;
+  RCC->CR &= (uint32_t)0xEBFFFFFFU;
 
   /* Disable all interrupts and clear pending bits  */
   RCC->CIR = 0x00FF0000U;

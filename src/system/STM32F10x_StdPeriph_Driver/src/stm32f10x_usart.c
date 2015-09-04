@@ -44,49 +44,49 @@
   * @{
   */
 
-#define CR1_UE_Set                ((uint16_t)0x2000)  /*!< USART Enable Mask */
-#define CR1_UE_Reset              ((uint16_t)0xDFFF)  /*!< USART Disable Mask */
+#define CR1_UE_Set                ((uint16_t)0x2000U)  /*!< USART Enable Mask */
+#define CR1_UE_Reset              ((uint16_t)0xDFFFU)  /*!< USART Disable Mask */
 
-#define CR1_WAKE_Mask             ((uint16_t)0xF7FF)  /*!< USART WakeUp Method Mask */
+#define CR1_WAKE_Mask             ((uint16_t)0xF7FFU)  /*!< USART WakeUp Method Mask */
 
-#define CR1_RWU_Set               ((uint16_t)0x0002)  /*!< USART mute mode Enable Mask */
-#define CR1_RWU_Reset             ((uint16_t)0xFFFD)  /*!< USART mute mode Enable Mask */
-#define CR1_SBK_Set               ((uint16_t)0x0001)  /*!< USART Break Character send Mask */
-#define CR1_CLEAR_Mask            ((uint16_t)0xE9F3)  /*!< USART CR1 Mask */
-#define CR2_Address_Mask          ((uint16_t)0xFFF0)  /*!< USART address Mask */
+#define CR1_RWU_Set               ((uint16_t)0x0002U)  /*!< USART mute mode Enable Mask */
+#define CR1_RWU_Reset             ((uint16_t)0xFFFDU)  /*!< USART mute mode Enable Mask */
+#define CR1_SBK_Set               ((uint16_t)0x0001U)  /*!< USART Break Character send Mask */
+#define CR1_CLEAR_Mask            ((uint16_t)(0xE9F3U))  /*!< USART CR1 Mask */
+#define CR2_Address_Mask          ((uint16_t)0xFFF0U)  /*!< USART address Mask */
 
-#define CR2_LINEN_Set              ((uint16_t)0x4000)  /*!< USART LIN Enable Mask */
-#define CR2_LINEN_Reset            ((uint16_t)0xBFFF)  /*!< USART LIN Disable Mask */
+#define CR2_LINEN_Set              ((uint16_t)0x4000U)  /*!< USART LIN Enable Mask */
+#define CR2_LINEN_Reset            ((uint16_t)0xBFFFU)  /*!< USART LIN Disable Mask */
 
-#define CR2_LBDL_Mask             ((uint16_t)0xFFDF)  /*!< USART LIN Break detection Mask */
-#define CR2_STOP_CLEAR_Mask       ((uint16_t)0xCFFF)  /*!< USART CR2 STOP Bits Mask */
-#define CR2_CLOCK_CLEAR_Mask      ((uint16_t)0xF0FF)  /*!< USART CR2 Clock Mask */
+#define CR2_LBDL_Mask             ((uint16_t)0xFFDFU)  /*!< USART LIN Break detection Mask */
+#define CR2_STOP_CLEAR_Mask       ((uint16_t)0xCFFFU)  /*!< USART CR2 STOP Bits Mask */
+#define CR2_CLOCK_CLEAR_Mask      ((uint16_t)0xF0FFU)  /*!< USART CR2 Clock Mask */
 
-#define CR3_SCEN_Set              ((uint16_t)0x0020)  /*!< USART SC Enable Mask */
-#define CR3_SCEN_Reset            ((uint16_t)0xFFDF)  /*!< USART SC Disable Mask */
+#define CR3_SCEN_Set              ((uint16_t)0x0020U)  /*!< USART SC Enable Mask */
+#define CR3_SCEN_Reset            ((uint16_t)0xFFDFU)  /*!< USART SC Disable Mask */
 
-#define CR3_NACK_Set              ((uint16_t)0x0010)  /*!< USART SC NACK Enable Mask */
-#define CR3_NACK_Reset            ((uint16_t)0xFFEF)  /*!< USART SC NACK Disable Mask */
+#define CR3_NACK_Set              ((uint16_t)0x0010U)  /*!< USART SC NACK Enable Mask */
+#define CR3_NACK_Reset            ((uint16_t)0xFFEFU)  /*!< USART SC NACK Disable Mask */
 
-#define CR3_HDSEL_Set             ((uint16_t)0x0008)  /*!< USART Half-Duplex Enable Mask */
-#define CR3_HDSEL_Reset           ((uint16_t)0xFFF7)  /*!< USART Half-Duplex Disable Mask */
+#define CR3_HDSEL_Set             ((uint16_t)0x0008U)  /*!< USART Half-Duplex Enable Mask */
+#define CR3_HDSEL_Reset           ((uint16_t)0xFFF7U)  /*!< USART Half-Duplex Disable Mask */
 
-#define CR3_IRLP_Mask             ((uint16_t)0xFFFB)  /*!< USART IrDA LowPower mode Mask */
-#define CR3_CLEAR_Mask            ((uint16_t)0xFCFF)  /*!< USART CR3 Mask */
+#define CR3_IRLP_Mask             ((uint16_t)0xFFFBU)  /*!< USART IrDA LowPower mode Mask */
+#define CR3_CLEAR_Mask            ((uint16_t)0xFCFFU)  /*!< USART CR3 Mask */
 
-#define CR3_IREN_Set              ((uint16_t)0x0002)  /*!< USART IrDA Enable Mask */
-#define CR3_IREN_Reset            ((uint16_t)0xFFFD)  /*!< USART IrDA Disable Mask */
-#define GTPR_LSB_Mask             ((uint16_t)0x00FF)  /*!< Guard Time Register LSB Mask */
-#define GTPR_MSB_Mask             ((uint16_t)0xFF00)  /*!< Guard Time Register MSB Mask */
-#define IT_Mask                   ((uint16_t)0x001F)  /*!< USART Interrupt Mask */
+#define CR3_IREN_Set              ((uint16_t)0x0002U)  /*!< USART IrDA Enable Mask */
+#define CR3_IREN_Reset            ((uint16_t)0xFFFDU)  /*!< USART IrDA Disable Mask */
+#define GTPR_LSB_Mask             ((uint16_t)0x00FFU)  /*!< Guard Time Register LSB Mask */
+#define GTPR_MSB_Mask             ((uint16_t)0xFF00U)  /*!< Guard Time Register MSB Mask */
+#define IT_Mask                   ((uint16_t)0x001FU)  /*!< USART Interrupt Mask */
 
 /* USART OverSampling-8 Mask */
-#define CR1_OVER8_Set             ((u16)0x8000)  /* USART OVER8 mode Enable Mask */
-#define CR1_OVER8_Reset           ((u16)0x7FFF)  /* USART OVER8 mode Disable Mask */
+#define CR1_OVER8_Set             ((u16)0x8000U)  /* USART OVER8 mode Enable Mask */
+#define CR1_OVER8_Reset           ((u16)0x7FFFU)  /* USART OVER8 mode Disable Mask */
 
 /* USART One Bit Sampling Mask */
-#define CR3_ONEBITE_Set           ((u16)0x0800)  /* USART ONEBITE mode Enable Mask */
-#define CR3_ONEBITE_Reset         ((u16)0xF7FF)  /* USART ONEBITE mode Disable Mask */
+#define CR3_ONEBITE_Set           ((u16)0x0800U)  /* USART ONEBITE mode Enable Mask */
+#define CR3_ONEBITE_Reset         ((u16)0xF7FFU)  /* USART ONEBITE mode Disable Mask */
 
 /**
   * @}

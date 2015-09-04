@@ -100,6 +100,10 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     {
         TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
     }
+    else
+    {
+
+    }
     /* Timer input capture configuration. */
     TIM_ICInitStructure.TIM_ICPolarity  = TIM_ICPolarity;
     TIM_ICInitStructure.TIM_ICSelection = TIM_TIxExternalCLKSource;
@@ -127,6 +131,10 @@ static BOARD_ERROR be_TIMER4_CAPTURE_channel_init(
     else if(u16_ch_number == 4U)
     {
         TIM_ITConfig(TIM4, TIM_IT_CC4|TIM_IT_Update, ENABLE);
+    }
+    else
+    {
+
     }
     return(be_result);
 }

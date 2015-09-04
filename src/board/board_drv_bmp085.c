@@ -291,7 +291,7 @@ BOARD_ERROR be_board_drv_bmp085_real_data_calculation(void)
         i32_tmp = i32_tmp - i32_b3;
         u32_b7 = ((uint32_t)i32_tmp) * (50000U / BMP085_OVERSAMPLING_POW);
 /*OK*/
-        if (u32_b7 < 0x80000000)
+        if (u32_b7 < 0x80000000U)
         {
             /* bss_bmp85_state.u32_real_pressure = (u32_b7 << 1) / u32_b4; */
             u32_pr_tmp = (u32_b7 << 1) / u32_b4;

@@ -92,6 +92,10 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
         /* Call baro state machine. */
         be_result = be_board_drv_bmp085_state_machine();
     }
+    else
+    {
+
+    }
     return(be_result);
 }
 
@@ -117,6 +121,10 @@ BOARD_ERROR be_api_i2c_read_process_start(void)
         /* End of baro state machine itteration. */
         api_i2c_data.u8_ready = 1U;
         GPIO_ResetBits( GPIOB, GPIO_Pin_12);/* for test only */
+    }
+    else
+    {
+
     }
     return(be_result);
 }

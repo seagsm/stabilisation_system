@@ -309,7 +309,7 @@ float float_api_filters_ma_acc_x(float float_new_sample)
     /* Input samples.  */
     const uint16_t u16_samples = ARRAY_SIZE;
     static float float_x[ARRAY_SIZE];
-    static float float_summ = 0;
+    static float float_summ = 0.0f;
     static uint16_t   u16_n = 0U;
     float float_y;
 
@@ -329,7 +329,7 @@ float float_api_filters_ma_acc_y(float float_new_sample)
     /* Input samples.  */
     const uint16_t u16_samples = ARRAY_SIZE;
     static float float_x[ARRAY_SIZE];
-    static float float_summ = 0;
+    static float float_summ = 0.0f;
     static uint16_t   u16_n = 0U;
     float float_y;
 
@@ -349,7 +349,7 @@ float float_api_filters_ma_acc_z(float float_new_sample)
     /* Input samples.  */
     const uint16_t u16_samples = ARRAY_SIZE;
     static float float_x[ARRAY_SIZE];
-    static float float_summ = 0;
+    static float float_summ = 0.0f;
     static uint16_t   u16_n = 0U;
     float float_y;
 

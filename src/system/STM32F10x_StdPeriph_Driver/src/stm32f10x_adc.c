@@ -45,99 +45,99 @@
   */
 
 /* ADC DISCNUM mask */
-#define CR1_DISCNUM_Reset           ((uint32_t)0xFFFF1FFF)
+#define CR1_DISCNUM_Reset           ((uint32_t)0xFFFF1FFFU)
 
 /* ADC DISCEN mask */
-#define CR1_DISCEN_Set              ((uint32_t)0x00000800)
-#define CR1_DISCEN_Reset            ((uint32_t)0xFFFFF7FF)
+#define CR1_DISCEN_Set              ((uint32_t)0x00000800U)
+#define CR1_DISCEN_Reset            ((uint32_t)0xFFFFF7FFU)
 
 /* ADC JAUTO mask */
-#define CR1_JAUTO_Set               ((uint32_t)0x00000400)
-#define CR1_JAUTO_Reset             ((uint32_t)0xFFFFFBFF)
+#define CR1_JAUTO_Set               ((uint32_t)0x00000400U)
+#define CR1_JAUTO_Reset             ((uint32_t)0xFFFFFBFFU)
 
 /* ADC JDISCEN mask */
-#define CR1_JDISCEN_Set             ((uint32_t)0x00001000)
-#define CR1_JDISCEN_Reset           ((uint32_t)0xFFFFEFFF)
+#define CR1_JDISCEN_Set             ((uint32_t)0x00001000U)
+#define CR1_JDISCEN_Reset           ((uint32_t)0xFFFFEFFFU)
 
 /* ADC AWDCH mask */
-#define CR1_AWDCH_Reset             ((uint32_t)0xFFFFFFE0)
+#define CR1_AWDCH_Reset             ((uint32_t)0xFFFFFFE0U)
 
 /* ADC Analog watchdog enable mode mask */
-#define CR1_AWDMode_Reset           ((uint32_t)0xFF3FFDFF)
+#define CR1_AWDMode_Reset           ((uint32_t)0xFF3FFDFFU)
 
 /* CR1 register Mask */
-#define CR1_CLEAR_Mask              ((uint32_t)0xFFF0FEFF)
+#define CR1_CLEAR_Mask              ((uint32_t)0xFFF0FEFFU)
 
 /* ADC ADON mask */
-#define CR2_ADON_Set                ((uint32_t)0x00000001)
-#define CR2_ADON_Reset              ((uint32_t)0xFFFFFFFE)
+#define CR2_ADON_Set                ((uint32_t)0x00000001U)
+#define CR2_ADON_Reset              ((uint32_t)0xFFFFFFFEU)
 
 /* ADC DMA mask */
-#define CR2_DMA_Set                 ((uint32_t)0x00000100)
-#define CR2_DMA_Reset               ((uint32_t)0xFFFFFEFF)
+#define CR2_DMA_Set                 ((uint32_t)0x00000100U)
+#define CR2_DMA_Reset               ((uint32_t)0xFFFFFEFFU)
 
 /* ADC RSTCAL mask */
-#define CR2_RSTCAL_Set              ((uint32_t)0x00000008)
+#define CR2_RSTCAL_Set              ((uint32_t)0x00000008U)
 
 /* ADC CAL mask */
-#define CR2_CAL_Set                 ((uint32_t)0x00000004)
+#define CR2_CAL_Set                 ((uint32_t)0x00000004U)
 
 /* ADC SWSTART mask */
-#define CR2_SWSTART_Set             ((uint32_t)0x00400000)
+#define CR2_SWSTART_Set             ((uint32_t)0x00400000U)
 
 /* ADC EXTTRIG mask */
-#define CR2_EXTTRIG_Set             ((uint32_t)0x00100000)
-#define CR2_EXTTRIG_Reset           ((uint32_t)0xFFEFFFFF)
+#define CR2_EXTTRIG_Set             ((uint32_t)0x00100000U)
+#define CR2_EXTTRIG_Reset           ((uint32_t)0xFFEFFFFFU)
 
 /* ADC Software start mask */
-#define CR2_EXTTRIG_SWSTART_Set     ((uint32_t)0x00500000)
-#define CR2_EXTTRIG_SWSTART_Reset   ((uint32_t)0xFFAFFFFF)
+#define CR2_EXTTRIG_SWSTART_Set     ((uint32_t)0x00500000U)
+#define CR2_EXTTRIG_SWSTART_Reset   ((uint32_t)0xFFAFFFFFU)
 
 /* ADC JEXTSEL mask */
-#define CR2_JEXTSEL_Reset           ((uint32_t)0xFFFF8FFF)
+#define CR2_JEXTSEL_Reset           ((uint32_t)0xFFFF8FFFU)
 
 /* ADC JEXTTRIG mask */
-#define CR2_JEXTTRIG_Set            ((uint32_t)0x00008000)
-#define CR2_JEXTTRIG_Reset          ((uint32_t)0xFFFF7FFF)
+#define CR2_JEXTTRIG_Set            ((uint32_t)0x00008000U)
+#define CR2_JEXTTRIG_Reset          ((uint32_t)0xFFFF7FFFU)
 
 /* ADC JSWSTART mask */
-#define CR2_JSWSTART_Set            ((uint32_t)0x00200000)
+#define CR2_JSWSTART_Set            ((uint32_t)0x00200000U)
 
 /* ADC injected software start mask */
-#define CR2_JEXTTRIG_JSWSTART_Set   ((uint32_t)0x00208000)
-#define CR2_JEXTTRIG_JSWSTART_Reset ((uint32_t)0xFFDF7FFF)
+#define CR2_JEXTTRIG_JSWSTART_Set   ((uint32_t)0x00208000U)
+#define CR2_JEXTTRIG_JSWSTART_Reset ((uint32_t)0xFFDF7FFFU)
 
 /* ADC TSPD mask */
-#define CR2_TSVREFE_Set             ((uint32_t)0x00800000)
-#define CR2_TSVREFE_Reset           ((uint32_t)0xFF7FFFFF)
+#define CR2_TSVREFE_Set             ((uint32_t)0x00800000U)
+#define CR2_TSVREFE_Reset           ((uint32_t)0xFF7FFFFFU)
 
 /* CR2 register Mask */
-#define CR2_CLEAR_Mask              ((uint32_t)0xFFF1F7FD)
+#define CR2_CLEAR_Mask              ((uint32_t)0xFFF1F7FDU)
 
 /* ADC SQx mask */
-#define SQR3_SQ_Set                 ((uint32_t)0x0000001F)
-#define SQR2_SQ_Set                 ((uint32_t)0x0000001F)
-#define SQR1_SQ_Set                 ((uint32_t)0x0000001F)
+#define SQR3_SQ_Set                 ((uint32_t)0x0000001FU)
+#define SQR2_SQ_Set                 ((uint32_t)0x0000001FU)
+#define SQR1_SQ_Set                 ((uint32_t)0x0000001FU)
 
 /* SQR1 register Mask */
-#define SQR1_CLEAR_Mask             ((uint32_t)0xFF0FFFFF)
+#define SQR1_CLEAR_Mask             ((uint32_t)0xFF0FFFFFU)
 
 /* ADC JSQx mask */
-#define JSQR_JSQ_Set                ((uint32_t)0x0000001F)
+#define JSQR_JSQ_Set                ((uint32_t)0x0000001FU)
 
 /* ADC JL mask */
-#define JSQR_JL_Set                 ((uint32_t)0x00300000)
-#define JSQR_JL_Reset               ((uint32_t)0xFFCFFFFF)
+#define JSQR_JL_Set                 ((uint32_t)0x00300000U)
+#define JSQR_JL_Reset               ((uint32_t)0xFFCFFFFFU)
 
 /* ADC SMPx mask */
-#define SMPR1_SMP_Set               ((uint32_t)0x00000007)
-#define SMPR2_SMP_Set               ((uint32_t)0x00000007)
+#define SMPR1_SMP_Set               ((uint32_t)0x00000007U)
+#define SMPR2_SMP_Set               ((uint32_t)0x00000007U)
 
 /* ADC JDRx registers offset */
-#define JDR_Offset                  ((uint8_t)0x28)
+#define JDR_Offset                  ((uint8_t)0x28U)
 
 /* ADC1 DR register base address */
-#define DR_ADDRESS                  ((uint32_t)0x4001244C)
+#define DR_ADDRESS                  ((uint32_t)0x4001244CU)
 
 /**
   * @}

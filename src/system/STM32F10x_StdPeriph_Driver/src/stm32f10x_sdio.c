@@ -93,22 +93,22 @@
 /* --- CLKCR Register ---*/
 
 /* CLKCR register clear mask */
-#define CLKCR_CLEAR_MASK         ((uint32_t)0xFFFF8100)
+#define CLKCR_CLEAR_MASK         ((uint32_t)0xFFFF8100U)
 
 /* --- PWRCTRL Register ---*/
 
 /* SDIO PWRCTRL Mask */
-#define PWR_PWRCTRL_MASK         ((uint32_t)0xFFFFFFFC)
+#define PWR_PWRCTRL_MASK         ((uint32_t)0xFFFFFFFCU)
 
 /* --- DCTRL Register ---*/
 
 /* SDIO DCTRL Clear Mask */
-#define DCTRL_CLEAR_MASK         ((uint32_t)0xFFFFFF08)
+#define DCTRL_CLEAR_MASK         ((uint32_t)0xFFFFFF08U)
 
 /* --- CMD Register ---*/
 
 /* CMD Register clear mask */
-#define CMD_CLEAR_MASK           ((uint32_t)0xFFFFF800)
+#define CMD_CLEAR_MASK           ((uint32_t)0xFFFFF800U)
 
 /* SDIO RESP Registers Address */
 #define SDIO_RESP_ADDR           ((uint32_t)(SDIO_BASE + 0x14U))
@@ -472,7 +472,7 @@ void SDIO_DataConfig(SDIO_DataInitTypeDef* SDIO_DataInitStruct)
 void SDIO_DataStructInit(SDIO_DataInitTypeDef* SDIO_DataInitStruct)
 {
   /* SDIO_DataInitStruct members default value */
-  SDIO_DataInitStruct->SDIO_DataTimeOut = 0xFFFFFFFF;
+  SDIO_DataInitStruct->SDIO_DataTimeOut = 0xFFFFFFFFU;
   SDIO_DataInitStruct->SDIO_DataLength = 0x00U;
   SDIO_DataInitStruct->SDIO_DataBlockSize = SDIO_DataBlockSize_1b;
   SDIO_DataInitStruct->SDIO_TransferDir = SDIO_TransferDir_ToCard;

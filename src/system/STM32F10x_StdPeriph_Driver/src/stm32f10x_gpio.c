@@ -58,16 +58,16 @@
 /* ---  MAPR Register ---*/
 /* Alias word address of MII_RMII_SEL bit */
 #define MAPR_OFFSET                 (AFIO_OFFSET + 0x04U)
-#define MII_RMII_SEL_BitNumber      ((uint8_t)0x17)
+#define MII_RMII_SEL_BitNumber      ((uint8_t)0x17U)
 #define MAPR_MII_RMII_SEL_BB        (PERIPH_BB_BASE + (MAPR_OFFSET * 32U) + (MII_RMII_SEL_BitNumber * 4U))
 
 
-#define EVCR_PORTPINCONFIG_MASK     ((uint16_t)0xFF80)
-#define LSB_MASK                    ((uint16_t)0xFFFF)
-#define DBGAFR_POSITION_MASK        ((uint32_t)0x000F0000)
-#define DBGAFR_SWJCFG_MASK          ((uint32_t)0xF0FFFFFF)
-#define DBGAFR_LOCATION_MASK        ((uint32_t)0x00200000)
-#define DBGAFR_NUMBITS_MASK         ((uint32_t)0x00100000)
+#define EVCR_PORTPINCONFIG_MASK     ((uint16_t)0xFF80U)
+#define LSB_MASK                    ((uint16_t)0xFFFFU)
+#define DBGAFR_POSITION_MASK        ((uint32_t)0x000F0000U)
+#define DBGAFR_SWJCFG_MASK          ((uint32_t)0xF0FFFFFFU)
+#define DBGAFR_LOCATION_MASK        ((uint32_t)0x00200000U)
+#define DBGAFR_NUMBITS_MASK         ((uint32_t)0x00100000U)
 /**
   * @}
   */
@@ -613,7 +613,7 @@ void GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
     tmpreg |= (tmp << ((GPIO_Remap >> 0x15)*0x10U));
   }
 
-  if((GPIO_Remap & 0x80000000) == 0x80000000)
+  if((GPIO_Remap & 0x80000000U) == 0x80000000U)
   {
     AFIO->MAPR2 = tmpreg;
   }
