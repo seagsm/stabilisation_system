@@ -203,7 +203,7 @@ BOARD_ERROR be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer(void)
             /* Probably we loosed some data, so, set tail index to head index and read all byte from buffer. */
             u16_DMA1_CH5_tail_index = u16_DMA1_CH5_head_index;
 
-            /* Read byte by byte. */
+            /* Read byte by byte. */ /* Code should be optimised. (same part of code)*/
             while (u16_byte_counter > 0U)
             {
                 u8_byte = u8_board_dma_buff_DMA1_CH5_RX[u16_DMA1_CH5_tail_index];

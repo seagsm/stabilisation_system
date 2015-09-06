@@ -12,6 +12,10 @@
 #define TX_USART1_SIZE  256U
 #define RX_USART1_SIZE  128U
 
+#define TX_USART3_SIZE  128U
+#define RX_USART3_SIZE  512U
+
+
 typedef struct
 {
 	uint16_t	gu16_r_buffer_head;	    /* Index of head of round buffer */
@@ -21,9 +25,13 @@ typedef struct
 }BOARD_ROUND_BUFFER_STRUCTURE;
 
 static BOARD_ERROR be_board_r_buff_structure_init(BOARD_ROUND_BUFFER_STRUCTURE *prb_round_buffer, uint16_t u16_size_of_buffer);
-BOARD_ERROR be_board_r_buff_USART1_init(void);
 
-BOARD_ERROR be_board_r_buff_USART1_TX_Put_byte(uint8_t u8_byte);
+BOARD_ERROR be_board_r_buff_USARTx_init(USART_TypeDef*  USARTx);
+
+BOARD_ERROR be_board_r_buff_USART1_TX_Put_byte(uint8_t u8_byte);/* Should be replased by function below */
+BOARD_ERROR be_board_r_buff_USARTx_TX_Put_byte( USART_TypeDef*  USARTx, uint8_t u8_byte);
+static BOARD_ERROR be_board_r_buff_USARTx_Put_byte_to_buffer_TX(uint8_t r_buff[], BOARD_ROUND_BUFFER_STRUCTURE *prb_TX_r_buffer, uint8_t u8_byte);
+
 BOARD_ERROR be_board_r_buff_USART1_TX_Get_byte(uint8_t *u8_byte);
 
 BOARD_ERROR be_board_r_buff_USART1_RX_Put_byte(uint8_t u8_byte);

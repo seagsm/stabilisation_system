@@ -26,7 +26,7 @@ int main( void)
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
-    
+
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)
