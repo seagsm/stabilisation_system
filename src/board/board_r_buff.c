@@ -1,7 +1,5 @@
 
-
 #include "board_r_buff.h"
-
 
 static uint8_t u8_board_r_buff_USART1_TX[TX_USART1_SIZE];
 static uint8_t u8_board_r_buff_USART1_RX[RX_USART1_SIZE];
@@ -12,8 +10,6 @@ static uint8_t u8_board_r_buff_USART3_TX[TX_USART3_SIZE];
 static uint8_t u8_board_r_buff_USART3_RX[RX_USART3_SIZE];
 static BOARD_ROUND_BUFFER_STRUCTURE rb_USART3_TX;
 static BOARD_ROUND_BUFFER_STRUCTURE rb_USART3_RX;
-
-
 
 /* This function initialize USARTx TX and RX buffer. */
 BOARD_ERROR be_board_r_buff_USARTx_init(USART_TypeDef*  USARTx)
@@ -320,7 +316,6 @@ static BOARD_ERROR be_board_r_buff_tail_eat_USARTx_PUT_to_RX(uint8_t r_buff[], B
     return(be_result);
 }
 
-
 /* Should be rereplased! This function put one byte to USART1 RX round buffer. If buffer is full this function return error */
 BOARD_ERROR be_board_r_buff_USART1_RX_Put_byte(uint8_t u8_byte)
 {
@@ -421,8 +416,6 @@ static BOARD_ERROR be_board_r_buff_USARTx_RX_buffer_GET_byte(uint8_t u8_r_buff[]
     }
     return(be_result);
 }
-
-
 
 /* Should be rereplased! This function get one byte from USART1 RX round buffer. If buffer is empty this function return error */
 BOARD_ERROR be_board_r_buff_USART1_RX_Get_byte(uint8_t *u8_byte)
@@ -540,7 +533,6 @@ BOARD_ERROR be_board_r_USARTx_RX_set_size_buffer( USART_TypeDef*  USARTx, uint16
     }
     return(be_result);
 }
-
 
 /* Should be replased!  Functions get and set rx buffer structure parameters */
 uint16_t u16_board_r_buff_USART1_RX_tail_get_buffer(void)

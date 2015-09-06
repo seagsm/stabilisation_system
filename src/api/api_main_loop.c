@@ -15,12 +15,12 @@ static void v_api_main_loop_process(void)
         {
             /* Calculation of real pressure and real temperature.*/
             v_board_baro_data_compensation();
- 
+
             /* Pressure filtration and altitude calculation. */
 
             /* Filter pressure using MA filter*/
             u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
-            
+
             /* Altitude estimation and BaroPid output calculation. */
             api_baro_altitude_estimation();
 
@@ -45,6 +45,10 @@ static void v_api_main_loop_process(void)
             /* Start control frame. */
             v_api_main_loop_control_loop();
         }
+
+        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
+        be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
+
         /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
         be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
 

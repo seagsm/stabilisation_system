@@ -25,6 +25,10 @@ BOARD_ERROR be_board_uart_init(void)
 
     /* Initialisation of UART3, GPS interface. */
     be_result |= be_board_uart_uart3_init();
+    be_result |= be_board_r_buff_USARTx_init(USART3);
+    be_result |= be_board_dma1_ch2_init();
+    be_result |= be_board_dma1_ch3_init();
+
 
     return(be_result);
 }

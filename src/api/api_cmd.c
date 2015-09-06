@@ -81,125 +81,121 @@ void api_cmd_reading_packet(void)
                         be_result = BOARD_ERR_EMPTY;
                         /* TODO: check if empty, what we should do??? */
                     }
-			}
-			break;
+                }
+                break;
 
-		case 2: /* Read data to line buffer.*/
-			be_result = be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
-
-			u8_value_buffer[u8_i] = u8_read_byte;
-			u8_i++;
-            if(u8_i >= u8_packet_size)
-            {
-            	u8_flag = 3U;
-            }
-
-			if(u16_board_r_buff_USART1_RX_size_buffer_get() == 0U)
-			{
-				be_result = BOARD_ERR_EMPTY; /* lets wait for next parth of packet. */
-			}
-            break;
-
-        case 3:
-            /* Read CRC byte.*/
-			be_result = be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
-			/* Here u8_i = u8_packet_size, so ,it pointed to CRC position. */
-			u8_value_buffer[u8_i] = u8_read_byte; /* Save CRC */
-            /* Calculating of CRC. */
-            u8_CRC = su8_api_CMD_CRC8(0U, u8_packet_size);
-            /* Check CRC.*/
-            if(u8_value_buffer[u8_i] == u8_CRC)
-            {
-                be_result = BOARD_ERR_OK ;
-                u8_flag = 4U;
-            }
-            else
-            {
-				/* It is wrong CRC. *//* Exit from while. *//* Buffer still pointed to SIZE byte. It can be head of  next packet. */
-				u8_flag = 0U;
-
-                /* Restore tail index in RX UART1 buffer. */
-                v_board_r_buff_USART1_RX_tail_buffer_set(u16_save_tail_index);
-                /* Restore size of data in RX UART1 buffer. */
-                v_board_r_buff_USART1_RX_size_buffer_set(u16_save_size);
-                /* Remove header from UART1 buffer. */
-                /* Read byte from UART1 RX buffer. Remember, after reading size--, tail++. */
+            case 2: /* Read data to line buffer.*/
                 be_result = be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
-				be_result = BOARD_ERR_RANGE;
-            }
-            break;
-		case 4:
-            /* Decoding data from packet */
-            /* TODO: In line_buffer we have now packet information load. We should decode it here. */
-            be_result = be_api_CMD_decoding_packet();
-            if(be_result == BOARD_ERR_OK)
-            {
-                /* Start looking for next packet. */
-                u8_flag = 0U;
-            }
-            else
-            {
-                u8_flag = 0U;
-                /* Restore tail index in RX UART1 buffer. */
-                v_board_r_buff_USART1_RX_tail_buffer_set(u16_save_tail_index);
-                /* Restore size of data in RX UART1 buffer. */
-                v_board_r_buff_USART1_RX_size_buffer_set(u16_save_size);
-                /* Remove header from UART1 buffer. */
-                /* Read byte from UART1 RX buffer to remove header byte. Remember, after reading size--, tail++. */
-                be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
-				be_result = BOARD_ERR_RANGE;
-            }
-            break;
 
-		default:
-			/* Just exit with error. */
-			u8_flag = 0U;
-			be_result = BOARD_ERR_RANGE;
-			break;
-		}
+                u8_value_buffer[u8_i] = u8_read_byte;
+                u8_i++;
+                if(u8_i >= u8_packet_size)
+                {
+                    u8_flag = 3U;
+                }
+
+                if(u16_board_r_buff_USART1_RX_size_buffer_get() == 0U)
+                {
+                    be_result = BOARD_ERR_EMPTY; /* lets wait for next parth of packet. */
+                }
+                break;
+
+            case 3:
+                /* Read CRC byte.*/
+                be_result = be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
+                /* Here u8_i = u8_packet_size, so ,it pointed to CRC position. */
+                u8_value_buffer[u8_i] = u8_read_byte; /* Save CRC */
+                /* Calculating of CRC. */
+                u8_CRC = su8_api_CMD_CRC8(0U, u8_packet_size);
+                /* Check CRC.*/
+                if(u8_value_buffer[u8_i] == u8_CRC)
+                {
+                    be_result = BOARD_ERR_OK ;
+                    u8_flag = 4U;
+                }
+                else
+                {
+                    /* It is wrong CRC. *//* Exit from while. *//* Buffer still pointed to SIZE byte. It can be head of  next packet. */
+                    u8_flag = 0U;
+
+                    /* Restore tail index in RX UART1 buffer. */
+                    v_board_r_buff_USART1_RX_tail_buffer_set(u16_save_tail_index);
+                    /* Restore size of data in RX UART1 buffer. */
+                    v_board_r_buff_USART1_RX_size_buffer_set(u16_save_size);
+                    /* Remove header from UART1 buffer. */
+                    /* Read byte from UART1 RX buffer. Remember, after reading size--, tail++. */
+                    be_result = be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
+                    be_result = BOARD_ERR_RANGE;
+                }
+                break;
+            case 4:
+                /* Decoding data from packet */
+                /* TODO: In line_buffer we have now packet information load. We should decode it here. */
+                be_result = be_api_CMD_decoding_packet();
+                if(be_result == BOARD_ERR_OK)
+                {
+                    /* Start looking for next packet. */
+                    u8_flag = 0U;
+                }
+                else
+                {
+                    u8_flag = 0U;
+                    /* Restore tail index in RX UART1 buffer. */
+                    v_board_r_buff_USART1_RX_tail_buffer_set(u16_save_tail_index);
+                    /* Restore size of data in RX UART1 buffer. */
+                    v_board_r_buff_USART1_RX_size_buffer_set(u16_save_size);
+                    /* Remove header from UART1 buffer. */
+                    /* Read byte from UART1 RX buffer to remove header byte. Remember, after reading size--, tail++. */
+                    be_board_r_buff_USART1_RX_Get_byte(&u8_read_byte);
+                    be_result = BOARD_ERR_RANGE;
+                }
+                break;
+            default:
+                /* Just exit with error. */
+                u8_flag = 0U;
+                be_result = BOARD_ERR_RANGE;
+                break;
+        }
 	}
 }
 
 /* Function decoding packet and call suitable process function. */
 static BOARD_ERROR be_api_CMD_decoding_packet(void)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;
-    uint16_t u16_data_id  = 0U;
-    uint16_t u16_a  = 0U;
-    uint16_t u16_b  = 0U;
-    uint8_t u8_cmd_id     = 0U;
-    int32_t i32_data_load = 0;
+    BOARD_ERROR be_result   = BOARD_ERR_OK;
+    uint16_t u16_data_id    = 0U;
+    uint16_t u16_a          = 0U;
+    uint16_t u16_b          = 0U;
+    uint8_t u8_cmd_id       = 0U;
+    int32_t i32_data_load   = 0;
 
-    u8_cmd_id = u8_value_buffer[0];
-    u16_a = (uint16_t)u8_value_buffer[1];
-    u16_b = (uint16_t)u8_value_buffer[2];
-    u16_b = u16_b << 8;
+    u8_cmd_id   = u8_value_buffer[0];
+    u16_a       = (uint16_t)u8_value_buffer[1];
+    u16_b       = (uint16_t)u8_value_buffer[2];
+    u16_b       = u16_b << 8;
     u16_data_id = u16_a + u16_b;
 
     switch (u8_cmd_id)
     {
-      case READ32:
-        be_result = be_api_CMD_data_answer_i32(u16_data_id);
-        break;
-      case READ64:
-        be_result = be_api_CMD_data_answer_u64(u16_data_id);
-        break;
-      case READQUAT:
-        be_result = be_api_CMD_data_answer_quaternion(u16_data_id);
-        break;
-      case READVECTOR3D:
-        be_result = be_api_CMD_data_answer_float_vector3d(u16_data_id);
-        break;
-
-
-      case WRITE32:
-        i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
-
-        be_result = be_api_CMD_data_write_i32(u16_data_id, i32_data_load );
-        break;
-      default:
-        be_result = BOARD_ERR_ID;
-        break;
+        case READ32:
+            be_result = be_api_CMD_data_answer_i32(u16_data_id);
+            break;
+        case READ64:
+            be_result = be_api_CMD_data_answer_u64(u16_data_id);
+            break;
+        case READQUAT:
+            be_result = be_api_CMD_data_answer_quaternion(u16_data_id);
+            break;
+        case READVECTOR3D:
+            be_result = be_api_CMD_data_answer_float_vector3d(u16_data_id);
+            break;
+        case WRITE32:
+            i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
+            be_result = be_api_CMD_data_write_i32(u16_data_id, i32_data_load );
+            break;
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
     }
     return(be_result);
 }
@@ -210,7 +206,7 @@ static BOARD_ERROR be_api_CMD_data_answer_float_vector3d(uint16_t u16_data_id)
     BOARD_FLOAT_3X_DATA fv3d_data;
     switch(u16_data_id)
     {
-            /* Send body wing angles. */
+        /* Send body wing angles. */
         case 0x0140U:
             fv3d_data.fl_X = fl_api_body_angle_wind_angles[0];
             fv3d_data.fl_Y = fl_api_body_angle_wind_angles[1];
@@ -246,8 +242,6 @@ static BOARD_ERROR be_api_CMD_data_answer_quaternion(uint16_t u16_data_id)
     }
     return(be_result);
 }
-
-
 
 static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id)
 {
