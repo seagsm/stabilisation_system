@@ -49,21 +49,21 @@ BOARD_ERROR nmea_init(int32_t connect)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;  
 
-    _gprmc_only         = connect;
-    _gprmc_utc          = 0.0f;
-    _gprmc_status       = 'V';
-    _gprmc_lat          = 0.0f;
-    _gprmc_long         = 0.0f;
-    _gprmc_speed        = 0.0f;
-    _gprmc_angle        = 0.0f;
-    _terms      = 0;
-    n           = 0;
-    _state      = 0;
-    _parity     = 0U;
-    _nt         = 0;
+    _gprmc_only     = connect;
+    _gprmc_utc      = 0.0f;
+    _gprmc_status   = 'V';
+    _gprmc_lat      = 0.0f;
+    _gprmc_long     = 0.0f;
+    _gprmc_speed    = 0.0f;
+    _gprmc_angle    = 0.0f;
+    _terms          = 0;
+    n               = 0;
+    _state          = 0;
+    _parity         = 0U;
+    _nt             = 0;
 
-    f_sentence[0] = 0U;
-    f_terms     = 0;
+    f_sentence[0]   = 0U;
+    f_terms         = 0;
 	
     /* allocate memory for individual terms of sentence */
     for (int t=0; t<30; t++) 
