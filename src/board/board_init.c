@@ -21,43 +21,43 @@ BOARD_ERROR be_board_init_main_init(void)
         switch (u16_step)
 		{
             case (0U):
-                be_result = be_board_gpio_init();   /* Init GPIO. */
+                be_result |= be_board_gpio_init();   /* Init GPIO. */
                 break;
             case (1U):
-                be_result = be_board_uart_init();   /* Init UART modules. */
+                be_result |= be_board_uart_init();   /* Init UART modules. */
                 break;
             case (2U):
-                be_result = be_board_adc_init();    /* Init ADC module. */
+                /* be_result |= be_board_adc_init(); */    /* Init ADC module. */
                 break;
             case (3U):
-                be_result = be_board_ppm_init();    /* Init PPM input capture. (Timer_4) */
+                /* be_result |= be_board_ppm_init(); */   /* Init PPM input capture. (Timer_4) */
                 break;
             case (4U):
-                be_result = be_board_pwm_init();    /* Init PWM chanels. (Timer_2 and Timer_3)*/
+                /* be_result |= be_board_pwm_init(); */    /* Init PWM chanels. (Timer_2 and Timer_3)*/
                 break;
             case (5U):
-                be_result = be_board_i2c_init();    /* Init I2C1 chanels. */
+                /* be_result |= be_board_i2c_init(); */    /* Init I2C1 chanels. */
                 break;
             case (6U):
-                be_result = be_board_gyro_init();   /* Init gyro module. */
+                /* be_result |= be_board_gyro_init(); */   /* Init gyro module. */
                 break;
             case (7U):
-                be_result = be_board_acc_init();    /* Init accelerometer module. */
+                /* be_result |= be_board_acc_init(); */    /* Init accelerometer module. */
                 break;
             case (8U):
-                be_result = be_board_mag_init();    /* Init magnetometer module. */
+                /* be_result |= be_board_mag_init(); */    /* Init magnetometer module. */
                 break;
             case (9U):
-                be_result = be_board_baro_init();    /* Init baro module. */
+                /* be_result |= be_board_baro_init(); */    /* Init baro module. */
                 break;
             case (10U):
-                be_result = be_api_i2c_acquisition_init(); /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */
+                /* be_result |= be_api_i2c_acquisition_init(); */ /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */
                 break;
             case (11U):
-                be_result = be_api_main_loop_init();  /* Init of Timer_1 for main loop interrupt. */
+                be_result |= be_api_main_loop_init();   /* Init of Timer_1 for main loop interrupt. */
                 break;
             default:
-                be_result = BOARD_ERR_ERROR;
+                be_result |= BOARD_ERR_ERROR;
                 break;
         }
         /* If during initialisation something going wrong. */

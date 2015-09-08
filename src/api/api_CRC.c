@@ -18,7 +18,7 @@ uint16_t gu16_api_CRC16_alg(uint16_t u16_start, uint16_t length)
               /* Put LSB of 16 bit code(in the future a ÑRÑ16) to ml. */
                 u8_ml = (uint8_t)(u16_code);
                 /* Do m1 XOR msg[i] and put result to m1. */
-                u8_ml ^= u8_tx_data_packet[i];
+                u8_ml ^= u8_tx_UART1_data_packet[i];
                 /* Set LSB of code to zero. */
                 u16_code &= 0xff00U;
                 u16_code += u8_ml;
@@ -48,7 +48,7 @@ uint8_t gu8_api_CRC8(uint16_t u16_start, uint16_t length)
 
     for (u16_i = u16_start; u16_i < length; u16_i++)
     {
-        u8_crc = u8_crc + u8_tx_data_packet[u16_i];
+        u8_crc = u8_crc + u8_tx_UART1_data_packet[u16_i];
     }
     u8_crc = 0xFFU - u8_crc;
     return(u8_crc);

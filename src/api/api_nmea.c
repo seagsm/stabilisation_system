@@ -24,25 +24,27 @@
 #define _LIB_VERSION    1U               /* software version of this library */
 
 
-int      _gprmc_only;
-float    _gprmc_utc;
-char     _gprmc_status;
-float    _gprmc_lat;
-float    _gprmc_long;
-float    _gprmc_speed;
-float    _gprmc_angle;
-char      f_sentence[100];
-char      f_term[30][15];
-int       f_terms;
-int      _terms;
-char     _sentence[100];
-char     _term[30][15];
-int       n;
-int      _gprmc_tag;
-int      _state;
-uint16_t _parity;
-int      _nt;
-float    _degs;
+static int      _gprmc_only;
+static float    _gprmc_utc;
+static char     _gprmc_status;
+static float    _gprmc_lat;
+static float    _gprmc_long;
+static float    _gprmc_speed;
+static float    _gprmc_angle;
+static char      f_sentence[100];
+static char      f_term[30][15];
+static int       f_terms;
+static int      _terms;
+static char     _sentence[100];
+static char     _term[30][15];
+static int       n;
+static int      _gprmc_tag;
+static int      _state;
+static uint16_t _parity;
+static int      _nt;
+static float    _degs;
+
+static char _header[6];
 
 
 BOARD_ERROR nmea_init(int32_t connect)
@@ -76,11 +78,92 @@ BOARD_ERROR nmea_init(int32_t connect)
 
 
 
+BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx) 
+{
+      BOARD_ERROR be_result = BOARD_ERR_OK;
+
+      uint16_t u16_save_tail_index;
+      uint16_t u16_save_size;
+      uint8_t  u8_read_byte;
+      uint8_t  u8_CRC  = 0U; 
+      uint8_t  u8_flag = 0U; /* Packet header found flag. */
+      uint8_t  u8_i    = 0U;
+      uint8_t  u8_packet_size = 0U;
+
+      
+      /* Read byte from UART1 Rx buffer. Remember, after reading size--, tail++. */
+      be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
+      if(be_result == BOARD_ERR_OK)
+      {  
+          u8_tx_UART3_data_packet[0] = u8_read_byte ;
+          _api_nmea_decode((char)u8_read_byte);
+          sv_board_dma_ch2_send_packet(2U);
+      }
+      else
+      {
+          u8_i++ ;
+      }
+      
+      
+      
+#if 0
+      /* Try to found packet header. */
+      while(be_result == BOARD_ERR_OK )
+      {
+          /* Save current buffer tail index pointed to next byte after header of packet. */
+          be_result |= be_board_r_USARTx_RX_get_tail_buffer( USARTx, &u16_save_tail_index);
+        
+          /* Save current buffer size. */
+          be_result |= be_board_r_USARTx_RX_get_size_buffer( USARTx, &u16_save_size);
+
+          /* Read byte from UART3 Rx buffer. Remember, after reading size--, tail++. */
+          be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
+        
+          /* Check for packet header. */
+          if(u8_read_byte == '$')
+          {
+              /* Flag header found. */
+              u8_flag = 1U;
+              break;
+          }
+      }
+      
+      if(u8_flag == 1U)
+      {
+          u8_i = 0U;
+          while(be_result == BOARD_ERR_OK)
+          {
+              be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
+              _header[u8_i] = (char) u8_read_byte;
+              if(u8_i >= 5U)
+              {
+                  _header[u8_i] = 0U;
+                  break;
+              }  
+              u8_i++;
+          }
+      }  
+       
+      if(be_result == BOARD_ERR_EMPTY)
+      {  
+          /* Restore tail index in RX UART3 buffer. */
+          be_board_r_USARTx_RX_set_tail_buffer(USARTx, u16_save_tail_index);
+          
+          /* Restore size of data in RX UART3 buffer. */
+          be_board_r_USARTx_RX_set_size_buffer(USARTx, u16_save_size);
+      }      
+
+#endif
+
+      return (be_result);
+}
+
+
+
 
 /* f_term[] inside string of digit  */
 
-
-BOARD_ERROR api_nmea_decode(char c) 
+static BOARD_ERROR _api_nmea_decode(char c) 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -388,7 +471,7 @@ float f_api_nmea_initial_course (float lat1, float long1, float lat2, float long
 
 
 
-uint8_t u8_api_nmea_dehex(char a) 
+static uint8_t u8_api_nmea_dehex(char a) 
 {
     /* 
         returns base-16 value of chars '0'-'9' and 'A'-'F';
@@ -413,7 +496,7 @@ uint8_t u8_api_nmea_dehex(char a)
 
 
 
-float f_api_nmea_decimal(char s[]) 
+static float f_api_nmea_decimal(char s[]) 
 {
     /*
         returns base-10 value of zero-termindated string

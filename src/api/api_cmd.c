@@ -18,7 +18,7 @@ void api_cmd_reading_packet(void)
     /* Try to found packet header. */
     while(be_result == BOARD_ERR_OK )
     {
-        /* Save current buffer tail index pointed to naxt byte after header of packet. */
+        /* Save current buffer tail index pointed to next byte after header of packet. */
         u16_save_tail_index = u16_board_r_buff_USART1_RX_tail_get_buffer();
 
         /* Save current buffer size. */

@@ -29,10 +29,11 @@
     This is maximun size of data packet that can be sent for one time.
     I think it is good idea to have same size like DMA TX round buffer.
 */
-#define USART_TX_DATA_PACKET_SIZE   TX_USART1_SIZE
-#define USART_RX_DATA_PACKET_SIZE   RX_USART1_SIZE
+#define USART1_TX_DATA_PACKET_SIZE   TX_USART1_SIZE
+#define USART3_TX_DATA_PACKET_SIZE   TX_USART3_SIZE
 
-extern uint8_t u8_tx_data_packet[USART_TX_DATA_PACKET_SIZE];
+extern uint8_t u8_tx_UART1_data_packet[USART1_TX_DATA_PACKET_SIZE];
+extern uint8_t u8_tx_UART3_data_packet[USART3_TX_DATA_PACKET_SIZE];
 
 BOARD_ERROR be_board_dma1_ch2_init(void);
 BOARD_ERROR be_board_dma1_ch3_init(void);
@@ -47,6 +48,8 @@ void DMA1_Channel5_IRQHandler(void);
 static uint16_t u16_board_dma_DMA1_CH3_byte_received(void);
 static uint16_t u16_board_dma_DMA1_CH5_byte_received(void);
 static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
+
+void sv_board_dma_ch2_send_packet(uint16_t u16_size_of_tx_data);
 
 BOARD_ERROR be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer(void);
 BOARD_ERROR be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer(void);
