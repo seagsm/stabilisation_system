@@ -1,4 +1,21 @@
 
+Recommended Minimum data
+$GPRMC,083559.00,A,4717.11437,N,00833.91522,E,0.004,77.52,091202,,,A*57
+$GPRMC,         
+083559.00,      UTC time, see note on UTC representation
+A,              Status, V = Navigation receiver warning, A = Data valid, see position fix flags description
+4717.11437,     Latitude (degrees & minutes), see format description
+N,              North/South indicator
+00833.91522,    Longitude (degrees & minutes), see format description
+E,              East/West indicator
+0.004,          Speed over ground
+77.52,          Course over ground
+091202,         Date in day, month, year format, see note on UTC representation
+,               Magnetic variation value (blank - not supported)
+,               Magnetic variation E/W indicator (blank - not supported)
+A               Mode Indicator, see position fix flags description
+*57             
+
 Global positioning system fix data
 $GPGGA,092725.00,4717.11399,N,00833.91590,E,1,08,1.01,499.6,M,48.0,M,,*5B
 $GPGGA,
