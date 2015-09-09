@@ -21,10 +21,12 @@
 #include "api_nmea.h"
 
 #define _GPRMC_TERM     "$GPRMC,"       /* GPRMC datatype identifier        */
+#define _GPVTG_TERM     "$GPVTG,"       /* GPVTG datatype identifier        */
+
 #define _LIB_VERSION    1U               /* software version of this library */
 
 
-static int      _gprmc_only;
+static int32_t  _i32_gprmc_only;
 static float    _gprmc_utc;
 static char     _gprmc_status;
 static float    _gprmc_lat;
@@ -37,21 +39,22 @@ static int       f_terms;
 static int      _terms;
 static char     _sentence[100];
 static char     _term[30][15];
-static int       n;
+static int32_t   i32_n;  
 static int      _gprmc_tag;
+static int      _gpvtg_tag;
 static int      _state;
 static uint16_t _parity;
-static int      _nt;
+static int32_t  _i32_nt;
 static float    _degs;
 
-static char _header[6];
+/* static char _header[6]; */
 
 
 BOARD_ERROR nmea_init(int32_t connect)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;  
 
-    _gprmc_only     = connect;
+    _i32_gprmc_only     = connect;
     _gprmc_utc      = 0.0f;
     _gprmc_status   = 'V';
     _gprmc_lat      = 0.0f;
@@ -59,10 +62,10 @@ BOARD_ERROR nmea_init(int32_t connect)
     _gprmc_speed    = 0.0f;
     _gprmc_angle    = 0.0f;
     _terms          = 0;
-    n               = 0;
+     i32_n          = 0;
     _state          = 0;
     _parity         = 0U;
-    _nt             = 0;
+    _i32_nt         = 0;
 
     f_sentence[0]   = 0U;
     f_terms         = 0;
@@ -82,14 +85,8 @@ BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx)
 {
       BOARD_ERROR be_result = BOARD_ERR_OK;
 
-      uint16_t u16_save_tail_index;
-      uint16_t u16_save_size;
       uint8_t  u8_read_byte;
-      uint8_t  u8_CRC  = 0U; 
-      uint8_t  u8_flag = 0U; /* Packet header found flag. */
-      uint8_t  u8_i    = 0U;
-      uint8_t  u8_packet_size = 0U;
-
+      uint8_t  u8_i = 0U; 
       
       while(be_result == BOARD_ERR_OK )
       {
@@ -107,70 +104,15 @@ BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx)
           }
       }
       
-      
-#if 0
-      /* Try to found packet header. */
-      while(be_result == BOARD_ERR_OK )
-      {
-          /* Save current buffer tail index pointed to next byte after header of packet. */
-          be_result |= be_board_r_USARTx_RX_get_tail_buffer( USARTx, &u16_save_tail_index);
-        
-          /* Save current buffer size. */
-          be_result |= be_board_r_USARTx_RX_get_size_buffer( USARTx, &u16_save_size);
-
-          /* Read byte from UART3 Rx buffer. Remember, after reading size--, tail++. */
-          be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
-        
-          /* Check for packet header. */
-          if(u8_read_byte == '$')
-          {
-              /* Flag header found. */
-              u8_flag = 1U;
-              break;
-          }
-      }
-      
-      if(u8_flag == 1U)
-      {
-          u8_i = 0U;
-          while(be_result == BOARD_ERR_OK)
-          {
-              be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
-              _header[u8_i] = (char) u8_read_byte;
-              if(u8_i >= 5U)
-              {
-                  _header[u8_i] = 0U;
-                  break;
-              }  
-              u8_i++;
-          }
-      }  
-       
-      if(be_result == BOARD_ERR_EMPTY)
-      {  
-          /* Restore tail index in RX UART3 buffer. */
-          be_board_r_USARTx_RX_set_tail_buffer(USARTx, u16_save_tail_index);
-          
-          /* Restore size of data in RX UART3 buffer. */
-          be_board_r_USARTx_RX_set_size_buffer(USARTx, u16_save_size);
-      }      
-
-#endif
-
       return (be_result);
 }
-
-
-
-
-/* f_term[] inside string of digit  */
 
 static BOARD_ERROR _api_nmea_decode(char c) 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-
-    /* avoid runaway sentences (>99 chars or >29 terms) and terms (>14 chars) */
-    if ((n >= 100) || (_terms >= 30) || (_nt >= 15)) 
+    
+    /* Characters filter avoid runaway sentences (>99 chars or >29 terms) and terms (>14 chars) */
+    if ((i32_n >= 100) || (_terms >= 30) || (_i32_nt >= 15)) 
     {      
         _state = 0; 
     }
@@ -183,13 +125,13 @@ static BOARD_ERROR _api_nmea_decode(char c)
     /* '$' always starts a new sentence */
     if (c == '$') 
     {
-        _gprmc_tag = 0;
-        _parity = 0U;
-        _terms = 0;
-        _nt = 0;
-        _sentence[0] = c;
-        n = 1;
-        _state = 4;
+        _gprmc_tag      = 0;
+        _parity         = 0U;
+        _terms          = 0;
+        _i32_nt         = 0;
+        _sentence[0]    = c;
+        i32_n           = 1;
+        _state          = 4;
         
         be_result = BOARD_ERR_OK;
     }
@@ -202,73 +144,77 @@ static BOARD_ERROR _api_nmea_decode(char c)
             break;
         case 1:
             /* decode chars after '$' and before '*' found */
-            if (n < 7) 
+            if (i32_n < 7) 
             {
                 /* see if first seven chars match "$GPRMC," */
-                if (c == _GPRMC_TERM[n]) 
+                if (c == _GPRMC_TERM[i32_n]) 
                 { 
                     _gprmc_tag++; 
                 }
+                if (c == _GPVTG_TERM[i32_n]) 
+                { 
+                    _gpvtg_tag++; 
+                }
             }
             /* add received char to sentence*/
-            _sentence[n++] = c;
+            _sentence[i32_n++] = c;
             switch (c) 
             {
                 case ',':
                     /* ',' delimits the individual terms */
-                    (_term[_terms++])[_nt] = 0U;
-                    _nt = 0;
+                    (_term[_terms++])[_i32_nt] = 0U;
+                    _i32_nt = 0;
                     _parity = _parity ^ c;
                     break;
                 case '*':
                     /* '*' delimits term and precedes checksum term */
-                    _term[_terms++][_nt] = 0U;
-                    _nt = 0;
+                    _term[_terms++][_i32_nt] = 0U;
+                    _i32_nt = 0;
                     _state++;
                     break;
                 default:
                     /* all other chars between '$' and '*' are part of a term */
-                    (_term[_terms])[_nt++] = c;
+                    (_term[_terms])[_i32_nt++] = c;
                      _parity = _parity ^ c;
                     break;
             }
             break;
         case 2:
             /* first char following '*' is checksum MSB */
-            _sentence[n++] = c;
-            (_term[_terms])[_nt++] = c;
+            _sentence[i32_n++] = c;
+            (_term[_terms])[_i32_nt++] = c;
             _parity = _parity - (16U * (uint16_t)u8_api_nmea_dehex(c));		/* replace with bitshift? */
             _state++;
             break;
         case 3:
             /* second char after '*' completes the checksum (LSB) */
-            _sentence[n++] = c;
-            _sentence[n++] = 0U;
-            (_term[_terms])[_nt++] = c;
-            (_term[_terms++])[_nt] = 0U;
+            _sentence[i32_n++] = c;
+            _sentence[i32_n++] = 0U;
+            (_term[_terms])[_i32_nt++] = c;
+            (_term[_terms++])[_i32_nt] = 0U;
             _state = 0;
             _parity = _parity - (uint16_t)u8_api_nmea_dehex(c);
             /* when parity is zero, checksum was correct! */
             if (_parity == 0U) 
             {
                 /* accept all sentences, or only GPRMC datatype? */
-                if ((!_gprmc_only) || (_gprmc_tag == 6)) 
+                if ((!_i32_gprmc_only) || (_gprmc_tag == 6) || (_gpvtg_tag == 6)) 
                 {
                     /* copy _sentence[] to f_sentence[] */
-                    while ((--n) >= 0) 
+                    while ((--i32_n) >= 0) 
                     { 
-                        f_sentence[n] = _sentence[n]; 
+                        f_sentence[i32_n] = _sentence[i32_n]; 
                     }
                     /* copy all _terms[] to f_terms[] */
                     for (f_terms=0; f_terms<_terms; f_terms++) 
                     {
-                        _nt = 0;
-                        while ((_term[f_terms])[_nt]) 
+                        _i32_nt = 0;
+                        while ((_term[f_terms])[_i32_nt]) 
                         {
-                            (f_term[f_terms])[_nt] = (_term[f_terms])[_nt];
-                            _nt++;
+                            (f_term[f_terms])[_i32_nt] = (_term[f_terms])[_i32_nt];
+                            _i32_nt++;
                         }
-                        f_term[f_terms][_nt] = 0U;
+                        f_term[f_terms][_i32_nt] = 0U;
                     }
                     /* when sentence is of datatype GPRMC */
                     if (_gprmc_tag == 6) 
@@ -276,8 +222,6 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         /* store values of relevant GPRMC terms */
                         /*_gprmc_utc = _decimal(_term[1]);*/
                         _gprmc_utc = f_api_nmea_decimal(_term[1]);  
-                      
-                        
                         _gprmc_status = (_term[2])[0];
                         /* calculate signed degree-decimal value of latitude term */
                         _gprmc_lat = f_api_nmea_decimal(_term[3]) / 100.0f;
@@ -302,6 +246,7 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         _gprmc_speed = f_api_nmea_decimal(_term[7]);
                         _gprmc_angle = f_api_nmea_decimal(_term[8]);
                     }
+
                     /* sentence accepted! */
                    be_result =  BOARD_ERR_PACKET_OK;
               }
@@ -374,6 +319,11 @@ float f_api_nmea_gprmc_course_to(float f_latitude, float f_longitude)
 	/* returns initial course in degrees from last-known GPRMC position to given position */
 	return f_api_nmea_initial_course( _gprmc_lat, _gprmc_long, f_latitude, f_longitude);
 }
+
+
+
+
+
 
 /*
 float NMEA::gprmc_rel_course_to(float latitude, float longitude) {
