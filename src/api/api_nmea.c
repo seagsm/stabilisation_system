@@ -91,19 +91,21 @@ BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx)
       uint8_t  u8_packet_size = 0U;
 
       
-      /* Read byte from UART1 Rx buffer. Remember, after reading size--, tail++. */
-      be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
-      if(be_result == BOARD_ERR_OK)
-      {  
-          u8_tx_UART3_data_packet[0] = u8_read_byte ;
-          _api_nmea_decode((char)u8_read_byte);
-          sv_board_dma_ch2_send_packet(2U);
-      }
-      else
+      while(be_result == BOARD_ERR_OK )
       {
-          u8_i++ ;
+          /* Read byte from UART1 Rx buffer. Remember, after reading size--, tail++. */
+          be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
+          if(be_result == BOARD_ERR_OK)
+          {  
+              /*   u8_tx_UART3_data_packet[0] = u8_read_byte ; */
+              _api_nmea_decode((char)u8_read_byte); 
+              /*  sv_board_dma_ch2_send_packet(2U); */
+          }
+          else
+          {
+              u8_i++ ;
+          }
       }
-      
       
       
 #if 0
@@ -187,10 +189,11 @@ static BOARD_ERROR _api_nmea_decode(char c)
         _nt = 0;
         _sentence[0] = c;
         n = 1;
-        _state = 1;
+        _state = 4;
         
         be_result = BOARD_ERR_OK;
     }
+    
     /* parse other chars according to parser state */
     switch(_state) 
     {
@@ -304,6 +307,9 @@ static BOARD_ERROR _api_nmea_decode(char c)
               }
           }
           break;
+      case 4:
+          _state = 1;
+          break;      
       default:
           _state = 0;
           break;

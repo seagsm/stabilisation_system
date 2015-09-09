@@ -65,7 +65,7 @@ static void v_api_main_loop_process(void)
         /* This is for reading GPS test only. Should be removed. */
                 /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
                 be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-         /*       api_nmea_decode(USART3);  */
+                api_nmea_decode(USART3);  
     }
 
 
