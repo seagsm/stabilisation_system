@@ -1,0 +1,35 @@
+
+Global positioning system fix data
+$GPGGA,092725.00,4717.11399,N,00833.91590,E,1,08,1.01,499.6,M,48.0,M,,*5B
+$GPGGA,
+092725.00,      time
+4717.11399,     lat
+N,              NS
+00833.91590,    long
+E,              EW
+1,              quality
+08,             numSV, Number of satellites used (range: 0-12)
+1.01,           Horizontal Dilution of Precision
+499.6,          Altitude above mean sea level
+M,              Altitude units: meters (fixed field)
+48.0,           Geoid separation: difference between geoid and mean sea level
+M,              Separation units: meters (fixed field)
+,               Age of differential corrections (blank when DGPS is not used)
+*5B             Checksum
+<CR><LF>        Carriage return and line feed  
+
+
+Course over ground and Ground speed
+$GPVTG,77.52,T,,M,0.004,N,0.008,K,A*06
+$GPVTG,
+77.52,          Course over ground (true)
+T,              Fixed field: true
+,               Course over ground (magnetic), not output
+M,              Fixed field: magnetic
+0.004,          Speed over ground (knot = sea mile per hour = 0.514444444 м / с )
+N,              Fixed field: knots
+0.008,          Speed over ground
+K,              Fixed field: kilometers per hour
+A               Mode Indicator, see position fix flags description
+*06             Checksum
+<CR><LF>        Carriage return and line feed  
