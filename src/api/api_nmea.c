@@ -21,6 +21,7 @@
 #include "api_nmea.h"
 
 #define _GPRMC_TERM     "$GPRMC,"       /* GPRMC datatype identifier        */
+#define _GPGGA_TERM     "$GPGGA,"       /* GPGGA datatype identifier        */
 #define _GPVTG_TERM     "$GPVTG,"       /* GPVTG datatype identifier        */
 
 #define _LIB_VERSION    1U               /* software version of this library */
@@ -33,6 +34,13 @@ static float    _gprmc_lat;
 static float    _gprmc_long;
 static float    _gprmc_speed;
 static float    _gprmc_angle;
+
+static float    _gpgga_utc;
+static float    _gpgga_cog;
+static float    _gpvtc_cog;
+
+
+
 static char      f_sentence[100];
 static char      f_term[30][15];
 static int       f_terms;
@@ -41,6 +49,7 @@ static char     _sentence[100];
 static char     _term[30][15];
 static int32_t   i32_n;  
 static int      _gprmc_tag;
+static int      _gpgga_tag;
 static int      _gpvtg_tag;
 static int      _state;
 static uint16_t _parity;
@@ -126,6 +135,8 @@ static BOARD_ERROR _api_nmea_decode(char c)
     if (c == '$') 
     {
         _gprmc_tag      = 0;
+        _gpgga_tag      = 0;
+        _gpvtg_tag      = 0;
         _parity         = 0U;
         _terms          = 0;
         _i32_nt         = 0;
@@ -151,10 +162,15 @@ static BOARD_ERROR _api_nmea_decode(char c)
                 { 
                     _gprmc_tag++; 
                 }
+                if (c == _GPGGA_TERM[i32_n]) 
+                { 
+                    _gpgga_tag++; 
+                }
                 if (c == _GPVTG_TERM[i32_n]) 
                 { 
                     _gpvtg_tag++; 
                 }
+
             }
             /* add received char to sentence*/
             _sentence[i32_n++] = c;
@@ -198,7 +214,7 @@ static BOARD_ERROR _api_nmea_decode(char c)
             if (_parity == 0U) 
             {
                 /* accept all sentences, or only GPRMC datatype? */
-                if ((!_i32_gprmc_only) || (_gprmc_tag == 6) || (_gpvtg_tag == 6)) 
+                if ((!_i32_gprmc_only) || (_gprmc_tag == 6) || (_gpgga_tag == 6) || (_gpvtg_tag == 6)) 
                 {
                     /* copy _sentence[] to f_sentence[] */
                     while ((--i32_n) >= 0) 
@@ -245,6 +261,22 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         }
                         _gprmc_speed = f_api_nmea_decimal(_term[7]);
                         _gprmc_angle = f_api_nmea_decimal(_term[8]);
+                    }
+                    else if (_gpgga_tag == 6) 
+                    {
+                        /* store values of relevant GPGGA terms */
+                        /* UTC time*/
+                        _gpgga_utc = f_api_nmea_decimal(_term[1]);  
+                        /* add more data */
+                    }
+                    else if (_gpvtg_tag == 6) 
+                    {
+                        /* store values of relevant GPVTG terms */
+                        _gpvtc_cog = f_api_nmea_decimal(_term[1]);  
+                    }
+                    else
+                    {
+                    
                     }
 
                     /* sentence accepted! */
