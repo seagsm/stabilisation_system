@@ -37,7 +37,7 @@ static float    _gprmc_angle;
 
 static float    _gpgga_utc;
 static float    _gpgga_cog;
-static float    _gpvtc_cog;
+static float    _gpvtg_cog;
 
 
 
@@ -272,13 +272,37 @@ static BOARD_ERROR _api_nmea_decode(char c)
                     else if (_gpvtg_tag == 6) 
                     {
                         /* store values of relevant GPVTG terms */
-                        _gpvtc_cog = f_api_nmea_decimal(_term[1]);  
+                        /* course over ground */  
+                        _gpvtg_cog = f_api_nmea_decimal(_term[1]);  
                     }
                     else
                     {
                     
                     }
-
+                    
+#if 0               /* TEST TX: This part send to TX received packet. */
+                    { 
+                        uint16_t  u16_i = 0U;
+                        while(f_sentence[u16_i] != 0U)
+                        {
+                            u8_tx_UART3_data_packet[u16_i] = f_sentence[u16_i];
+                            u16_i++;
+                        }  
+                        u8_tx_UART3_data_packet[u16_i] = 0x0AU;
+                        u16_i++;
+                        u8_tx_UART3_data_packet[u16_i] = 0x0DU;
+                        u16_i++;
+                        sv_board_dma_ch2_send_packet(u16_i);
+                     
+                    }
+                    /********/
+ #endif                    
+                    
+                    
+                    
+                    
+                    
+                    
                     /* sentence accepted! */
                    be_result =  BOARD_ERR_PACKET_OK;
               }

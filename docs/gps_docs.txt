@@ -50,3 +50,253 @@ K,              Fixed field: kilometers per hour
 A               Mode Indicator, see position fix flags description
 *06             Checksum
 <CR><LF>        Carriage return and line feed  
+
+  
+  //Disable data that we don't need.
+  Serial.println("$PUBX disable GLL....");
+  Serial1.print("$PUBX,40,GLL,0,0,0,0*5C\r\n");
+  Serial.println("$PUBX disable ZDA....");
+  Serial1.print("$PUBX,40,ZDA,0,0,0,0*44\r\n");
+  Serial.println("$PUBX disable VTG....");
+  Serial1.print("$PUBX,40,VTG,0,0,0,0*5E\r\n");
+  Serial.println("$PUBX disable GSV....");
+  Serial1.print("$PUBX,40,GSV,0,0,0,0*59\r\n");
+  Serial.println("$PUBX disable GSA....");
+  Serial1.print("$PUBX,40,GSA,0,0,0,0*4E\r\n");
+  Serial.println("$PUBX disable RMC....");
+  Serial1.print("$PUBX,40,RMC,0,0,0,0*47\r\n");
+  Serial.println("$PUBX disable GGA....");
+  Serial1.print("$PUBX,40,GGA,0,0,0,0*5A\r\n");
+  
+  
+  Enable UBX input and output on UART1 @ 115200 from NMEA mode:
+  $PUBX,41,1,0003,0003,115200,0*1C\r\n
+
+  
+  
+  
+  
+  const  uint32_t init_speed[5] = { 9600, 19200, 38400, 57600, 115200 };
+...
+void UbloxForceBaud(uint32_t baud)
+{
+    uint8_t i;
+    for (i = 0; i < 5; i++)
+    {
+        delay(50);
+        uart2ChangeBaud(init_speed[i]);
+        delay(250);
+        switch(baud)
+        {
+        case 19200:
+            gpsPrint("$PUBX,41,1,0003,0001,19200,0*23\r\n");
+            break;
+        case 38400:
+            gpsPrint("$PUBX,41,1,0003,0001,38400,0*26\r\n");
+            break;
+        case 57600:
+            gpsPrint("$PUBX,41,1,0003,0001,57600,0*2D\r\n");
+            break;
+        case 115200:
+            gpsPrint("$PUBX,41,1,0003,0001,115200,0*1E\r\n");
+            break;
+        }
+    }
+    uart2ChangeBaud(baud);
+    delay(200);
+}
+
+static void gpsPrint(const char *str)
+{
+    while (*str)
+    {
+        delay(7);
+        uart2Write(*str);
+        str++;
+    }
+    while (!uart2TransmitEmpty());                                                  // wait to send all
+    delay(30);
+}
+
+#include <NewSoftSerial.h>
+NewSoftSerial ss(2, 3);
+
+void setup()
+{
+  Serial.begin(9600);
+  ss.begin(9600);
+  delay(3000);
+   delay(3000);
+  ss.println("$PUBX,41,1,0003,96,0,0*14");//on
+  // Set the navigation mode (Airborne, 1G)  top line 
+  // Set the navigation mode (pedestrian) bottom line
+   Serial.print("Setting uBlox nav mode: ");
+   uint8_t setNav[] = //{0xB5, 0x62, 0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x06, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00, 0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0xDC};// airbourne
+                        {0xB5, 0x62, 0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00, 0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x13, 0x76}; //pedestrian
+//sendUBX(setNav, sizeof(setNav)/sizeof(uint8_t)); //this polls the message
+   //getUBX_ACK(setNav);  leave commented  
+
+  ss.println("$PUBX,40,GLL,0,1,0,0*5D");//on
+// ss.println("$PUBX,40,GLL,0,0,0,0*5C");//off
+  //----------------------------------------
+ss.println("$PUBX,40,GGA,0,1,0,0*5B");//on
+// ss.println("$PUBX,40,GGA,0,0,0,0*5A");//off
+  //------------------------------------------
+  ss.println("$PUBX,40,GSA,0,1,0,0*4F");//on
+// ss.println("$PUBX,40,GSA,0,0,0,0*4E");//off
+//------------------------------------------------
+  ss.println("$PUBX,40,RMC,0,1,0,0*46");//on
+// ss.println("$PUBX,40,RMC,0,0,0,0*47");//off
+//------------------------------------------------
+  ss.println("$PUBX,40,GSV,0,1,0,0*58");//on
+    // ss.println("$PUBX,40,GSV,0,0,0,0*59");//off
+//---------------------------------------
+   ss.println("$PUBX,40,VTG,0,1,0,0*5F");//on
+// ss.println("$PUBX,40,VTG,0,0,0,0*5E");//off
+delay(3000); 
+  }
+
+void loop()
+{ // For one second we parse GPS data and report some key values
+  for (unsigned long start = millis(); millis() - start < 1000;)
+  {
+    while (ss.available())
+    {
+      char c = ss.read();
+      
+       Serial.write(c); // uncomment this line if you want to see the GPS data flowing
+    //  if (gps.encode(c)) // Did a new valid sentence come in?
+       // newData = true;
+       
+    }
+}
+}
+  
+  
+  
+0xB5, 0x62, 0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x06,
+ 0x03, 0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00,
+ 0x05, 0x00, 0xFA, 0x00, 0xFA, 0x00, 0x64, 0x00, 0x2C,
+ 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16, 0xDC  
+  
+B56206242400FFFF060300000000102700000500FA00FA0064002C01000000000000000000000000000016DC  
+  
+0xB5, Sync Char 1
+0x62, Sync Char 2
+0x06, Class (CFG 0x06 Configuration Input Messages: Set Dynamic Model, Set DOP Mask, Set Baud Rate, etc.)
+0x24, ID
+0x24, Length LSB
+0x00, Length MSB
+
+0000    0xFF, Parameters Bitmask. 
+0001    0xFF, Only the masked(Bitfield 2 bytes)
+0002    0x06, Dynamic Platform model: 6 Airborne with <1g Acceleration
+0003    0x03, Position Fixing Mode.   3: Auto 2D/3D
+0004    0x00, Fixed altitude (mean sea level) for 2D fix mode. I4, m
+0005    0x00, -
+0006    0x00, -
+0007    0x00, -
+0008    0x10, Fixed altitude variance for 2D mode. U4 m^2
+0009    0x27, -
+0010    0x00, -
+0011    0x00, -
+0012    0x05, Minimum Elevation for a GNSS satellite to be used in NAV 
+0013    0x00, Reserved
+0014    0xFA, Position DOP Mask to use
+0015    0x00, -
+0016    0xFA, Time DOP Mask to use
+0017    0x00, -
+0018    0x64, Position Accuracy Mask
+0019    0x00, -
+0020    0x2C, Time Accuracy Mask
+0021    0x01, -
+0022    0x00, Static hold threshold
+0023    0x00, DGPS time-out
+0024    0x00, Number of satellites required to have C/N0 above cnoThresh for a fix to be attempted
+0025    0x00, C/N0 threshold for deciding whether to attempt a fix
+0026    0x00, Always set to zero
+0027    0x00, -
+0028    0x00, Always set to zero
+0029    0x00, -
+0030    0x00, -
+0031    0x00, -
+0032    0x00, Always set to zero 
+0033    0x00, -
+0034    0x00, -
+0035    0x00, -
+
+0x16, 
+0xDC
+
+
+
+https://github.com/cuspaceflight/joey-m/blob/master/firmware/gps.c
+
+void gps_get_position(int32_t* lat, int32_t* lon, int32_t* alt)
+{
+    // Request a NAV-POSLLH message from the GPS
+    uint8_t request[8] = {0xB5, 0x62, 0x01, 0x02, 0x00, 0x00, 0x03,
+        0x0A};
+
+B56201020000030A
+
+get time
+B562012100002267
+answer
+B5
+62
+01
+21  NAV-TIMEUTC (0x01 0x21)
+14  length LSB 
+00  MSB
+
+0000 D8     GPS time of week of the navigation epoch. See the description of iTOW for details. ms
+0001 E5     -
+0002 3C     -
+0003 00     -
+0004 FF     Time accuracy estimate (UTC) ns
+0005 FF     -
+0006 FF     -
+0007 FF     -
+0008 00     Fraction of second, range -1e9 .. 1e9 (UTC) ns
+0009 00     -
+0010 00     -
+0011 00     -
+0012 BC     Year, range 1999..2099 (UTC) 
+0013 07     -
+0014 01     Month, range 1..12 (UTC)
+0015 06     Day of month, range 1..31 (UTC)      day
+0016 01     Hour of day, range 0..23 (UTC)       hour
+0017 06     Minute of hour, range 0..59 (UTC)    minute          
+0018 0F     Seconds of minute, range 0..60 (UTC) sec
+0019 00     Validity Flags (see graphic below)
+0B     crc CK_A
+0D     crc CK_B    
+
+
+/**********************************************************************************/
+https://github.com/QuadTinnakon/TK_QuadDue32bit_FullSensor/blob/master/GPSNEO7N_multi.h
+https://ukhas.org.uk/guides:ublox_psm
+
+
+http://www.multiwii.com/forum/viewtopic.php?f=6&t=4964
+Here:
+#define TIMEUTC_ON 0xB5,0x62,0x06,0x01,0x03,0x00,0x01,0x21,0x01,0x2D,0x85                            // set TIMEUTC MSG rate
+B562060103000121012D85 
+#define UBLOX_5HZ        0xB5,0x62,0x06,0x08,0x06,0x00,0xC8,0x00,0x01,0x00,0x01,0x00,0xDE,0x6A       // set rate to 5Hz
+B56206080600C80001000100DE6A    It works!
+just send it to module and NMEA string will be sent with 5 hz refresh rate.
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
