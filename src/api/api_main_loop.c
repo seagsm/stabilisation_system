@@ -64,8 +64,11 @@ static void v_api_main_loop_process(void)
         GPIO_ResetBits( GPIOA, GPIO_Pin_12);
         /* This is for reading GPS test only. Should be removed. */
                 /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
+        if(u32_flag_GPS_on)
+        {  
                 be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
                 api_nmea_decode(USART3);  
+        }        
     }
 
 

@@ -321,23 +321,22 @@ static BOARD_ERROR _api_nmea_decode(char c)
     
 }
 
-
-
-
 float f_api_nmea_gprmc_utc(void) 
 {
 	/* returns decimal value of UTC term of last-known GPRMC sentence */
 	return _gprmc_utc;
 }
 
-
-
-
-
 char c_api_nmea_gprmc_status(void) 
 {
 	/* returns status character of last-known GPRMC sentence ('A' or 'V')*/
 	return _gprmc_status;
+}
+
+void    v_api_nmea_clear_gprmc_status(void)
+{
+	/* returns status character of last-known GPRMC sentence ('A' or 'V')*/
+	_gprmc_status = (char)0;
 }
 
 float f_api_nmea_gprmc_latitude(void)

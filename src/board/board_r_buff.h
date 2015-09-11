@@ -12,7 +12,7 @@
 
 typedef struct
 {
-	uint16_t	gu16_r_buffer_head;	    /* Index of head of round buffer */
+	uint16_t	gu16_r_buffer_head;	/* Index of head of round buffer */
 	uint16_t 	gu16_r_buffer_tail; 	/* Index of tail of round buffer */
 	uint16_t 	gu16_r_buffer_size; 	/* Size of data stored in round buffer*/
 	uint16_t 	gu16_r_sizeof_buffer;	/* Size of buffer. */

@@ -16,6 +16,8 @@
 #include "api_filters.h"
 #include "board_drv_bmp085.h"
 #include "api_nmea.h"
+#include "board_gps.h"
+
 
 /* Main loop interrupt period, should not be less
  * than sensor data acquisition time (2.7mSec)

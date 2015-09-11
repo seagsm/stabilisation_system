@@ -17,6 +17,7 @@
 #include "board_acc.h"
 #include "board_mag.h"
 #include "board_baro.h"
+#include "board_gps.h"
 #include "api_i2c_acquisition.h"
 #include "api_main_loop.h"
 

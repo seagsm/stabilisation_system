@@ -2090,6 +2090,12 @@
         <name>$PROJ_DIR$\src\board\board_gpio.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\board\board_gps.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_gps.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\board\board_gyro.c</name>
       </file>
       <file>

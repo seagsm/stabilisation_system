@@ -55,6 +55,7 @@ static BOARD_ERROR _api_nmea_decode(char c);                  /* parse one chara
 
 float   f_api_nmea_gprmc_utc(void);                    /* returns decimal value of UTC term in last full GPRMC sentence*/
 char    c_api_nmea_gprmc_status(void);                 /* returns status character in last full GPRMC sentence ('A' or 'V')*/
+void    v_api_nmea_clear_gprmc_status(void);           /* set status flag to undifined state 0x00 */
 float   f_api_nmea_gprmc_latitude(void);               /* signed degree-decimal value of latitude terms in last full GPRMC sentence*/
 float   f_api_nmea_gprmc_longitude(void);              /* signed degree-decimal value of longitude terms in last full GPRMC sentence*/
 float   f_api_nmea_gprmc_speed(float unit);        /* speed-on-ground term in last full GPRMC sentence*/

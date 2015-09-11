@@ -290,6 +290,16 @@ just send it to module and NMEA string will be sent with 5 hz refresh rate.
 
 
 
+B5 62 05 01 02 00 06 00 0E 37 
+B5 62 
+05 01 
+02 
+00 
+06 
+00 
+0E 37 
+
+
 
 
   

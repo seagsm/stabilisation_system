@@ -28,6 +28,9 @@ BOARD_ERROR be_board_init_main_init(void)
                 break;
             case (2U):
                 /* be_result |= be_board_adc_init(); */    /* Init ADC module. */
+ 
+                be_result |= be_board_gps_init();
+             
                 break;
             case (3U):
                 /* be_result |= be_board_ppm_init(); */   /* Init PPM input capture. (Timer_4) */
