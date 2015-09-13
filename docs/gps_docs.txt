@@ -284,6 +284,17 @@ http://www.multiwii.com/forum/viewtopic.php?f=6&t=4964
 Here:
 #define TIMEUTC_ON 0xB5,0x62,0x06,0x01,0x03,0x00,0x01,0x21,0x01,0x2D,0x85                            // set TIMEUTC MSG rate
 B562060103000121012D85 
+
+
+
+
+
+
+
+
+
+
+
 #define UBLOX_5HZ        0xB5,0x62,0x06,0x08,0x06,0x00,0xC8,0x00,0x01,0x00,0x01,0x00,0xDE,0x6A       // set rate to 5Hz
 B56206080600C80001000100DE6A    It works!
 just send it to module and NMEA string will be sent with 5 hz refresh rate.
@@ -301,32 +312,6 @@ B562060806006400010001007A12
 0x00,
 0x01, GPS time
 0x00
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-B5 62 05 01 02 00 06 00 0E 37 
-B5 62 
-05 01 
-02 
-00 
-06 
-00 
-0E 37 
-
 
 0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0xC2,0x01,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xBE,0x72
 
@@ -371,20 +356,54 @@ B5620600140001000000D008000000C201000700010000000000BE72
   
 B5620600140001000000D0080000802500000700010000000000A0A9  
   
+ Soft reset 0xB5,0x62,0x06,0x04,0xFF,0xFF,0x01,0x00,0x09,0x33
+  
+  B5620604FFFF01000933
+  
+Hard reset 0xB5,0x62,0x06,0x04,0xFF,0xFF,0x01,0x00,0x08,0x31
+B5620604FFFF01000831
   
   
+#define RMC_OFF    0xB5,0x62,0x06,0x01,0x03,0x00,0xF0,0x04,0x00,0xFE,0x17                            // switch RMC off
   
+0xB5,0x62,
+0x06,0x01,
+0x03,
+0x00,
+0xF0,
+0x04,
+0x00,
+0xFE,0x17
+
+ byte setGLL[] = {0xB5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x2B};
+B56206010800F001000000000001012B  
   
+char RMC_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X04, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X03, 0X3F};
+char VTG_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X05, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X04, 0X46};
+char GSA_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X02, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X01, 0X31};
+char GSV_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X03, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X02, 0X38};
+char GLL_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X01, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X2A};
+char GGA_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0XFF, 0X23};
+char GGA_On[]  = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X00, 0X00, 0X01, 0X01, 0X00, 0X00, 0X00, 0X01, 0X2C}; B56206010800F000000101000000012C
+char ZDA_Off[] = { 0XB5, 0X62, 0X06, 0X01, 0X08, 0X00, 0XF0, 0X08, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X07, 0X5B};  
   
+https://ukhas.org.uk/guides:falcom_fsa03
   
+  https://groups.google.com/forum/#!msg/phoenixpilot/vzbQk2NJXKo/WlIy96k1IO8J
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
+	Interesting
+	https://github.com/emlid/Navio/blob/master/C%2B%2B/Navio/Ublox.cpp  
+    NAV_POSLLH = 0x0102,
+    NAV_STATUS = 0x0103
+	B562060103000102010E47	NAV POLL on
+	B562060103000102000D46 	NAV POLL off
+	B562060103000103010F49  STATUS on
+	B562060103000103000E48  STATUS off
+	
+
+	
+	
+	
+	
+	
   
