@@ -401,9 +401,28 @@ https://ukhas.org.uk/guides:falcom_fsa03
 	B562060103000103000E48  STATUS off
 	
 
+ *** uBlox 9/14/2015 3:50:14 PM = UTC: 135014.556 ***
+NAV-POSLLH : B5 62 01 02 1C 00 1C 78 1E 08 40 50 89 09 DE D4 34 1D E0 93 04 00 E0 93 04 00 06 17 00 00 3C 24 00 00 69 89 
+B5 62 
+01 02 
+1C 00 
+0006    1C 78 1E 08 
+0010    40 50 89 09     159993920   Longitude
+0014    DE D4 34 1D     490001630   Latitude
+0018    E0 93 04 00 
+E0 93 04 00 
+06 17 00 00     5894
+3C 24 00 00     9276
+69 89 
+
+Latitude 49.000163N
+Longitude 15.999392E
+Altitude 300m
+Heading 276
+Speed 64km/h	
 	
-	
-	
+1C 78 1E 08
+081E781c	
 	
 	
   

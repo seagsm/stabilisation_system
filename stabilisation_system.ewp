@@ -119,7 +119,7 @@
         <option>
           <name>GeneralMisraRules04</name>
           <version>0</version>
-          <state>011101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
+          <state>011101110010111111111000110111111111111111111111111110010111101111011101111111111111111111111111101111111011111001111011111011111111111111111</state>
         </option>
         <option>
           <name>RTConfigPath2</name>
@@ -2013,6 +2013,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_rx_channels.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_ublox.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_ublox.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>
