@@ -16,6 +16,7 @@
 #include "api_filters.h"
 #include "board_drv_bmp085.h"
 #include "api_nmea.h"
+#include "api_ublox_msg.h"
 #include "board_gps.h"
 
 

@@ -22,47 +22,15 @@ static BOARD_ERROR be_board_UBLOX_gps_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     
-    /* be_result |= be_board_UBLOX_gps_check(); */
-    be_result |= be_board_UBLOX_gps_set_speed();
-    be_result |= be_board_UBLOX_gps_check();
-    
-    
+    /*  be_result |= be_board_UBLOX_gps_check(); */ /* TEST SOLUTION */
+    if(be_result == BOARD_ERR_OK)
+    {  
+        be_result |= api_ublox_gps_init();
+    }
 
 
     return(be_result);
 }
-
-static BOARD_ERROR be_board_UBLOX_gps_set_speed(void)
-{
-    BOARD_ERROR be_result = BOARD_ERR_OK;
-    uint16_t  u16_i = 0U;
-    uint16_t  u16_size = 0U;
-    
-    /* uint8_t UBLOX_115200[] ={0xB5U,0x62U,0x06U,0x00U,0x14U,0x00U,0x01U,0x00U,0x00U,0x00U,0xD0U,0x08U,0x00U,0x00U,0x00U,0xC2U,0x01U,0x00U,0x07U,0x00U,0x01U,0x00U,0x00U,0x00U,0x00U,0x00U,0xBEU,0x72U};  */
-    uint8_t UBLOX_115200[] ={0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x80,0x25,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xA0,0xA9}; /*38400*/
-    
-    
-    
-    u16_size = sizeof(UBLOX_115200)/sizeof(uint8_t);
-    
-    if( u32_flag_GPS_on == 1U)
-    {
-        while(u16_i < u16_size)
-        {
-            u8_tx_UART3_data_packet[u16_i] = UBLOX_115200[u16_i];
-            u16_i++;
-        }  
-        sv_board_dma_ch2_send_packet(u16_i);
-        
-        /* Delay 1 Sec. */
-        gv_board_sys_tick_delay(1000U);
-    }  
-
-    return(be_result);
-}
-
-
-
 
 
 

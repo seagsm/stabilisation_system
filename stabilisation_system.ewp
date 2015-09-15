@@ -2021,6 +2021,12 @@
         <name>$PROJ_DIR$\src\api\api_ublox.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_ublox_msg.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_ublox_msg.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\MadgwickAHRS.c</name>
       </file>
       <file>

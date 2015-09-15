@@ -67,7 +67,11 @@ static void v_api_main_loop_process(void)
         if(u32_flag_GPS_on)
         {  
                 be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-                api_nmea_decode(USART3);  
+                api_ublox_msg_input_decode(USART3);  
+                if(gps_state.u8_flags != 0x03U)
+                {
+                    u32_flag_GPS_on = 1U;
+                }  
         }        
     }
 

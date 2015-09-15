@@ -21,6 +21,7 @@
 #include "api_i2c_acquisition.h"
 #include "api_main_loop.h"
 
+
 #define BOARD_INIT_TOTAL_STEPS 12U
 
 BOARD_ERROR be_board_init_main_init(void);

@@ -73,7 +73,8 @@ typedef enum
     BOARD_ERR_RANGE     = 6U,
     BOARD_ERR_ID        = 7U,
     BOARD_ERR_STATE     = 8U,
-    BOARD_ERR_PACKET_OK = 9U
+    BOARD_ERR_PACKET_OK = 9U,
+    BOARD_ERR_TIMEOUT   = 10U  
 }   BOARD_ERROR; /* variable tag be_xxx */
 
 typedef struct
