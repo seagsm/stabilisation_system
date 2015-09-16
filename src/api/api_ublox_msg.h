@@ -59,24 +59,26 @@ typedef struct
 
 
 
-extern GPS_NAVIGATION_DATA      gps_data;  /* here we save navigation data */           
-extern GPS_RECEIVER_STATE       gps_state;
-/* extern UBL_ACK_STATE            ack_state;  */
-
 
        BOARD_ERROR api_ublox_msg_parcer_init(void); 
        BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size);
        BOARD_ERROR api_ublox_msg_read_status(void);
        BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx);
        
-static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[]);
+       BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data); 
+       BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data);
+       BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state); 
+       BOARD_ERROR api_ublox_msg_reset_nav_status(void); 
+       
+/* static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[]); */
+       
+static BOARD_ERROR api_ublox_msg_decode(uint8_t u8_c, uint8_t u8_message[]); 
+
 static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_length); 
 static BOARD_ERROR api_ublox_msg_ck_a_b(uint8_t buff[], uint32_t u32_length, uint8_t *CK_A, uint8_t *CK_B);
 
 static BOARD_ERROR api_ublox_msg_get_message_state(UBL_STATE  *us_state);
 static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE   us_state);
-
-
 
 
 

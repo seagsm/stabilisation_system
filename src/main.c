@@ -26,7 +26,7 @@ int main( void)
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
-
+    
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)
@@ -39,6 +39,7 @@ int main( void)
             case BOARD_SYSTEM_INIT:
                 v_board_state_update_current_state(BOARD_SYSTEM_INIT);
                 be_result = be_board_init_main_init();      /* init main hardware moduls.*/
+                api_led_flash_set_fast_period(200U);
                 break;
             case BOARD_SYSTEM_READY_TO_RUN:
                 v_board_state_update_current_state(BOARD_SYSTEM_READY_TO_RUN);
@@ -68,16 +69,11 @@ int main( void)
                 GPIO_ResetBits( GPIOA, GPIO_Pin_12);
 #endif
                 /* Led. */
-                GPIO_SetBits( GPIOB, GPIO_Pin_1);
-                gv_board_sys_tick_fast_delay(50U);
-                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+                api_led_flash_fast();
 
             /*    gv_board_dma_send_packet(); */
             /*    board_dma_send_buff(); */
 
-                GPIO_SetBits( GPIOB, GPIO_Pin_1);
-                gv_board_sys_tick_fast_delay(50U);
-                GPIO_ResetBits( GPIOB, GPIO_Pin_1);
                 break;
             case BOARD_SYSTEM_MOTOR_CALIBRATION:/* Calibration of motor ESD controller.*/
                 v_board_state_update_current_state(BOARD_SYSTEM_MOTOR_CALIBRATION);

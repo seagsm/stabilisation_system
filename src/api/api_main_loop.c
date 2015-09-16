@@ -5,6 +5,7 @@
 static void v_api_main_loop_process(void)
 {
     static uint8_t u8_calibration = 0U;
+    GPS_RECEIVER_STATE nav_state;
 
     if(api_i2c_data.u8_ready == 1U)
     {
@@ -63,12 +64,14 @@ static void v_api_main_loop_process(void)
         gv_board_sys_tick_fast_delay(50U);
         GPIO_ResetBits( GPIOA, GPIO_Pin_12);
         /* This is for reading GPS test only. Should be removed. */
-                /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
+        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
         if(u32_flag_GPS_on)
         {  
                 be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-                api_ublox_msg_input_decode(USART3);  
-                if(gps_state.u8_flags != 0x03U)
+                api_ublox_msg_input_decode(USART3); 
+                api_ublox_msg_get_nav_status(&nav_state);
+                
+                if(nav_state.u8_flags != 0x03U)
                 {
                     u32_flag_GPS_on = 1U;
                 }  

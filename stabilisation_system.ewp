@@ -1988,6 +1988,12 @@
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_led.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_led.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_main_loop.c</name>
       </file>
       <file>

@@ -28,15 +28,19 @@ BOARD_ERROR api_ublox_gps_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;  
     
+    GPS_NAVIGATION_DATA nav_data;
+    
     be_result = api_ublox_msg_parcer_init(); 
                     
-    gps_data.i32_longitude   = 0;
-    gps_data.i32_latitude    = 0;
-    gps_data.i32_height      = 0;
-    gps_data.u32_speed       = 0U;
-    gps_data.i32_heading     = 0; 
+    nav_data.i32_longitude   = 0;
+    nav_data.i32_latitude    = 0;
+    nav_data.i32_height      = 0;
+    nav_data.u32_speed       = 0U;
+    nav_data.i32_heading     = 0; 
 
-    be_result |= api_ublox_gps_parameters_init();
+    be_result = api_ublox_msg_set_navigation_data(nav_data); 
+      
+    be_result = api_ublox_gps_parameters_init();
     
     return (be_result);
 }

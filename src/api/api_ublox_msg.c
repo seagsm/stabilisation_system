@@ -1,9 +1,9 @@
 
 #include "api_ublox_msg.h"
 
-GPS_NAVIGATION_DATA     gps_data;
-GPS_RECEIVER_STATE      gps_state;
-static UBL_ACK_STATE    ack_state;
+static GPS_NAVIGATION_DATA     gps_data;
+static GPS_RECEIVER_STATE      gps_state;
+static UBL_ACK_STATE           ack_state;
 
 
 static uint8_t          u8_ubl_message[MAX_UBL_MESSAGE_LENGTH];
@@ -13,6 +13,65 @@ static uint32_t         u32_message_length;
 
 
 
+
+BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state) 
+{ 
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    nav_state->u8_gpsFix  = gps_state.u8_gpsFix;
+    nav_state->u32_msss   = gps_state.u32_msss;
+    nav_state->u32_ttff   = gps_state.u32_ttff;
+    nav_state->u8_fixStat = gps_state.u8_fixStat;
+    nav_state->u8_flags   = gps_state.u8_flags;
+    nav_state->u8_flags2  = gps_state.u8_flags2;
+
+    return (be_result);
+}
+
+BOARD_ERROR api_ublox_msg_reset_nav_status(void) 
+{ 
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    gps_state.u8_gpsFix  = 0U;
+    gps_state.u32_msss   = 0U;
+    gps_state.u32_ttff   = 0U;
+    gps_state.u8_fixStat = 0U;
+    gps_state.u8_flags   = 0U;
+    gps_state.u8_flags2  = 0U;
+
+    return (be_result);
+}
+
+BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data) 
+{ 
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    gps_data.i32_heading   = nav_data.i32_heading;
+    gps_data.i32_height    = nav_data.i32_height;
+    gps_data.i32_latitude  = nav_data.i32_latitude;
+    gps_data.i32_longitude = nav_data.i32_longitude;
+    gps_data.u32_speed     = nav_data.u32_speed;
+
+    return (be_result);
+}
+
+BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data) 
+{ 
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    nav_data->i32_heading   = gps_data.i32_heading;
+    nav_data->i32_height    = gps_data.i32_height;
+    nav_data->i32_latitude  = gps_data.i32_latitude;
+    nav_data->i32_longitude = gps_data.i32_longitude;
+    nav_data->u32_speed     = gps_data.u32_speed;
+
+    return (be_result);
+}
+
+
+
+
+/* Function reset parcing variable. */
 BOARD_ERROR api_ublox_msg_parcer_init(void) 
 { 
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -23,6 +82,8 @@ BOARD_ERROR api_ublox_msg_parcer_init(void)
     return (be_result);
 } 
 
+
+/* Function decode UBLOX message. uint8_t u8_buff[] is message buffer, uint32_t u32_length is length of message. */
 static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_length) 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -179,7 +240,7 @@ static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE  us_state)
     Function get character from input stream and try to decode UBLOX message. 
     Message saved to u8_message[] array.
 */
-static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[]) 
+static BOARD_ERROR api_ublox_msg_decode(uint8_t u8_c, uint8_t u8_message[]) 
 {
     BOARD_ERROR     be_result       = BOARD_ERR_OK;
     static uint32_t u32_data_length = 0U;
@@ -189,7 +250,7 @@ static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[])
     
     if (us_state != PACKET_RECEIVED) 
     {    
-        u8_message[u32_message_position] = (uint8_t)c; 
+        u8_message[u32_message_position] = u8_c; 
         u32_message_position++;
         if (u32_message_position >= MAX_UBL_MESSAGE_LENGTH) 
         {
@@ -201,7 +262,7 @@ static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[])
     switch (us_state) 
     { 
         case PACKET_SYNC0: 
-            if (c == 0xB5U) 
+            if (u8_c == 0xB5U) 
             {  
                 be_result |= api_ublox_msg_set_message_state(PACKET_SYNC1);
             }
@@ -212,13 +273,13 @@ static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[])
             break; 
         
         case PACKET_SYNC1: 
-            if (c == 0x62U)
+            if (u8_c == 0x62U)
             {  
                 be_result |= api_ublox_msg_set_message_state(PACKET_CLASS);
             }
             else 
             { 
-                if (c == 0xB5U) 
+                if (u8_c == 0xB5U) 
                 {     
                     be_result |= api_ublox_msg_set_message_state(PACKET_SYNC0);
                 }
@@ -239,12 +300,12 @@ static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[])
             break; 
 
         case PACKET_LENGTH0: 
-            u32_data_length = (uint32_t)c; 
+            u32_data_length = (uint32_t)u8_c; 
             be_result |= api_ublox_msg_set_message_state(PACKET_LENGTH1);
             break; 
         
         case PACKET_LENGTH1: 
-            u32_data_length = u32_data_length + (((uint32_t)c) << 8);
+            u32_data_length = u32_data_length + (((uint32_t)u8_c) << 8);
             be_result |= api_ublox_msg_set_message_state(PACKET_LOAD);
             break; 
         
@@ -277,6 +338,8 @@ static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[])
     return (be_result);
 }
 
+
+/* Function send UBLOX packet and wait TIMEOUT for ACK */
 BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
 {
     BOARD_ERROR be_result  = BOARD_ERR_OK;
@@ -292,40 +355,38 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
     /* Send packet */
     sv_board_dma_ch2_send_packet(u16_size);
     
-    /* gv_board_sys_tick_delay(1000U); *//* TEST ONLY */
-    
     /* We will wait for ACK packet. So, set ACK to undefined state.*/
     ack_state.ub_id.u8_class = 0U;
     ack_state.ub_id.u8_id    = 0U;
     ack_state.u8_ack_state   = 0U;
-    /**** read answer ****/
+
+    /**** read ACK ****/
     u16_i = 0U;    
     while(ack_state.u8_ack_state == 0U)
     {  
         /* Read received bytes from DMA buffer to UART3 RX buffer */
         be_result = be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
     
-        /* Read byte-by-byte from UART3 RX buffer */
-
         while(be_result == BOARD_ERR_OK)
         {
             /* Read byte from UART3 Rx buffer. Remember, after reading size--, tail++. */
             be_result = be_board_r_buff_USARTx_RX_GET_byte(USART3, &u8_read_byte);
             if(be_result == BOARD_ERR_OK)
-            {  
-                /* Decode next RX received byte */
+            {   /* Decode next RX received byte */
                 be_result |= api_ublox_msg_decode(u8_read_byte, u8_ubl_message); 
+                /* Check decoding state */
                 be_result |= api_ublox_msg_get_message_state(&us_state);
                 if(us_state == PACKET_RECEIVED)
-                {  
+                {   /* Decode UBLOX message */
                     be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length);
-                    if(ack_state.u8_ack_state != 0U)                  /* We received ACK packet for */
-                    {
-                        if(ack_state.ub_id.u8_class == u8_message[2]) /* same Class  and */
-                        {
-                            if(ack_state.ub_id.u8_id == u8_message[3])/* same ID */
-                            {
-                                break; /* stop reading input stream */
+                    /* Check if receiver sent ACK answer */
+                    if(ack_state.u8_ack_state != 0U)     
+                    {   /* Check if this answer was for same Class  and */
+                        if(ack_state.ub_id.u8_class == u8_message[2]) 
+                        {   /* Check if this answer was for same ID */
+                            if(ack_state.ub_id.u8_id == u8_message[3])
+                            {   /* stop reading input stream */
+                                break; 
                             }
                         }
                     }  

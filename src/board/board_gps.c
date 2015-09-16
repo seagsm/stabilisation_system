@@ -12,7 +12,6 @@ BOARD_ERROR be_board_gps_init(void)
     
     /* Start GPS UBLOX init function */
     be_result = be_board_UBLOX_gps_init();
-
     
     return(be_result);
 }
@@ -28,11 +27,8 @@ static BOARD_ERROR be_board_UBLOX_gps_init(void)
         be_result |= api_ublox_gps_init();
     }
 
-
     return(be_result);
 }
-
-
 
 /* This function check if GPS UBLOX module connected to UART. */
 static BOARD_ERROR be_board_UBLOX_gps_check(void)
