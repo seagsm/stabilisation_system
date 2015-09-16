@@ -39,7 +39,8 @@
 
 BOARD_ERROR be_board_uart_init(void);
 static BOARD_ERROR be_board_uart_uart1_init(void);
-static BOARD_ERROR be_board_uart_uart3_init(void);
+/* static BOARD_ERROR be_board_uart_uart3_init(void); */ 
+BOARD_ERROR be_board_uart_uart3_init(uint32_t u32_BaudRate);
 static BOARD_ERROR be_board_uart_module_init(
                                                 USART_TypeDef*  USARTx,
                                                 USART_InitTypeDef* p_usart_init_struct,

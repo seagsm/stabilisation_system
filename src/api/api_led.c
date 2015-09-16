@@ -73,7 +73,23 @@ BOARD_ERROR api_led_flash_sys_delay(uint64_t u64_timeout)
     return (be_result);
 }               
 
+BOARD_ERROR api_led_on(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK; 
 
+    GPIO_SetBits( GPIOB, GPIO_Pin_1);
+
+    return (be_result);
+}               
+
+BOARD_ERROR api_led_off(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK; 
+
+    GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+
+    return (be_result);
+}               
 
 
 

@@ -11,8 +11,8 @@
        BOARD_ERROR api_led_flash_set_sys_period(uint64_t u64_value);
        BOARD_ERROR api_led_flash_fast(void);
        BOARD_ERROR api_led_flash_sys(void);
-
-
+       BOARD_ERROR api_led_on(void);
+       BOARD_ERROR api_led_off(void);
 
        BOARD_ERROR api_led_flash_sys_delay(uint64_t u64_timeout);
 static BOARD_ERROR api_led_flash_fast_delay(uint32_t u32_timeout);

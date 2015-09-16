@@ -6,10 +6,13 @@
 #include "board_sys_tick.h"
 #include "board_dma.h"
 #include "board_r_buff.h"
+#include "board_uart.h"
 
 #define MAX_UBL_MESSAGE_LENGTH 128U
 #define ACK_TIME_OUT           2000U
 #define GPS_FIX_TIMEOUT        600000U /*  wait for GPS fix satelites for 60 seconds */
+#define GPS_UART_SPEED_TIMEOUT 300U /* 300 mS */
+
 typedef enum 
 {
   PACKET_SYNC0,
@@ -23,6 +26,16 @@ typedef enum
   PACKET_CK_B,
   PACKET_RECEIVED
 } UBL_STATE;
+
+typedef enum 
+{
+    UART_9600,
+    UART_19200,
+    UART_38400,
+    UART_57600,
+    UART_115200
+} UART_BAUD_RATE;
+
 
 typedef struct
 {
@@ -80,9 +93,9 @@ static BOARD_ERROR api_ublox_msg_ck_a_b(uint8_t buff[], uint32_t u32_length, uin
 static BOARD_ERROR api_ublox_msg_get_message_state(UBL_STATE  *us_state);
 static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE   us_state);
 
+BOARD_ERROR api_ublox_msg_send_speed(UART_BAUD_RATE ub_baud_rate);
 
-
-
+static BOARD_ERROR api_ublox_msg_UART3_TX_copy(uint8_t u8_out[], uint16_t u16_size);
 
 
 

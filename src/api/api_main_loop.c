@@ -4,6 +4,7 @@
 
 static void v_api_main_loop_process(void)
 {
+    BOARD_ERROR be_result = BOARD_ERR_OK;
     static uint8_t u8_calibration = 0U;
     GPS_RECEIVER_STATE nav_state;
 
@@ -68,12 +69,22 @@ static void v_api_main_loop_process(void)
         if(u32_flag_GPS_on)
         {  
                 be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-                api_ublox_msg_input_decode(USART3); 
+                be_result = api_ublox_msg_input_decode(USART3); 
+                if(be_result != BOARD_ERR_OK)
+                {  
+                    be_result = api_led_flash_set_fast_period(400000U);
+                }
+                else
+                {
+                    be_result = api_led_flash_set_fast_period(100000U);
+                }  
+                
                 api_ublox_msg_get_nav_status(&nav_state);
                 
                 if(nav_state.u8_flags != 0x03U)
                 {
                     u32_flag_GPS_on = 1U;
+                    
                 }  
         }        
     }

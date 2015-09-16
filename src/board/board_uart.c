@@ -24,7 +24,7 @@ BOARD_ERROR be_board_uart_init(void)
     be_result |= be_board_dma1_ch5_init();
 
     /* Initialisation of UART3, GPS interface. */
-    be_result |= be_board_uart_uart3_init();
+    be_result |= be_board_uart_uart3_init(USART3_BAUD_RATE);
     be_result |= be_board_r_buff_USARTx_init(USART3);
     be_result |= be_board_dma1_ch2_init();
     be_result |= be_board_dma1_ch3_init();
@@ -64,7 +64,7 @@ static BOARD_ERROR be_board_uart_uart1_init(void)
 }
 
 /* This function do initialisation of UART3 module. */
-static BOARD_ERROR be_board_uart_uart3_init(void)
+BOARD_ERROR be_board_uart_uart3_init(uint32_t u32_BaudRate)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -72,7 +72,7 @@ static BOARD_ERROR be_board_uart_uart3_init(void)
     USART_InitTypeDef usart_init_uart;
 
     /* Setup uart module parameters. */
-    usart_init_uart.USART_BaudRate   = USART3_BAUD_RATE;
+    usart_init_uart.USART_BaudRate   = u32_BaudRate;
     usart_init_uart.USART_WordLength = USART_WordLength_8b;
     usart_init_uart.USART_StopBits   = USART_StopBits_1;
     usart_init_uart.USART_Parity     = USART_Parity_No;
@@ -92,8 +92,6 @@ static BOARD_ERROR be_board_uart_uart3_init(void)
 
     return(be_result);
 }
-
-
 
 /*
     This function configurate communication port.

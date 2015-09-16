@@ -11,7 +11,11 @@ static UBL_STATE        us_message_state;
 static uint32_t         u32_message_position;
 static uint32_t         u32_message_length;
 
-
+static uint8_t UBLOX_9600_speed[]   = {0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x80,0x25,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xA0,0xA9};
+static uint8_t UBLOX_19200_speed[]  = {0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0x4B,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x46,0x4B};
+static uint8_t UBLOX_38400_speed[]  = {0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0x96,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x91,0x84};
+static uint8_t UBLOX_57600_speed[]  = {0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0xE1,0x00,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xDC,0xBD};
+static uint8_t UBLOX_115200_speed[] = {0xB5,0x62,0x06,0x00,0x14,0x00,0x01,0x00,0x00,0x00,0xD0,0x08,0x00,0x00,0x00,0xC2,0x01,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0xBE,0x72};
 
 
 BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state) 
@@ -192,7 +196,7 @@ static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_
     {
         be_result |= BOARD_ERR_STATE;
     }
-    
+    be_result |= api_ublox_msg_parcer_init();
     return (be_result);
 }
 
@@ -338,6 +342,87 @@ static BOARD_ERROR api_ublox_msg_decode(uint8_t u8_c, uint8_t u8_message[])
     return (be_result);
 }
 
+static BOARD_ERROR api_ublox_msg_UART3_TX_copy(uint8_t u8_out[], uint16_t u16_size)
+{       
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
+    
+    uint16_t   u16_i         = 0U;
+    
+    if(u16_size <= USART3_TX_DATA_PACKET_SIZE)
+    {  
+        while(u16_i < u16_size)
+        {
+            u8_tx_UART3_data_packet[u16_i] = u8_out[u16_i];
+            u16_i++;
+        }
+    }
+    else
+    {
+        be_result = BOARD_ERR_RANGE;
+    }  
+    return (be_result);
+}
+
+
+/* Function send UBLOX packet and wait TIMEOUT for ACK */
+BOARD_ERROR api_ublox_msg_send_speed(UART_BAUD_RATE ub_baud_rate )
+{
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
+    uint16_t   u16_size      = 0U;
+    uint32_t   u32_BaudRate  = 0U; 
+    
+    switch (ub_baud_rate)
+    {
+        case UART_9600:
+            u16_size = sizeof(UBLOX_9600_speed)/sizeof(*UBLOX_9600_speed);
+            api_ublox_msg_UART3_TX_copy(UBLOX_9600_speed, u16_size);
+            u32_BaudRate = 9600U;
+            break;
+        case UART_19200:
+            u16_size = sizeof(UBLOX_19200_speed)/sizeof(*UBLOX_19200_speed);
+            api_ublox_msg_UART3_TX_copy(UBLOX_19200_speed, u16_size);
+            u32_BaudRate = 19200U;
+            break;
+        case UART_38400:
+            u16_size = sizeof(UBLOX_38400_speed)/sizeof(*UBLOX_38400_speed);
+            api_ublox_msg_UART3_TX_copy(UBLOX_38400_speed, u16_size);
+            u32_BaudRate = 38400U;
+            break;
+        case UART_57600:
+            u16_size = sizeof(UBLOX_57600_speed)/sizeof(*UBLOX_57600_speed);
+            api_ublox_msg_UART3_TX_copy(UBLOX_57600_speed, u16_size);
+            u32_BaudRate = 57600U;
+            break;
+        case UART_115200:
+            u16_size = sizeof(UBLOX_115200_speed)/sizeof(*UBLOX_115200_speed);
+            api_ublox_msg_UART3_TX_copy(UBLOX_115200_speed, u16_size);
+            u32_BaudRate = 115200U;
+            break;
+        default:
+            be_result    = BOARD_ERR_RANGE;
+            break;
+    }
+    /* Send packet */
+    sv_board_dma_ch2_send_packet(u16_size);
+    /* Just wait 300 mS. It should be sent. */
+    gv_board_sys_tick_delay(GPS_UART_SPEED_TIMEOUT);
+    /* Reinit board UART module with new speed. */
+    be_result |= be_board_uart_uart3_init(u32_BaudRate);
+    /* Just wait 300 mS. It should be sent. */
+    gv_board_sys_tick_delay(GPS_UART_SPEED_TIMEOUT);
+
+    return (be_result);
+}
+
+
+
+
+
+
+
+
+
+
 
 /* Function send UBLOX packet and wait TIMEOUT for ACK */
 BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
@@ -410,9 +495,6 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
     return (be_result);
 }
 
-
-
-
 BOARD_ERROR api_ublox_msg_read_status(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -426,7 +508,6 @@ BOARD_ERROR api_ublox_msg_read_status(void)
 
     if(be_result == BOARD_ERR_OK)
     {  
-        GPIO_ResetBits( GPIOB, GPIO_Pin_1); /* Turn LED on */  
         while(gps_state.u8_gpsFix != 0x03U)
         {
             /* Read received bytes from DMA buffer to UART3 RX buffer */
@@ -464,7 +545,6 @@ BOARD_ERROR api_ublox_msg_read_status(void)
             }
             
         }
-        GPIO_SetBits( GPIOB, GPIO_Pin_1); /* Turn LED off */
     }
     return(be_result);
 }

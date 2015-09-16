@@ -39,7 +39,7 @@ int main( void)
             case BOARD_SYSTEM_INIT:
                 v_board_state_update_current_state(BOARD_SYSTEM_INIT);
                 be_result = be_board_init_main_init();      /* init main hardware moduls.*/
-                api_led_flash_set_fast_period(200U);
+                api_led_flash_set_fast_period(200000U);
                 break;
             case BOARD_SYSTEM_READY_TO_RUN:
                 v_board_state_update_current_state(BOARD_SYSTEM_READY_TO_RUN);
@@ -91,17 +91,6 @@ int main( void)
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 #ifdef  USE_FULL_ASSERT
 /**
