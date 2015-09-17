@@ -59,7 +59,7 @@ BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data)
     return (be_result);
 }
 
-BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data) 
+static BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data) 
 { 
     BOARD_ERROR be_result = BOARD_ERR_OK;
     
@@ -87,15 +87,21 @@ BOARD_ERROR api_ublox_msg_parcer_init(void)
 } 
 
 
-/* Function decode UBLOX message. uint8_t u8_buff[] is message buffer, uint32_t u32_length is length of message. */
-static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_length) 
+/* 
+    Function decode UBLOX message. 
+Input value:
+        uint8_t u8_buff[] is message buffer, 
+        uint32_t u32_length is length of message. 
+Output value:
+        uint32_t *u32_packet_id  is decoded packet Class+ID. 
+*/
+static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_length, uint32_t *u32_packet_id ) 
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     
     uint8_t     u8_flag         = 1U;
     uint8_t     u8_ck_a         = 0U;
     uint8_t     u8_ck_b         = 0U;
-    uint32_t    u32_packet_id   = 0U;
     uint32_t    u32_value       = 0U;
     UBL_STATE   us_state;
     
@@ -126,9 +132,9 @@ static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_
         if(u8_flag == 1U)
         {    
             /* Get CLASS and ID */
-            u32_packet_id =  (((uint32_t)(u8_buff[2])) << 8) + (uint32_t)(u8_buff[3]);
+            *u32_packet_id =  (((uint32_t)(u8_buff[2])) << 8) + (uint32_t)(u8_buff[3]);
             
-            switch(u32_packet_id)
+            switch(*u32_packet_id)
             { 
                 case 0x0501:    /* ACK-ACK (0x05 0x01)*/ 
                     ack_state.ub_id.u8_class    = u8_buff[6];
@@ -244,7 +250,7 @@ static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE  us_state)
     Function get character from input stream and try to decode UBLOX message. 
     Message saved to u8_message[] array.
 */
-static BOARD_ERROR api_ublox_msg_decode(uint8_t u8_c, uint8_t u8_message[]) 
+static BOARD_ERROR api_ublox_msg_byte_decode(uint8_t u8_c, uint8_t u8_message[]) 
 {
     BOARD_ERROR     be_result       = BOARD_ERR_OK;
     static uint32_t u32_data_length = 0U;
@@ -431,6 +437,7 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
     UBL_STATE   us_state   = PACKET_SYNC0;     
     uint8_t   u8_read_byte = 0U;
     uint16_t  u16_i        = 0U;
+    uint32_t  u32_ClassId  = 0U;
     
     while(u16_i < u16_size)
     {
@@ -458,12 +465,12 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
             be_result = be_board_r_buff_USARTx_RX_GET_byte(USART3, &u8_read_byte);
             if(be_result == BOARD_ERR_OK)
             {   /* Decode next RX received byte */
-                be_result |= api_ublox_msg_decode(u8_read_byte, u8_ubl_message); 
+                be_result |= api_ublox_msg_byte_decode(u8_read_byte, u8_ubl_message); 
                 /* Check decoding state */
                 be_result |= api_ublox_msg_get_message_state(&us_state);
                 if(us_state == PACKET_RECEIVED)
                 {   /* Decode UBLOX message */
-                    be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length);
+                    be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
                     /* Check if receiver sent ACK answer */
                     if(ack_state.u8_ack_state != 0U)     
                     {   /* Check if this answer was for same Class  and */
@@ -502,6 +509,7 @@ BOARD_ERROR api_ublox_msg_read_status(void)
     uint32_t u32_timeout    = 0U;
     UBL_STATE   us_state    = PACKET_SYNC0;     
     uint8_t   u8_read_byte  = 0U;
+    uint32_t  u32_ClassId   = 0U;
   
     /* Check GPS status fix on here for GPS_FIX_TIMEOUT. */
     gps_state.u8_flags = 0U;
@@ -522,11 +530,11 @@ BOARD_ERROR api_ublox_msg_read_status(void)
                 if(be_result == BOARD_ERR_OK)
                 {  
                     /* Decode next RX received byte */
-                    be_result |= api_ublox_msg_decode(u8_read_byte, u8_ubl_message); 
+                    be_result |= api_ublox_msg_byte_decode(u8_read_byte, u8_ubl_message); 
                     be_result |= api_ublox_msg_get_message_state(&us_state);
                     if(us_state == PACKET_RECEIVED)
                     {  
-                        be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length);
+                        be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
                         if(gps_state.u8_gpsFix == 0x03U)
                         {
                             u32_timeout++ ;
@@ -556,6 +564,10 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
       UBL_STATE   us_state     = PACKET_SYNC0; 
       uint8_t     u8_read_byte = 0U;
       uint32_t   u32_i         = 0U; 
+      uint32_t   u32_ClassId   = 0U;
+      GPS_NAVIGATION_DATA      gnd_nav_data;
+      GPS_POSITION_DATA        gpd_gps_data;
+      GPS_RECEIVER_STATE       grs_nav_state;
       
       while(be_result == BOARD_ERR_OK )
       {
@@ -565,13 +577,35 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
           if(be_result == BOARD_ERR_OK)
           {  
               /* Decode next RX received byte */
-              be_result |= api_ublox_msg_decode(u8_read_byte, u8_ubl_message); 
+              be_result |= api_ublox_msg_byte_decode(u8_read_byte, u8_ubl_message); 
               /* Check message decoding status */
               be_result |= api_ublox_msg_get_message_state(&us_state);
               /* If message decoding ready, try to parsing it. */
               if(us_state == PACKET_RECEIVED)
               {  
-                  be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length);
+                  be_result = api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
+                  
+                  /* Calculation of GPS influences */
+                  api_ublox_msg_get_nav_status(&grs_nav_state);
+                  
+                  if(grs_nav_state.u8_gpsFix == 0x03U)
+                  {  
+                      /* If decoded packet with heading, start calculation of GPS influences */
+                      if(u32_ClassId == UBL_NAV_VELNED_ID) 
+                      {  
+                          /* read fresh navigation data */
+                          api_ublox_msg_get_navigation_data(&gnd_nav_data);
+                          /* convert UBL nav data to real word float value */
+                          api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
+                          api_ublox_msg_set_home_wp(gpd_gps_data);
+                      }
+                  }    
+                  
+                  if(be_result != BOARD_ERR_OK)
+                  {
+                      u32_i++ ;
+                  }  
+                  
               }
           }
           else
@@ -582,7 +616,20 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
       return (be_result);
 }
 
+static BOARD_ERROR api_ublox_msg_set_home_wp(GPS_POSITION_DATA gpd_gps_data) 
+{
+      static uint32_t u32_counter = 0U;
+  
+      BOARD_ERROR be_result = BOARD_ERR_OK; 
+  
+      if(u32_counter < 10U) /* 10 time */
+      {  
+          be_result = api_gps_nav_set_wp(gpd_gps_data, 0U);
+          u32_counter++;
+      }
 
+      return(be_result);
+}
 
 
 

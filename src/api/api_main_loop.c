@@ -66,26 +66,26 @@ static void v_api_main_loop_process(void)
         GPIO_ResetBits( GPIOA, GPIO_Pin_12);
         /* This is for reading GPS test only. Should be removed. */
         /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
+        
+        /* Check if GPS support is ON. */
         if(u32_flag_GPS_on)
-        {  
-                be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-                be_result = api_ublox_msg_input_decode(USART3); 
-                if(be_result != BOARD_ERR_OK)
-                {  
-                    be_result = api_led_flash_set_fast_period(400000U);
-                }
-                else
-                {
-                    be_result = api_led_flash_set_fast_period(100000U);
-                }  
-                
-                api_ublox_msg_get_nav_status(&nav_state);
-                
-                if(nav_state.u8_flags != 0x03U)
-                {
-                    u32_flag_GPS_on = 1U;
-                    
-                }  
+        {   
+            /* Copy received data to UART buffer */
+            be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
+            /* Decoding received data */
+            be_result = api_ublox_msg_input_decode(USART3); 
+            
+            api_ublox_msg_get_nav_status(&nav_state); 
+            
+            /* Indication of received error. */
+            if(be_result != BOARD_ERR_OK)
+            {  
+                be_result = api_led_flash_set_fast_period(400000U);
+            }
+            else
+            {
+                be_result = api_led_flash_set_fast_period(100000U);
+            }  
         }        
     }
 

@@ -29,7 +29,8 @@ BOARD_ERROR be_board_init_main_init(void)
             case (2U):
                 /* be_result |= be_board_adc_init(); */    /* Init ADC module. */
  
-                be_result |= be_board_gps_init();
+                /* be_result |= be_board_gps_init(); */
+                be_board_gps_init();
              
                 break;
             case (3U):

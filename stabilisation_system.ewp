@@ -1982,6 +1982,12 @@
         <name>$PROJ_DIR$\src\api\api_flash.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_gps_nav.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_gps_nav.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_i2c_acquisition.c</name>
       </file>
       <file>
