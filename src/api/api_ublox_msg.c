@@ -504,19 +504,27 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
 
 BOARD_ERROR api_ublox_msg_read_status(void)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;
+    BOARD_ERROR be_result       = BOARD_ERR_OK;
+    BOARD_ERROR be_home_wp      = BOARD_ERR_BUSY;
+    uint32_t    u32_timeout     = 0U;
+    UBL_STATE   us_state        = PACKET_SYNC0;     
+    uint8_t     u8_read_byte    = 0U;
+    uint32_t    u32_ClassId     = 0U;
+    uint32_t    u32_home_wp_set_flag = 0U;
+    uint32_t    u32_gps_fix_set_flag = 0U;
+    GPS_RECEIVER_STATE  grs_nav_state;
+    GPS_NAVIGATION_DATA gnd_nav_data;
+    GPS_POSITION_DATA   gpd_gps_data;
     
-    uint32_t u32_timeout    = 0U;
-    UBL_STATE   us_state    = PACKET_SYNC0;     
-    uint8_t   u8_read_byte  = 0U;
-    uint32_t  u32_ClassId   = 0U;
-  
+    
+    
     /* Check GPS status fix on here for GPS_FIX_TIMEOUT. */
     gps_state.u8_flags = 0U;
-
+    u32_home_wp_set_flag = 0U;
+    
     if(be_result == BOARD_ERR_OK)
     {  
-        while(gps_state.u8_gpsFix != 0x03U)
+        while(  (u32_gps_fix_set_flag ==0U ) && (u32_home_wp_set_flag == 0U))
         {
             /* Read received bytes from DMA buffer to UART3 RX buffer */
             be_result = be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
@@ -535,10 +543,26 @@ BOARD_ERROR api_ublox_msg_read_status(void)
                     if(us_state == PACKET_RECEIVED)
                     {  
                         be_result |= api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
-                        if(gps_state.u8_gpsFix == 0x03U)
+                        be_result |= api_ublox_msg_get_nav_status(&grs_nav_state);
+                        if(grs_nav_state.u8_gpsFix == 0x03U)
                         {
+                            u32_gps_fix_set_flag =0U;
                             u32_timeout++ ;
-                            break;
+                            /* Here we have GPS on and fixed. So, we can read navigation data for home way point. */
+                       
+                            if(u32_ClassId == UBL_NAV_VELNED_ID) 
+                            {  
+                                /* read fresh navigation data */
+                                api_ublox_msg_get_navigation_data(&gnd_nav_data);
+                                /* convert UBL nav data to real word float value */
+                                api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
+                                be_home_wp = api_ublox_msg_set_home_wp(gpd_gps_data);
+                            }
+                            if(be_home_wp == BOARD_ERR_OK)
+                            {
+                                u32_home_wp_set_flag = 1U;
+                                break;
+                            }    
                         }  
                     }
                 }
@@ -569,6 +593,10 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
       GPS_POSITION_DATA        gpd_gps_data;
       GPS_RECEIVER_STATE       grs_nav_state;
       
+      GPS_POSITION_DATA        gpd_get_wp_data;
+      
+      float fl_home_heading = 0.0f;
+      
       while(be_result == BOARD_ERR_OK )
       {
           /* Read byte from UARTx Rx buffer. Remember, after reading size--, tail++. */
@@ -597,7 +625,19 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
                           api_ublox_msg_get_navigation_data(&gnd_nav_data);
                           /* convert UBL nav data to real word float value */
                           api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
-                          api_ublox_msg_set_home_wp(gpd_gps_data);
+                          
+                          api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */ 
+/*                        
+                          fl_home_heading = f_api_nmea_initial_course (
+                                                                          gpd_gps_data.fl_latitude,gpd_gps_data.fl_longitude,    
+                                                                          gpd_get_wp_data.fl_latitude, gpd_get_wp_data.fl_longitude
+                                                                      ); 
+                          fl_home_heading = f_api_nmea_initial_course (
+                                                                          48.997793f,16.002287f,    
+                                                                          49.0f,16.0f
+                                                                      ); 
+*/                         
+                          
                       }
                   }    
                   
@@ -616,16 +656,23 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
       return (be_result);
 }
 
+/* Write input position like a home WP. */
 static BOARD_ERROR api_ublox_msg_set_home_wp(GPS_POSITION_DATA gpd_gps_data) 
 {
       static uint32_t u32_counter = 0U;
   
       BOARD_ERROR be_result = BOARD_ERR_OK; 
   
-      if(u32_counter < 10U) /* 10 time */
+      /* Because we set home WP during initialisation, we will take correct data after HOME_WP_INITIALISATION_TIMEOUT reading after GPS FIX flag ON. */
+      if(u32_counter < HOME_WP_INITIALISATION_TIMEOUT) /* 10 time */
       {  
           be_result = api_gps_nav_set_wp(gpd_gps_data, 0U);
           u32_counter++;
+          be_result = BOARD_ERR_BUSY;
+      }
+      else
+      {
+          be_result = BOARD_ERR_OK;
       }
 
       return(be_result);

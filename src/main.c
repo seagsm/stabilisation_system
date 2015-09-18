@@ -27,6 +27,47 @@ int main( void)
                     and maximum value for each channel.
      */
     
+    {
+      GPS_POSITION_DATA gpd_current_wp; 
+      GPS_POSITION_DATA gpd_target_wp;
+      double dbl_course = 0.0;
+      double dbl_distance =0.0;
+      
+      /* test of same point */    
+      gpd_current_wp.fl_latitude  = 49.230378f ;
+      gpd_current_wp.fl_longitude = 16.557845f ;
+      gpd_target_wp.fl_latitude   = 49.230378f ;
+      gpd_target_wp.fl_longitude  = 16.557845f ;
+      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);       
+    
+      /* test point , head = 6.4337662433101741 , distance = 4.0307234251069616E+2 */    
+      gpd_current_wp.fl_latitude  = 49.230378f ;
+      gpd_current_wp.fl_longitude = 16.557845f ;
+      gpd_target_wp.fl_latitude   = 49.226776f ;
+      gpd_target_wp.fl_longitude  = 16.557222f ;
+      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance); 
+
+      /* test point , head = 3.1039242211971515E+2 , distance = 3.9545993229342786E+2 */    
+      gpd_current_wp.fl_latitude  = 49.230378f ;
+      gpd_current_wp.fl_longitude = 16.557845f ;
+      gpd_target_wp.fl_latitude   = 49.228072f ;
+      gpd_target_wp.fl_longitude  = 16.561991f ;
+      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);   
+
+      /* test point , head = 3.4198281153468497E+2 , distance = 5.9564439110751107E+2 */    
+      gpd_current_wp.fl_latitude  = 49.230378f ;
+      gpd_current_wp.fl_longitude = 16.557845f ;
+      gpd_target_wp.fl_latitude   = 49.235471f ;
+      gpd_target_wp.fl_longitude  = 16.555307f ;
+      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);  
+      
+       dbl_course = (double)f_api_nmea_initial_course(gpd_target_wp.fl_latitude, gpd_target_wp.fl_longitude, gpd_current_wp.fl_latitude, gpd_current_wp.fl_longitude);
+      
+      
+      
+api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);  
+       
+    }   
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)

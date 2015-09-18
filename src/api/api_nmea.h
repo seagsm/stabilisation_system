@@ -84,8 +84,8 @@ static float f_api_nmea_decimal(char s[]);
 
 
 
-float f_sin(float f_value);
-float f_cos(float f_value);
+static float f_sin(float f_value);
+static float f_cos(float f_value);
 
 
 

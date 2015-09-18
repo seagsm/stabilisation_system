@@ -25,6 +25,22 @@ float rad2deg(float rad)
     return (float)(180.0f/_M_PI) * rad;
 }
 
+
+double dbl_deg2rad(double degrees)
+{
+    return (double)(_M_PI / 180.0f) * degrees;
+}
+
+/* Function convert degree to radians*/
+double dbl_rad2deg(double rad)
+{
+    return (double)(180.0f/_M_PI) * rad;
+}
+
+
+
+
+
 /* Return x between y and z.*/
 int32_t constrain_i32(int32_t i32_x,int32_t i32_y,int32_t i32_z)
 {

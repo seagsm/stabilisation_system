@@ -560,12 +560,12 @@ static float f_api_nmea_decimal(char s[])
 
 
 
-float f_sin(float f_value)
+static float f_sin(float f_value)
 {
-  return ((float)asin((double)f_value));
+  return ((float)sin((double)f_value));
 }
 
-float f_cos(float f_value)
+static float f_cos(float f_value)
 {
-  return ((float)acos((double)f_value));
+  return ((float)cos((double)f_value));
 }

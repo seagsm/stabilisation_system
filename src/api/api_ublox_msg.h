@@ -8,14 +8,15 @@
 #include "board_r_buff.h"
 #include "board_uart.h"
 #include "api_gps_nav.h"
+#include "api_nmea.h"
 
 #define MAX_UBL_MESSAGE_LENGTH 128U
 #define ACK_TIME_OUT           2000U
 #define GPS_FIX_TIMEOUT        600000U  /*  wait for GPS fix satelites for 60 seconds */
 #define GPS_UART_SPEED_TIMEOUT 300U     /* 300 mS */
 
-#define UBL_NAV_VELNED_ID      0x0112U
-
+#define UBL_NAV_VELNED_ID               0x0112U
+#define HOME_WP_INITIALISATION_TIMEOUT  0x02U
 
 typedef enum 
 {

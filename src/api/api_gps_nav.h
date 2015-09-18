@@ -3,6 +3,7 @@
 
 #include "stm32f10x.h"
 #include "board_system_type.h"
+#include "math.h"
 
 #define GPS_MAX_WP_VALUE       50U
 
@@ -44,7 +45,7 @@ BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, G
 
 BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data,  uint32_t u32_WP_number); 
 BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number); 
-
+BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, double *dbl_course, double *dbl_distance);
 
 
 #endif
