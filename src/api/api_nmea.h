@@ -50,7 +50,7 @@
 
 BOARD_ERROR nmea_init(int32_t connect);   /* constructor for NMEA parser object; parse sentences of GPRMC or all datatypes. */
 
-BOARD_ERROR  api_nmea_decode(USART_TypeDef*  USARTx); 
+BOARD_ERROR  api_nmea_decode(USART_TypeDef*  USARTx);
 static BOARD_ERROR _api_nmea_decode(char c);                  /* parse one character received from GPS; returns 1 when full sentence found w/ checksum OK, 0 otherwise */
 
 float   f_api_nmea_gprmc_utc(void);                    /* returns decimal value of UTC term in last full GPRMC sentence*/
@@ -71,22 +71,22 @@ float       f_api_nmea_term_term_decimal(int t);            /* returns the base-
 uint32_t    u32_api_nmea_libversion(void);                   /* returns software version number of NMEA library*/
 float       f_api_nmea_term_decimal(int t);
 
-float f_api_nmea_gprmc_distance_to(float f_latitude, float f_longitude, float f_unit); 
+float f_api_nmea_gprmc_distance_to(float f_latitude, float f_longitude, float f_unit);
 
 
 float   f_api_nmea_distance_between (float lat1, float long1, float lat2, float long2, float units_per_meter);
 float   f_api_nmea_initial_course(float lat1, float long1, float lat2, float long2);
-static uint8_t u8_api_nmea_dehex(char a); 
+static uint8_t u8_api_nmea_dehex(char a);
 /* int     _dehex(char a);*/
 
-static float f_api_nmea_decimal(char s[]); 
+static float f_api_nmea_decimal(char s[]);
 /* float	_decimal(char* s); */
 
 
-
+/*
 static float f_sin(float f_value);
 static float f_cos(float f_value);
-
+*/
 
 
 

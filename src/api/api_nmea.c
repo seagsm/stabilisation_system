@@ -47,7 +47,7 @@ static int       f_terms;
 static int      _terms;
 static char     _sentence[100];
 static char     _term[30][15];
-static int32_t   i32_n;  
+static int32_t   i32_n;
 static int      _gprmc_tag;
 static int      _gpgga_tag;
 static int      _gpvtg_tag;
@@ -61,7 +61,7 @@ static float    _degs;
 
 BOARD_ERROR nmea_init(int32_t connect)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;  
+    BOARD_ERROR be_result = BOARD_ERR_OK;
 
     _i32_gprmc_only     = connect;
     _gprmc_utc      = 0.0f;
@@ -78,33 +78,33 @@ BOARD_ERROR nmea_init(int32_t connect)
 
     f_sentence[0]   = 0U;
     f_terms         = 0;
-	
+
     /* allocate memory for individual terms of sentence */
-    for (int t=0; t<30; t++) 
+    for (int t=0; t<30; t++)
     {
         f_term[t][0] = 0U;
     }
-  
+
     return(be_result);
 }
 
 
 
-BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx) 
+BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx)
 {
       BOARD_ERROR be_result = BOARD_ERR_OK;
 
       uint8_t  u8_read_byte;
-      uint8_t  u8_i = 0U; 
-      
+      uint8_t  u8_i = 0U;
+
       while(be_result == BOARD_ERR_OK )
       {
           /* Read byte from UART1 Rx buffer. Remember, after reading size--, tail++. */
           be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
           if(be_result == BOARD_ERR_OK)
-          {  
+          {
               /*   u8_tx_UART3_data_packet[0] = u8_read_byte ; */
-              _api_nmea_decode((char)u8_read_byte); 
+              _api_nmea_decode((char)u8_read_byte);
               /*  sv_board_dma_ch2_send_packet(2U); */
           }
           else
@@ -112,27 +112,27 @@ BOARD_ERROR api_nmea_decode(USART_TypeDef*  USARTx)
               u8_i++ ;
           }
       }
-      
+
       return (be_result);
 }
 
-static BOARD_ERROR _api_nmea_decode(char c) 
+static BOARD_ERROR _api_nmea_decode(char c)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     /* Characters filter avoid runaway sentences (>99 chars or >29 terms) and terms (>14 chars) */
-    if ((i32_n >= 100) || (_terms >= 30) || (_i32_nt >= 15)) 
-    {      
-        _state = 0; 
+    if ((i32_n >= 100) || (_terms >= 30) || (_i32_nt >= 15))
+    {
+        _state = 0;
     }
-  
+
     /* LF and CR always reset parser */
-    if ((c == 0x0AU) || (c == 0x0DU)) 
-    { 
-        _state = 0; 
+    if ((c == 0x0AU) || (c == 0x0DU))
+    {
+        _state = 0;
     }
     /* '$' always starts a new sentence */
-    if (c == '$') 
+    if (c == '$')
     {
         _gprmc_tag      = 0;
         _gpgga_tag      = 0;
@@ -143,38 +143,38 @@ static BOARD_ERROR _api_nmea_decode(char c)
         _sentence[0]    = c;
         i32_n           = 1;
         _state          = 4;
-        
+
         be_result = BOARD_ERR_OK;
     }
-    
+
     /* parse other chars according to parser state */
-    switch(_state) 
+    switch(_state)
     {
         case 0:
             /* waiting for '$', do nothing */
             break;
         case 1:
             /* decode chars after '$' and before '*' found */
-            if (i32_n < 7) 
+            if (i32_n < 7)
             {
                 /* see if first seven chars match "$GPRMC," */
-                if (c == _GPRMC_TERM[i32_n]) 
-                { 
-                    _gprmc_tag++; 
+                if (c == _GPRMC_TERM[i32_n])
+                {
+                    _gprmc_tag++;
                 }
-                if (c == _GPGGA_TERM[i32_n]) 
-                { 
-                    _gpgga_tag++; 
+                if (c == _GPGGA_TERM[i32_n])
+                {
+                    _gpgga_tag++;
                 }
-                if (c == _GPVTG_TERM[i32_n]) 
-                { 
-                    _gpvtg_tag++; 
+                if (c == _GPVTG_TERM[i32_n])
+                {
+                    _gpvtg_tag++;
                 }
 
             }
             /* add received char to sentence*/
             _sentence[i32_n++] = c;
-            switch (c) 
+            switch (c)
             {
                 case ',':
                     /* ',' delimits the individual terms */
@@ -211,21 +211,21 @@ static BOARD_ERROR _api_nmea_decode(char c)
             _state = 0;
             _parity = _parity - (uint16_t)u8_api_nmea_dehex(c);
             /* when parity is zero, checksum was correct! */
-            if (_parity == 0U) 
+            if (_parity == 0U)
             {
                 /* accept all sentences, or only GPRMC datatype? */
-                if ((!_i32_gprmc_only) || (_gprmc_tag == 6) || (_gpgga_tag == 6) || (_gpvtg_tag == 6)) 
+                if ((!_i32_gprmc_only) || (_gprmc_tag == 6) || (_gpgga_tag == 6) || (_gpvtg_tag == 6))
                 {
                     /* copy _sentence[] to f_sentence[] */
-                    while ((--i32_n) >= 0) 
-                    { 
-                        f_sentence[i32_n] = _sentence[i32_n]; 
+                    while ((--i32_n) >= 0)
+                    {
+                        f_sentence[i32_n] = _sentence[i32_n];
                     }
                     /* copy all _terms[] to f_terms[] */
-                    for (f_terms=0; f_terms<_terms; f_terms++) 
+                    for (f_terms=0; f_terms<_terms; f_terms++)
                     {
                         _i32_nt = 0;
-                        while ((_term[f_terms])[_i32_nt]) 
+                        while ((_term[f_terms])[_i32_nt])
                         {
                             (f_term[f_terms])[_i32_nt] = (_term[f_terms])[_i32_nt];
                             _i32_nt++;
@@ -233,11 +233,11 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         f_term[f_terms][_i32_nt] = 0U;
                     }
                     /* when sentence is of datatype GPRMC */
-                    if (_gprmc_tag == 6) 
+                    if (_gprmc_tag == 6)
                     {
                         /* store values of relevant GPRMC terms */
                         /*_gprmc_utc = _decimal(_term[1]);*/
-                        _gprmc_utc = f_api_nmea_decimal(_term[1]);  
+                        _gprmc_utc = f_api_nmea_decimal(_term[1]);
                         _gprmc_status = (_term[2])[0];
                         /* calculate signed degree-decimal value of latitude term */
                         _gprmc_lat = f_api_nmea_decimal(_term[3]) / 100.0f;
@@ -245,7 +245,7 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         _gprmc_lat = (100.0f * (_gprmc_lat - _degs)) / 60.0f;
                         _gprmc_lat += _degs;
                         /* southern hemisphere is negative-valued */
-                        if ((_term[4])[0] == 'S') 
+                        if ((_term[4])[0] == 'S')
                         {
                             _gprmc_lat = 0.0f - _gprmc_lat;
                         }
@@ -255,54 +255,54 @@ static BOARD_ERROR _api_nmea_decode(char c)
                         _gprmc_long = (100.0f * (_gprmc_long - _degs)) / 60.0f;
                         _gprmc_long += _degs;
                         /* western hemisphere is negative-valued */
-                        if ((_term[6])[0] == 'W') 
+                        if ((_term[6])[0] == 'W')
                         {
                             _gprmc_long = 0.0f - _gprmc_long;
                         }
                         _gprmc_speed = f_api_nmea_decimal(_term[7]);
                         _gprmc_angle = f_api_nmea_decimal(_term[8]);
                     }
-                    else if (_gpgga_tag == 6) 
+                    else if (_gpgga_tag == 6)
                     {
                         /* store values of relevant GPGGA terms */
                         /* UTC time*/
-                        _gpgga_utc = f_api_nmea_decimal(_term[1]);  
+                        _gpgga_utc = f_api_nmea_decimal(_term[1]);
                         /* add more data */
                     }
-                    else if (_gpvtg_tag == 6) 
+                    else if (_gpvtg_tag == 6)
                     {
                         /* store values of relevant GPVTG terms */
-                        /* course over ground */  
-                        _gpvtg_cog = f_api_nmea_decimal(_term[1]);  
+                        /* course over ground */
+                        _gpvtg_cog = f_api_nmea_decimal(_term[1]);
                     }
                     else
                     {
-                    
+
                     }
-                    
+
 #if 0               /* TEST TX: This part send to TX received packet. */
-                    { 
+                    {
                         uint16_t  u16_i = 0U;
                         while(f_sentence[u16_i] != 0U)
                         {
                             u8_tx_UART3_data_packet[u16_i] = f_sentence[u16_i];
                             u16_i++;
-                        }  
+                        }
                         u8_tx_UART3_data_packet[u16_i] = 0x0AU;
                         u16_i++;
                         u8_tx_UART3_data_packet[u16_i] = 0x0DU;
                         u16_i++;
                         sv_board_dma_ch2_send_packet(u16_i);
-                     
+
                     }
                     /********/
- #endif                    
-                    
-                    
-                    
-                    
-                    
-                    
+ #endif
+
+
+
+
+
+
                     /* sentence accepted! */
                    be_result =  BOARD_ERR_PACKET_OK;
               }
@@ -310,7 +310,7 @@ static BOARD_ERROR _api_nmea_decode(char c)
           break;
       case 4:
           _state = 1;
-          break;      
+          break;
       default:
           _state = 0;
           break;
@@ -318,16 +318,16 @@ static BOARD_ERROR _api_nmea_decode(char c)
 
     be_result = BOARD_ERR_OK;
     return (be_result);
-    
+
 }
 
-float f_api_nmea_gprmc_utc(void) 
+float f_api_nmea_gprmc_utc(void)
 {
 	/* returns decimal value of UTC term of last-known GPRMC sentence */
 	return _gprmc_utc;
 }
 
-char c_api_nmea_gprmc_status(void) 
+char c_api_nmea_gprmc_status(void)
 {
 	/* returns status character of last-known GPRMC sentence ('A' or 'V')*/
 	return _gprmc_status;
@@ -345,31 +345,31 @@ float f_api_nmea_gprmc_latitude(void)
 	return _gprmc_lat;
 }
 
-float f_api_nmea_gprmc_longitude(void) 
+float f_api_nmea_gprmc_longitude(void)
 {
 	/* returns signed degree-decimal longitude value of last-known GPRMC position */
 	return _gprmc_long;
 }
 
-float f_api_nmea_gprmc_speed(float unit) 
+float f_api_nmea_gprmc_speed(float unit)
 {
 	/* returns speed-over-ground from last-known GPRMC sentence */
 	return (_gprmc_speed * unit);
 }
 
-float f_api_nmea_gprmc_course(void) 
+float f_api_nmea_gprmc_course(void)
 {
 	/* returns decimal value of track-angle-made-good term in last-known GPRMC sentence */
 	return _gprmc_angle;
 }
 
-float f_api_nmea_gprmc_distance_to(float f_latitude, float f_longitude, float f_unit) 
+float f_api_nmea_gprmc_distance_to(float f_latitude, float f_longitude, float f_unit)
 {
 	/* returns distance from last-known GPRMC position to given position */
 	return f_api_nmea_distance_between( _gprmc_lat, _gprmc_long, f_latitude, f_longitude, f_unit);
 }
 
-float f_api_nmea_gprmc_course_to(float f_latitude, float f_longitude) 
+float f_api_nmea_gprmc_course_to(float f_latitude, float f_longitude)
 {
 	/* returns initial course in degrees from last-known GPRMC position to given position */
 	return f_api_nmea_initial_course( _gprmc_lat, _gprmc_long, f_latitude, f_longitude);
@@ -393,13 +393,13 @@ float NMEA::gprmc_rel_course_to(float latitude, float longitude) {
 
 
 
-char* pc_api_nmea_sentence(void) 
+char* pc_api_nmea_sentence(void)
 {
     /*returns last received full sentence as zero terminated string */
     return f_sentence;
 }
 
-uint32_t u32_api_nmea_terms(void) 
+uint32_t u32_api_nmea_terms(void)
 {
     /* returns number of terms (including data type and checksum) in last received full sentence */
     return (uint32_t)f_terms;
@@ -407,19 +407,19 @@ uint32_t u32_api_nmea_terms(void)
 
 
 
-char* pc_api_nmea_term(int t) 
+char* pc_api_nmea_term(int t)
 {
     /* returns term t of last received full sentence as zero terminated string */
     return f_term[t];
 }
 
-float f_api_nmea_term_decimal(int t) 
+float f_api_nmea_term_decimal(int t)
 {
     /* returns value of decimally coded term t */
     return f_api_nmea_decimal(f_term[t]);
 }
 
-uint32_t u32_api_nmea_libversion(void) 
+uint32_t u32_api_nmea_libversion(void)
 {
     /* returns software version of this library */
     return _LIB_VERSION;
@@ -429,9 +429,9 @@ uint32_t u32_api_nmea_libversion(void)
 
 /* private methods */
 
-float f_api_nmea_distance_between (float lat1, float long1, float lat2, float long2, float units_per_meter) 
+float f_api_nmea_distance_between (float lat1, float long1, float lat2, float long2, float units_per_meter)
 {
-    /*  
+    /*
         returns distance in meters between two positions, both specified
         as signed decimal-degrees latitude and longitude. Uses great-circle
         distance computation for hypothised sphere of radius 6372795 meters.
@@ -449,7 +449,7 @@ float f_api_nmea_distance_between (float lat1, float long1, float lat2, float lo
     delta = (clat1 * slat2) - (slat1 * clat2 * cdlong);
     delta = (float)sqrt((double)delta);
     double d_tmp = ((double)clat2) * ((double)sdlong);
-    delta += (float)sqrt(d_tmp);  /*  delta += (float)sqrt((double)(clat2 * sdlong)); */ 
+    delta += (float)sqrt(d_tmp);  /*  delta += (float)sqrt((double)(clat2 * sdlong)); */
     delta = (float)sqrt((double)delta);
     float denom = (slat1 * slat2) + (clat1 * clat2 * cdlong);
     delta = (float)atan2((double)delta, (double)denom);
@@ -457,14 +457,14 @@ float f_api_nmea_distance_between (float lat1, float long1, float lat2, float lo
 }
 
 
-float f_api_nmea_initial_course (float lat1, float long1, float lat2, float long2) 
+float f_api_nmea_initial_course (float lat1, float long1, float lat2, float long2)
 {
     /*
         returns initial course in degrees (North=0, West=270) from
         position 1 to position 2, both specified as signed decimal-degrees
         latitude and longitude.
     */
-  
+
     float dlon = deg2rad(long2-long1);
     lat1 = deg2rad(lat1);
     lat2 = deg2rad(lat2);
@@ -472,34 +472,34 @@ float f_api_nmea_initial_course (float lat1, float long1, float lat2, float long
     float a2 = f_sin(lat1) * f_cos(lat2) * f_cos(dlon);
     a2 = f_cos(lat1) * f_sin(lat2) - a2;
     a2 = (float)atan2((double)a1, (double)a2);
-    if (a2 < 0.0f) 
+    if (a2 < 0.0f)
     {
         a2 +=(float)(_M_PI + _M_PI ); /* TWO_PI; */			/* modulo operator doesn't seem to work on floats */
     }
-    
+
     return rad2deg(a2);
 }
 
 
 
-static uint8_t u8_api_nmea_dehex(char a) 
+static uint8_t u8_api_nmea_dehex(char a)
 {
-    /* 
+    /*
         returns base-16 value of chars '0'-'9' and 'A'-'F';
 	does not trap invalid chars!
     */
     uint8_t u8_tmp = 0U;
     u8_tmp = (uint8_t)a;
-  
-    if (u8_tmp >= 65U) 
+
+    if (u8_tmp >= 65U)
     {
         u8_tmp = u8_tmp - 55U;
     }
-    else 
+    else
     {
         u8_tmp = u8_tmp - 48U;
     }
-    
+
     return (u8_tmp);
 }
 
@@ -507,7 +507,7 @@ static uint8_t u8_api_nmea_dehex(char a)
 
 
 
-static float f_api_nmea_decimal(char s[]) 
+static float f_api_nmea_decimal(char s[])
 {
     /*
         returns base-10 value of zero-termindated string
@@ -520,14 +520,14 @@ static float f_api_nmea_decimal(char s[])
     float rb = 0.1f;
     _boolean dec = _false;
     int i = 0;
-    
-    if ((s[i] == '-') || (s[i] == '+')) 
-    { 
-        i++; 
-    }
-    while (s[i] != 0U) 
+
+    if ((s[i] == '-') || (s[i] == '+'))
     {
-        if (s[i] == '.') 
+        i++;
+    }
+    while (s[i] != 0U)
+    {
+        if (s[i] == '.')
         {
             dec = _true;
         }
@@ -539,7 +539,7 @@ static float f_api_nmea_decimal(char s[])
                 c_tmp = s[i] - 48U;
                 rl = rl + (long)c_tmp;
             }
-            else 
+            else
             {
                 c_tmp = s[i] - 48U;
                 rr += rb * (float)c_tmp;
@@ -549,7 +549,7 @@ static float f_api_nmea_decimal(char s[])
         i++;
     }
     rr += (float)rl;
-    if (s[0] == '-') 
+    if (s[0] == '-')
     {
         rr = 0.0f - rr;
     }
@@ -558,7 +558,7 @@ static float f_api_nmea_decimal(char s[])
 
 
 
-
+/*
 
 static float f_sin(float f_value)
 {
@@ -569,3 +569,5 @@ static float f_cos(float f_value)
 {
   return ((float)cos((double)f_value));
 }
+
+*/

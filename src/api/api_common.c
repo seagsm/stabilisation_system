@@ -28,13 +28,13 @@ float rad2deg(float rad)
 
 double dbl_deg2rad(double degrees)
 {
-    return (double)(_M_PI / 180.0f) * degrees;
+    return (double)(_M_PI / 180.0) * degrees;
 }
 
 /* Function convert degree to radians*/
 double dbl_rad2deg(double rad)
 {
-    return (double)(180.0f/_M_PI) * rad;
+    return (double)(180.0/_M_PI) * rad;
 }
 
 
@@ -78,5 +78,23 @@ int32_t abs_t(int32_t i32_x)
     return(i32_x);
 }
 
+float f_sin(float f_value)
+{
+  return ((float)sin((double)f_value));
+}
 
+float f_cos(float f_value)
+{
+  return ((float)cos((double)f_value));
+}
+
+float f_pow(float f_value, float fl_i)
+{
+    return((float)pow((double)f_value, (double)fl_i));
+}
+
+float f_sqrt(float fl_value)
+{
+    return((float)sqrt((double)fl_value));
+}
 

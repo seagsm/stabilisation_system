@@ -1,23 +1,17 @@
 
 #include "api_gps_nav.h"
 
-
 static GPS_POSITION_DATA gpd_gps_WP_position[GPS_MAX_WP_VALUE];
 
 
-
-
-
-
-
-BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_number) 
+BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_number)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     if( u32_WP_number >= GPS_MAX_WP_VALUE )
     {
         be_result = BOARD_ERR_RANGE;
-    }  
+    }
     else
     {
         gpd_gps_WP_position[u32_WP_number].fl_heading   = gpd_gps_data.fl_heading;
@@ -25,18 +19,18 @@ BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_n
         gpd_gps_WP_position[u32_WP_number].fl_latitude  = gpd_gps_data.fl_latitude;
         gpd_gps_WP_position[u32_WP_number].fl_longitude = gpd_gps_data.fl_longitude;
         gpd_gps_WP_position[u32_WP_number].fl_speed     = gpd_gps_data.fl_speed;
-    }  
+    }
     return(be_result);
 }
 
-BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number) 
+BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
-    
+
     if( u32_WP_number >= GPS_MAX_WP_VALUE )
     {
         be_result = BOARD_ERR_RANGE;
-    }  
+    }
     else
     {
         gpd_gps_data->fl_heading   = gpd_gps_WP_position[u32_WP_number].fl_heading;
@@ -44,12 +38,12 @@ BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_
         gpd_gps_data->fl_latitude  = gpd_gps_WP_position[u32_WP_number].fl_latitude;
         gpd_gps_data->fl_longitude = gpd_gps_WP_position[u32_WP_number].fl_longitude;
         gpd_gps_data->fl_speed     = gpd_gps_WP_position[u32_WP_number].fl_speed;
-    }  
-    
+    }
+
     return(be_result);
 }
 
-BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, GPS_POSITION_DATA *gpd_gps_data) 
+BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, GPS_POSITION_DATA *gpd_gps_data)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
@@ -58,115 +52,83 @@ BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, G
     gpd_gps_data->fl_latitude   = ((float)(gnd_nav_data->i32_latitude)) / 10000000.0f; /* degree.minutes */
     gpd_gps_data->fl_longitude  = ((float)(gnd_nav_data->i32_longitude))/ 10000000.0f; /* degree.minutes */
     gpd_gps_data->fl_speed      = ((float)(gnd_nav_data->u32_speed))    / 100.0f;      /* Speed in m/s */
-    
+
     return(be_result);
 }
 
 
-BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, double *dbl_course, double *dbl_distance)
+BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, float *fl_course, float *fl_distance)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
-    
-    double rad = 6372795.0; /* #pi - M_PI pi, rad - Earthe radius */ 
 
-    double lat1  = 0.0;
-    double long1 = 0.0;
-    double lat2  = 0.0;
-    double long2 = 0.0;
-    
-    double llat1  = 0.0;  
-    double llong1 = 0.0;
-    double llat2  = 0.0;  
-    double llong2 = 0.0;
+    double lat1      = 0.0;
+    double long1     = 0.0;
+    double lat2      = 0.0;
+    double long2     = 0.0;
 
-    double cl1 = 0.0;
-    double cl2 = 0.0;
-    double sl1 = 0.0;
-    double sl2 = 0.0;
-    double delta = 0.0;
-    double cdelta = 0.0;
-    double sdelta = 0.0;
-    
-    double y = 0.0;
-    double x = 0.0;
-    float x1 = 0.0f;
-    float x2 = 0.0f;
-    double z = 0.0;
-    double z2 = 0.0;
-    double ad = 0.0;
-    double anglerad2 = 0.0;
-    double dbl_tmp = 0.0;
+    double delta     = 0.0;
+    double sdlong    = 0.0;
+    double cdlong    = 0.0;
+    double slat1     = 0.0;
+    double clat1     = 0.0;
+    double slat2     = 0.0;
+    double clat2     = 0.0;
+    double denom     = 0.0;
 
-    
 
-    
-    /* coordinate from */
-    llat1  = (double)gpd_current_wp.fl_latitude;
-    llong1 = (double)gpd_current_wp.fl_longitude;
-    /* coordinate to */
-    llat2  = (double)gpd_target_wp.fl_latitude;
-    llong2 = (double)gpd_target_wp.fl_longitude;
- 
-    /* convert to radianes */
-    lat1  = llat1  * _M_PI / 180.0;
-    lat2  = llat2  * _M_PI / 180.0;
-    long1 = llong1 * _M_PI / 180.0;
-    long2 = llong2 * _M_PI / 180.0;
- 
- /* Make calculation of sin and cosine */
-    cl1 = cos(lat1);
-    cl2 = cos(lat2);
-    sl1 = sin(lat1);
-    sl2 = sin(lat2);
-    delta = long2 - long1;
-    cdelta = cos(delta);
-    sdelta = sin(delta);
- 
- /* Calculation of radius of big circle */
- /* y = math.sqrt(math.pow(cl2*sdelta,2)+math.pow(cl1*sl2-sl1*cl2*cdelta,2)) */
- 
-    dbl_tmp = pow(cl2 * sdelta, 2.0) + pow( (cl1 * sl2) - (sl1 * cl2 * cdelta), 2.0);
-    y = sqrt(dbl_tmp);
-    x = (sl1 * sl2) + (cl1 * cl2 * cdelta);
-    ad = atan2(y,x);
-    
-    *dbl_distance = ad * rad;
- 
- /* Calculation of start asimut */
-    
-   /* x = (cl1 * sl2) - (sl1 * cl2 * cdelta); */
-    x1 = ((float)cl1 * (float)sl2);
-    x2 = ((float)sl1 * (float)cl2 * (float)cdelta);
-    x  =( (double)x1 - (double)x2);
-    
-    x = (cl1 * sl2) - (sl1 * cl2 * cdelta);
-    
-    
-    
-    y = sdelta * cl2;
-    
-    z = atan2(-y,x);
-    z = z * 180.0 / _M_PI;
-   
-    if (x < 0.0)
+    double dlon  = 0.0;
+    double a1    = 0.0;
+    double a2    = 0.0;
+
+    lat1  = gpd_current_wp.fl_latitude;
+    long1 = gpd_current_wp.fl_longitude;
+    lat2  = gpd_target_wp.fl_latitude;
+    long2 = gpd_target_wp.fl_longitude;
+
+    /*
+        returns distance in meters between two positions, both specified
+        as signed decimal-degrees latitude and longitude. Uses great-circle
+        distance computation for hypothised sphere of radius 6372795 meters.
+        Because Earth is no exact sphere, rounding errors may be upto 0.5%.
+    */
+    /*
+        returns initial course in degrees (North=0, West=270) from
+        position 1 to position 2, both specified as signed decimal-degrees
+        latitude and longitude.
+    */
+
+    dlon = dbl_deg2rad(long2-long1);
+    delta = - dlon;
+    sdlong = sin(delta);
+    cdlong = cos(delta);
+
+    lat1 = dbl_deg2rad(lat1);
+    lat2 = dbl_deg2rad(lat2);
+    slat1 = sin(lat1);
+    clat1 = cos(lat1);
+    slat2 = sin(lat2);
+    clat2 = cos(lat2);
+
+    delta = sqrt(pow(clat2 * sdlong, 2.0) + pow(clat1 * slat2 - slat1 * clat2 * cdlong, 2.0));
+    denom = (slat1 * slat2) + (clat1 * clat2 * cdlong);
+    delta = atan2(delta, denom);
+
+    /* set distance */
+    *fl_distance = (float)(delta * 6372795.0);
+
+    /* Heading calculation */
+    a1 = -sdlong * clat2;
+    a2 = slat1 * clat2 * cdlong;
+    a2 = clat1 * slat2 - a2;
+    a2 = atan2(a1, a2);
+    if (a2 < 0.0)
     {
-        z = z+180.0;
+        a2 += (_M_PI + _M_PI ); /* TWO_PI; */
     }
-    
-    /* z2 = (z + 180.0) % 360.0 - 180.0; */
-    z2 = fmod((z + 180.0), 360.0);
-    z2 = z2 - 180.0;
-    
-    
-    z2 = -(z2) * _M_PI / 180.0;
-     
-    /* anglerad2 = z2 - ( (2 *_M_PI) * floor(( z2 / (2 * _M_PI ) ) )); */
-    dbl_tmp = floor( ( z2 / (2.0 * _M_PI ) ) );
-    
-    anglerad2 = z2 - ( (2.0 *_M_PI) * dbl_tmp );
-    
-    *dbl_course = (anglerad2 * 180.0)/_M_PI;
- 
+
+    /* set course */
+    *fl_course = (float)dbl_rad2deg(a2);
+
     return(be_result);
 }
 

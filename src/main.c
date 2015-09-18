@@ -19,6 +19,14 @@ int main( void)
     BOARD_SYSTEM_STATE  bss_state;
     BOARD_ERROR         be_result = BOARD_ERR_OK;
 
+    GPS_POSITION_DATA gpd_wp[5] =   {
+                                        {49.226844f, 16.557175f, 0.0f, 0.0f ,0.0f},
+                                        {49.230229f, 16.553991f, 0.0f, 0.0f ,0.0f},
+                                        {49.232621f, 16.560554f, 0.0f, 0.0f ,0.0f},
+                                        {49.237174f, 16.550213f, 0.0f, 0.0f ,0.0f},
+                                        {49.237821f, 16.558168f, 0.0f, 0.0f ,0.0f},
+                                    };
+
 
 
     v_board_state_set_required_state(BOARD_SYSTEM_INIT);
@@ -26,48 +34,34 @@ int main( void)
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
-    
+
     {
-      GPS_POSITION_DATA gpd_current_wp; 
-      GPS_POSITION_DATA gpd_target_wp;
-      double dbl_course = 0.0;
-      double dbl_distance =0.0;
-      
-      /* test of same point */    
-      gpd_current_wp.fl_latitude  = 49.230378f ;
-      gpd_current_wp.fl_longitude = 16.557845f ;
-      gpd_target_wp.fl_latitude   = 49.230378f ;
-      gpd_target_wp.fl_longitude  = 16.557845f ;
-      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);       
-    
-      /* test point , head = 6.4337662433101741 , distance = 4.0307234251069616E+2 */    
-      gpd_current_wp.fl_latitude  = 49.230378f ;
-      gpd_current_wp.fl_longitude = 16.557845f ;
-      gpd_target_wp.fl_latitude   = 49.226776f ;
-      gpd_target_wp.fl_longitude  = 16.557222f ;
-      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance); 
+      float fl_course   = 0.0f;
+      float fl_distance = 0.0f;
 
-      /* test point , head = 3.1039242211971515E+2 , distance = 3.9545993229342786E+2 */    
-      gpd_current_wp.fl_latitude  = 49.230378f ;
-      gpd_current_wp.fl_longitude = 16.557845f ;
-      gpd_target_wp.fl_latitude   = 49.228072f ;
-      gpd_target_wp.fl_longitude  = 16.561991f ;
-      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);   
+      int i_old = 0;
+      int i_new = 1;
 
-      /* test point , head = 3.4198281153468497E+2 , distance = 5.9564439110751107E+2 */    
-      gpd_current_wp.fl_latitude  = 49.230378f ;
-      gpd_current_wp.fl_longitude = 16.557845f ;
-      gpd_target_wp.fl_latitude   = 49.235471f ;
-      gpd_target_wp.fl_longitude  = 16.555307f ;
-      api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);  
-      
-       dbl_course = (double)f_api_nmea_initial_course(gpd_target_wp.fl_latitude, gpd_target_wp.fl_longitude, gpd_current_wp.fl_latitude, gpd_current_wp.fl_longitude);
-      
-      
-      
-api_gps_nav_course_to_target(gpd_current_wp, gpd_target_wp, &dbl_course, &dbl_distance);  
-       
-    }   
+      while(i_new < 100)
+      {
+
+         /*  dbl_course = (double)f_api_nmea_initial_course(gpd_wp[i_old].fl_latitude, gpd_wp[i_old].fl_longitude, gpd_wp[i_new].fl_latitude, gpd_wp[i_new].fl_longitude);*/
+          api_gps_nav_course_to_target(gpd_wp[i_old], gpd_wp[i_new], &fl_course, &fl_distance);
+          i_old++;
+          i_new++;
+          if(i_old >= 5)
+          {
+              i_old = 0;
+          }
+          if(i_new >= 5)
+          {
+              i_new = 0;
+          }
+
+      }
+   }
+
+
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)
