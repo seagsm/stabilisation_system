@@ -16,6 +16,7 @@ double dbl_rad2deg(double rad);
 double dbl_deg2rad(double degrees);
 
 int32_t constrain_i32(int32_t i32_x,int32_t i32_y,int32_t i32_z);
+float   fl_constrain(float fl_x, float fl_y, float fl_z);
 int32_t min(int32_t i32_x,int32_t i32_y);
 int32_t abs_t(int32_t i32_x);
 

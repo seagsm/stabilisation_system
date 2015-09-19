@@ -59,6 +59,28 @@ int32_t constrain_i32(int32_t i32_x,int32_t i32_y,int32_t i32_z)
     return(i32_x);
 }
 
+/* Return float x between float y and float z.*/
+float fl_constrain(float fl_x, float fl_y, float fl_z)
+{
+    if(fl_x < fl_y)
+    {
+        fl_x = fl_y;
+    }
+    else if(fl_x > fl_z)
+    {
+        fl_x = fl_z;
+    }
+    else
+    {
+
+    }
+    return(fl_x);
+}
+
+
+
+
+
 /* Function return minimum value of two int32. */
 int32_t min(int32_t i32_x,int32_t i32_y)
 {

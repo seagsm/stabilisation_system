@@ -3,7 +3,16 @@
 
 static GPS_POSITION_DATA gpd_gps_WP_position[GPS_MAX_WP_VALUE];
 
+static GPS_PID gp_gps_dir_pid;
+static GPS_PID gp_gps_alt_pid;
 
+
+
+/*
+    Function set WP to WP array:
+    GPS_POSITION_DATA gpd_gps_data - WP coordinates.
+    uint32_t u32_WP_number         - WP number.
+*/
 BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_number)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -23,6 +32,9 @@ BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_n
     return(be_result);
 }
 
+/*
+    Function gett WP[x] from WP array.
+*/
 BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
@@ -43,6 +55,7 @@ BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_
     return(be_result);
 }
 
+/* Function convert GPS UBL RAW data to real word float value. */
 BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, GPS_POSITION_DATA *gpd_gps_data)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
@@ -56,7 +69,21 @@ BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, G
     return(be_result);
 }
 
+/*
+    Function calculate heading and distance between two WPs.
+    Returns initial course in degrees (North=0, West=270) from
+    position 1 to position 2, both specified as signed decimal-degrees
+    latitude and longitude. And returns distance in meters between
+    two positions, both specified as signed decimal-degrees latitude
+    and longitude. Uses great-circle distance computation for
+    hypothised sphere of radius 6372795 meters. Because Earth is
+    no exact sphere, rounding errors may be upto 0.5%.
 
+    GPS_POSITION_DATA gpd_current_wp - current WP( We are here.)
+    GPS_POSITION_DATA gpd_target_wp  - target WP (Our destination.)
+    float            *fl_course      - heading to destination.
+    float            *fl_distance    - distance between two WPs.
+*/
 BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, float *fl_course, float *fl_distance)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
@@ -134,14 +161,66 @@ BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_
 
 
 
+/*
+u(t) = P(t) + I(t) + D(t)
+P(t) = Cp * e(t)
+I(t) = I(t – T) + Ci * e(t)
+D(t) = Cd * ( e(t) – e(t-T) )
+Cp, Ci, Cd – coefficients of PID controller.
+T - period of PID controller.
+
+*/
 
 
+BOARD_ERROR  api_gps_nav_pid_initialisation(void)
+{
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
+
+    /* Set start value for direction PID controller. */
+    gp_gps_dir_pid.fl_p = 2.0f;
+    gp_gps_dir_pid.fl_d = 0.5f;
+    gp_gps_dir_pid.fl_i = 0.001f;
+
+    gp_gps_dir_pid.fl_integrall = 0.0f;
+    gp_gps_dir_pid.fl_integrall_max =  10.0f;
+    gp_gps_dir_pid.fl_integrall_min = -10.0f;
+
+    gp_gps_dir_pid.fl_old_value = 0.0f;
+
+    gp_gps_dir_pid.fl_out_max   =  30.0f; /* degree */
+    gp_gps_dir_pid.fl_out_max   = -30.0f; /* degree */
+
+    return (be_result);
+}
 
 
+BOARD_ERROR  api_gps_nav_pid(float fl_err, GPS_PID *gp_gps_pid)
+{
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
 
+    float fl_proportional = 0.0f;
+    float fl_integrall    = 0.0f;
+    float fl_differencial = 0.0f;
+    /* P */
+    fl_proportional = gp_gps_pid->fl_p * fl_err;
 
+    /* I */
+    fl_integrall = gp_gps_pid->fl_integrall + gp_gps_pid->fl_i * fl_err;
+    fl_integrall = fl_constrain(fl_integrall, gp_gps_pid->fl_integrall_min, gp_gps_pid->fl_integrall_max);
+    gp_gps_pid->fl_integrall = fl_integrall;
 
+    /* D */
+    fl_differencial = gp_gps_pid->fl_d * (fl_err - gp_gps_pid->fl_old_value);
+    gp_gps_pid->fl_old_value = fl_err;
 
+    /* OUT */
+    gp_gps_pid->fl_out = fl_proportional + fl_integrall + fl_differencial;
+
+    /* Constrain output. */
+    gp_gps_pid->fl_out = fl_constrain(gp_gps_pid->fl_out,gp_gps_pid->fl_out_min,gp_gps_pid->fl_out_max);
+
+    return (be_result);
+}
 
 
 
