@@ -66,7 +66,7 @@ BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data,  uint32_t u32_WP_
 BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number);
 BOARD_ERROR api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, float *fl_course, float *fl_distance);
 
-
+BOARD_ERROR  api_gps_nav_test(void);
 
 
 #endif

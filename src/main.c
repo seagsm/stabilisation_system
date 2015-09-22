@@ -19,49 +19,13 @@ int main( void)
     BOARD_SYSTEM_STATE  bss_state;
     BOARD_ERROR         be_result = BOARD_ERR_OK;
 
-    GPS_POSITION_DATA gpd_wp[5] =   {
-                                        {49.226844f, 16.557175f, 0.0f, 0.0f ,0.0f},
-                                        {49.230229f, 16.553991f, 0.0f, 0.0f ,0.0f},
-                                        {49.232621f, 16.560554f, 0.0f, 0.0f ,0.0f},
-                                        {49.237174f, 16.550213f, 0.0f, 0.0f ,0.0f},
-                                        {49.237821f, 16.558168f, 0.0f, 0.0f ,0.0f},
-                                    };
-
-
-
     v_board_state_set_required_state(BOARD_SYSTEM_INIT);
+    
     /*TODO:
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
-
-    {
-      float fl_course   = 0.0f;
-      float fl_distance = 0.0f;
-
-      int i_old = 0;
-      int i_new = 1;
-
-      while(i_new < 100)
-      {
-
-         /*  dbl_course = (double)f_api_nmea_initial_course(gpd_wp[i_old].fl_latitude, gpd_wp[i_old].fl_longitude, gpd_wp[i_new].fl_latitude, gpd_wp[i_new].fl_longitude);*/
-          api_gps_nav_course_to_target(gpd_wp[i_old], gpd_wp[i_new], &fl_course, &fl_distance);
-          i_old++;
-          i_new++;
-          if(i_old >= 5)
-          {
-              i_old = 0;
-          }
-          if(i_new >= 5)
-          {
-              i_new = 0;
-          }
-
-      }
-   }
-
-
+    
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)

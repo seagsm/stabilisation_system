@@ -594,6 +594,9 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
       GPS_RECEIVER_STATE       grs_nav_state;
       
       GPS_POSITION_DATA        gpd_get_wp_data;
+      float fl_course   = 0.0f;
+      float fl_distance = 0.0f;
+      
       
       float fl_home_heading = 0.0f;
       
@@ -626,17 +629,16 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
                           /* convert UBL nav data to real word float value */
                           api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
                           
+                          /* Get target WP coordinate. */
                           api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */ 
-/*                        
-                          fl_home_heading = f_api_nmea_initial_course (
-                                                                          gpd_gps_data.fl_latitude,gpd_gps_data.fl_longitude,    
-                                                                          gpd_get_wp_data.fl_latitude, gpd_get_wp_data.fl_longitude
-                                                                      ); 
-                          fl_home_heading = f_api_nmea_initial_course (
-                                                                          48.997793f,16.002287f,    
-                                                                          49.0f,16.0f
-                                                                      ); 
-*/                         
+                          
+                          /* Calculate heading and distance to target WP. */
+                          api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
+                          /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
+                          fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
+                          /* temporary, just for test */
+                          api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);  
+                          
                           
                       }
                   }    

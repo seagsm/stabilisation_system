@@ -60,7 +60,21 @@ static void v_api_main_loop_process(void)
     }
     else
     {
+        /* all code here is temporary, before IMU module will be connected. */
 
+        /* UART1 communication. */
+        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
+        be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
+        /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
+        be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
+        /* TODO: function name should be fixed. */
+        /* Read and decode packets from UART1 RX buffer.*/
+        api_cmd_reading_packet();
+      
+      
+      
+        /* GPS, UART3 communication. */
+        
         GPIO_SetBits( GPIOA, GPIO_Pin_12);
         gv_board_sys_tick_fast_delay(50U);
         GPIO_ResetBits( GPIOA, GPIO_Pin_12);

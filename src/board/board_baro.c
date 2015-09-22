@@ -36,9 +36,6 @@ void u32_board_baro_set_filtered_pressure(uint32_t u32_filtered_pressure)
     v_board_drv_bmp085_set_filtered_pressure(u32_filtered_pressure);
 }
 
-
-
-
 /* Function calculate altitude from pressure. */
 int32_t i32_board_baro_get_altitude(void)
 {

@@ -87,3 +87,22 @@ void api_baro_altitude_estimation(void)
     bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID + temp32;
 
 }
+
+int32_t api_baro_get_altitude_estimation(void)
+{
+     return (bp_baro_pid.i32_EstAlt);
+}
+
+void api_baro_set_altitude_estimation(int32_t i32_value)
+{
+    bp_baro_pid.i32_EstAlt = i32_value;
+}
+
+
+
+
+
+
+
+
+
