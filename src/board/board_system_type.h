@@ -74,8 +74,8 @@ typedef enum
     BOARD_ERR_ID        = 7U,
     BOARD_ERR_STATE     = 8U,
     BOARD_ERR_PACKET_OK = 9U,
-    BOARD_ERR_TIMEOUT   = 10U,  
-    BOARD_ERR_OFF       = 11U    
+    BOARD_ERR_TIMEOUT   = 10U,
+    BOARD_ERR_OFF       = 11U
 }   BOARD_ERROR; /* variable tag be_xxx */
 
 typedef enum
@@ -84,7 +84,11 @@ typedef enum
     BOARD_DEV_ON        = 1U
 }   BOARD_DEV_STATE; /* device state */
 
-
+typedef enum
+{
+    BOARD_DATA_NOT_READY    = 0U,
+    BOARD_DATA_READY        = 1U
+}   BOARD_DATA_STATE; /* device state */
 
 
 typedef struct
@@ -125,12 +129,12 @@ typedef struct
 
 typedef struct
 {
-    uint32_t    u32_ttff;
-    uint32_t    u32_msss;
-    uint8_t     u8_gpsFix;
-    uint8_t     u8_flags;
-    uint8_t     u8_fixStat;
-    uint8_t     u8_flags2;
+    uint32_t    u32_ttff;  /* Time to first fix (millisecond time tag) */
+    uint32_t    u32_msss;  /* Milliseconds since Startup / Reset */
+    uint8_t     u8_gpsFix; /* GPSfix Type, 0x03 is "3D FIX OK" */
+    uint8_t     u8_flags;  /* Navigation Status Flags. flag & 0x01 -> 1 in first bit means "GPS FIX OK" */
+    uint8_t     u8_fixStat;/* Fix Status Information */
+    uint8_t     u8_flags2; /* Further information about navigation output */
 } GPS_RECEIVER_STATE;
 
 typedef struct

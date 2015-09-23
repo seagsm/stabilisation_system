@@ -18,7 +18,7 @@
 #define UBL_NAV_VELNED_ID               0x0112U
 #define HOME_WP_INITIALISATION_TIMEOUT  0x02U
 
-typedef enum 
+typedef enum
 {
   PACKET_SYNC0,
   PACKET_SYNC1,
@@ -32,7 +32,7 @@ typedef enum
   PACKET_RECEIVED
 } UBL_STATE;
 
-typedef enum 
+typedef enum
 {
     UART_9600,
     UART_19200,
@@ -55,42 +55,19 @@ typedef struct
 } UBL_ACK_STATE;
 
 
-/*
-typedef struct
-{
-    int32_t     i32_longitude;
-    int32_t     i32_latitude;
-    int32_t     i32_height;
-    uint32_t    u32_speed;
-    int32_t     i32_heading;
-} GPS_NAVIGATION_DATA;
-
-typedef struct
-{
-    uint8_t     u8_gpsFix;
-    uint8_t     u8_flags;
-    uint8_t     u8_fixStat;
-    uint8_t     u8_flags2;
-    uint32_t    u32_ttff;
-    uint32_t    u32_msss;
-} GPS_RECEIVER_STATE;
-*/
-
-
-
-       BOARD_ERROR api_ublox_msg_parcer_init(void); 
+BOARD_ERROR api_ublox_msg_parcer_init(void);
        BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size);
        BOARD_ERROR api_ublox_msg_read_status(void);
        BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx);
-       
-       BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data); 
+
+       BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data);
 static BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data);
-       BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state); 
-       BOARD_ERROR api_ublox_msg_reset_nav_status(void); 
-       
+       BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state);
+       BOARD_ERROR api_ublox_msg_reset_nav_status(void);
+
 /* static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[]); */
-       
-static BOARD_ERROR api_ublox_msg_byte_decode(uint8_t u8_c, uint8_t u8_message[]); 
+
+static BOARD_ERROR api_ublox_msg_byte_decode(uint8_t u8_c, uint8_t u8_message[]);
 static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_length, uint32_t *u32_packet_id);
 static BOARD_ERROR api_ublox_msg_get_message_state(UBL_STATE  *us_state);
 static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE   us_state);
@@ -101,10 +78,10 @@ BOARD_ERROR api_ublox_msg_send_speed(UART_BAUD_RATE ub_baud_rate);
 
 static BOARD_ERROR api_ublox_msg_UART3_TX_copy(uint8_t u8_out[], uint16_t u16_size);
 
-static BOARD_ERROR api_ublox_msg_set_home_wp(GPS_POSITION_DATA gpd_gps_data); 
+static BOARD_ERROR api_ublox_msg_set_home_wp(GPS_POSITION_DATA gpd_gps_data);
 
-
-
+BOARD_ERROR api_ublox_msg_set_gps_data_status(BOARD_DATA_STATE bds_value);
+BOARD_ERROR api_ublox_msg_get_gps_data_status(BOARD_DATA_STATE *bds_value);
 
 
 

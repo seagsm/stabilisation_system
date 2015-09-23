@@ -12,40 +12,66 @@ BOARD_ERROR api_gps_nav_processing(void)
     BOARD_ERROR        be_result = BOARD_ERR_OK;
     BOARD_DEV_STATE    bds_value = BOARD_DEV_OFF;
     GPS_RECEIVER_STATE nav_state;
+    BOARD_DATA_STATE   bds_gps_data_ready_flag;
 
-    /*Get status of GPS device. */
+    /*Get is GPS power ON status. */
     be_board_gps_get_gps_dev_state(&bds_value);
-    
+
     /* If GPS is ON and work. */
     if(bds_value == BOARD_DEV_ON)
-    {   
+    {
         /* Copy received data to UART3 buffer. */
         be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-        
+
         /* Decoding received from GPS data. */
-        be_result = api_ublox_msg_input_decode(USART3); 
-        
-        /* Get GPS navigation stsatus. */
-        api_ublox_msg_get_nav_status(&nav_state);
-        
-        
-        
-        
-            
+        be_result = api_ublox_msg_input_decode(USART3);
+
+        /* Check if new data come from GPS receiver. */
+        api_ublox_msg_get_gps_data_status(&bds_gps_data_ready_flag);
+
+        if(bds_gps_data_ready_flag == BOARD_DATA_READY)
+        {
+            /* Reset DATA READY FLAG. */
+            api_ublox_msg_set_gps_data_status(BOARD_DATA_NOT_READY );
+
+            /* Read fresh navigation data. */
+            api_ublox_msg_get_navigation_data(&gnd_nav_data);
+
+            /* Convert UBL nav data to real word float value. */
+            api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data);
+
+            /* Get target WP coordinate. */
+            api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */
+
+            /* Calculate heading and distance to target WP.
+               Here heading between current course and cource to WP.
+            */
+            api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
+
+            /* It is a place to call GPS PID controller. */
+
+
+            /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
+            fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
+
+            /* temporary, just for test */
+            api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);
+        }
+
         /* Indication of received error. */
         if(be_result != BOARD_ERR_OK)
-        {  
+        {
             be_result = api_led_flash_set_fast_period(400000U);
         }
         else
         {
             be_result = api_led_flash_set_fast_period(100000U);
-        }  
+        }
     }
     else
     {
         be_result = BOARD_ERR_OFF;
-    }  
+    }
     return(be_result);
 }
 
@@ -209,7 +235,7 @@ BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_
 BOARD_ERROR  api_gps_nav_test(void)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
-    
+
     GPS_POSITION_DATA gpd_wp[5] =   {
                                         {49.226844f, 16.557175f, 0.0f, 0.0f ,0.0f},
                                         {49.230229f, 16.553991f, 0.0f, 0.0f ,0.0f},
@@ -237,7 +263,7 @@ BOARD_ERROR  api_gps_nav_test(void)
             i_new = 0;
         }
     }
-    
+
     return(be_result);
 }
 
