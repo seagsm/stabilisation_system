@@ -3,7 +3,7 @@
 /* Linear buffer. */
 static  uint8_t  u8_value_buffer[API_CMD_MAX_SIZE_OF_LINE_BUFFER];
 
-void api_cmd_reading_packet(void)
+static BOARD_ERROR be_api_cmd_reading_packet(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint16_t u16_save_tail_index;
@@ -36,11 +36,11 @@ void api_cmd_reading_packet(void)
         }
     }
 
-   	/* Start read packet data if buffer is not empty and pointed to head of packet. */
-	while(  ( (u16_board_r_buff_USART1_RX_size_buffer_get() > 0U) || (u8_flag == 4U) )  && (u8_flag != 0U))
-	{
-		switch (u8_flag)
-		{
+    /* Start read packet data if buffer is not empty and pointed to head of packet. */
+    while(  ( (u16_board_r_buff_USART1_RX_size_buffer_get() > 0U) || (u8_flag == 4U) )  && (u8_flag != 0U))
+    {
+        switch (u8_flag)
+        {
             case 1: /* Read and check size of data in packet. */
 
                 /* Read size of data in packet. */
@@ -156,7 +156,11 @@ void api_cmd_reading_packet(void)
                 be_result = BOARD_ERR_RANGE;
                 break;
         }
-	}
+    }
+    
+    /* TODO: should be added right error code. */
+    be_result = BOARD_ERR_OK;
+    return (be_result);
 }
 
 /* Function decoding packet and call suitable process function. */
@@ -552,6 +556,21 @@ static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length)
     return(u8_crc);
 }
 
+
+BOARD_ERROR be_api_cmd_communication(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    /* Command communication going through UART1. */
+
+    /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
+    be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
+
+    /* Read and decode packets from UART1 RX buffer.*/
+    be_api_cmd_reading_packet();
+
+    return(be_result);
+}
 
 
 

@@ -8,9 +8,9 @@
 
 #define GPS_TIMEOUT 3000U  /* It is timeout for waiting of the GPS any GPS packet.*/
 
-extern uint32_t u32_flag_GPS_on;
-
 BOARD_ERROR be_board_gps_init(void);
+BOARD_ERROR be_board_gps_get_gps_dev_state(BOARD_DEV_STATE *bds_value);
+static BOARD_ERROR be_board_gps_set_gps_dev_state(BOARD_DEV_STATE bds_value);
 static BOARD_ERROR be_board_UBLOX_gps_init(void);
 static BOARD_ERROR be_board_UBLOX_gps_check(void);
 

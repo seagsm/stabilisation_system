@@ -7,6 +7,52 @@ static GPS_PID gp_gps_dir_pid;
 static GPS_PID gp_gps_alt_pid;
 
 
+BOARD_ERROR api_gps_nav_processing(void)
+{
+    BOARD_ERROR        be_result = BOARD_ERR_OK;
+    BOARD_DEV_STATE    bds_value = BOARD_DEV_OFF;
+    GPS_RECEIVER_STATE nav_state;
+
+    /*Get status of GPS device. */
+    be_board_gps_get_gps_dev_state(&bds_value);
+    
+    /* If GPS is ON and work. */
+    if(bds_value == BOARD_DEV_ON)
+    {   
+        /* Copy received data to UART3 buffer. */
+        be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
+        
+        /* Decoding received from GPS data. */
+        be_result = api_ublox_msg_input_decode(USART3); 
+        
+        /* Get GPS navigation stsatus. */
+        api_ublox_msg_get_nav_status(&nav_state);
+        
+        
+        
+        
+            
+        /* Indication of received error. */
+        if(be_result != BOARD_ERR_OK)
+        {  
+            be_result = api_led_flash_set_fast_period(400000U);
+        }
+        else
+        {
+            be_result = api_led_flash_set_fast_period(100000U);
+        }  
+    }
+    else
+    {
+        be_result = BOARD_ERR_OFF;
+    }  
+    return(be_result);
+}
+
+
+
+
+
 
 /*
     Function set WP to WP array:

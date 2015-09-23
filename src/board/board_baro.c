@@ -1,14 +1,43 @@
 
 
-
 #include "board_baro.h"
+
+static BOARD_DEV_STATE bds_baro_on = BOARD_DEV_OFF;
+
+
+/* Set Baro davice state. Use this function if you need set Baro state. */
+static BOARD_ERROR be_board_baro_set_baro_dev_state(BOARD_DEV_STATE bds_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    bds_baro_on = bds_value;
+    
+    return (be_result);
+}
+
+/* Get Baro davice state. Use this function if you need get Baro state. */
+BOARD_ERROR be_board_baro_get_baro_dev_state(BOARD_DEV_STATE *bds_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    *bds_value = bds_baro_on;
+    
+    return (be_result);
+}
 
 /* Function init baro modyle. */
 BOARD_ERROR be_board_baro_init(void)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;
-
+    BOARD_ERROR     be_result = BOARD_ERR_OK;
+    BOARD_DEV_STATE bds_value = BOARD_DEV_OFF;
+    
     be_result = be_board_drv_bmp085_init();
+    
+    if(be_result == BOARD_ERR_OK)
+    {
+        bds_value = BOARD_DEV_ON;
+    }
+    be_board_baro_set_baro_dev_state(bds_value);
     return (be_result);
 }
 

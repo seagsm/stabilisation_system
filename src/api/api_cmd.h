@@ -12,7 +12,10 @@
 
 #define API_CMD_MAX_SIZE_OF_LINE_BUFFER 32U
 
-void api_cmd_reading_packet(void);
+
+
+       BOARD_ERROR be_api_cmd_communication(void); /* Just start this function to make next loop of communication. */
+static BOARD_ERROR be_api_cmd_reading_packet(void);       
 static BOARD_ERROR be_api_CMD_decoding_packet(void);
 static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id);
 static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id);

@@ -218,7 +218,7 @@ static BOARD_ERROR api_ublox_msg_ck_a_b(uint8_t buff[], uint32_t u32_length, uin
     
     uint32_t i = 0U;
     
-    for (i = 2U; i < (u32_length-2U); i++)
+    for (i = 2U; i < (u32_length - 2U); i++)
     { 
         *CK_A += buff[i]; 
         *CK_B += *CK_A; 
@@ -227,7 +227,7 @@ static BOARD_ERROR api_ublox_msg_ck_a_b(uint8_t buff[], uint32_t u32_length, uin
 }
 
 
-
+/* Get current message decoding state. */
 static BOARD_ERROR api_ublox_msg_get_message_state(UBL_STATE  *us_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -237,6 +237,7 @@ static BOARD_ERROR api_ublox_msg_get_message_state(UBL_STATE  *us_state)
     return (be_result);   
 }
 
+/* Set current message decoding state. */
 static BOARD_ERROR api_ublox_msg_set_message_state(UBL_STATE  us_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -348,6 +349,7 @@ static BOARD_ERROR api_ublox_msg_byte_decode(uint8_t u8_c, uint8_t u8_message[])
     return (be_result);
 }
 
+/* Copy UBL message to UART3 TX buffer. */
 static BOARD_ERROR api_ublox_msg_UART3_TX_copy(uint8_t u8_out[], uint16_t u16_size)
 {       
     BOARD_ERROR be_result    = BOARD_ERR_OK;
@@ -368,7 +370,6 @@ static BOARD_ERROR api_ublox_msg_UART3_TX_copy(uint8_t u8_out[], uint16_t u16_si
     }  
     return (be_result);
 }
-
 
 /* Function send UBLOX packet and wait TIMEOUT for ACK */
 BOARD_ERROR api_ublox_msg_send_speed(UART_BAUD_RATE ub_baud_rate )
@@ -419,16 +420,6 @@ BOARD_ERROR api_ublox_msg_send_speed(UART_BAUD_RATE ub_baud_rate )
 
     return (be_result);
 }
-
-
-
-
-
-
-
-
-
-
 
 /* Function send UBLOX packet and wait TIMEOUT for ACK */
 BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
@@ -502,6 +493,11 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
     return (be_result);
 }
 
+/* 
+    This function using during initialisation and wait before GPS locate satelites. 
+    After GPS fixed position, function save current position to homw WP( WP[0])
+    If  during GPS_FIX_TIMEOUT timeout GPS can not fix position, function return ERROR.
+*/
 BOARD_ERROR api_ublox_msg_read_status(void)
 {
     BOARD_ERROR be_result       = BOARD_ERR_OK;
@@ -581,84 +577,92 @@ BOARD_ERROR api_ublox_msg_read_status(void)
     return(be_result);
 }
 
-
+/* Function decode messages during runtime. */
+/* TODO: check it. */
 BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx) 
 {
-      BOARD_ERROR be_result    = BOARD_ERR_OK;
-      UBL_STATE   us_state     = PACKET_SYNC0; 
-      uint8_t     u8_read_byte = 0U;
-      uint32_t   u32_i         = 0U; 
-      uint32_t   u32_ClassId   = 0U;
-      GPS_NAVIGATION_DATA      gnd_nav_data;
-      GPS_POSITION_DATA        gpd_gps_data;
-      GPS_RECEIVER_STATE       grs_nav_state;
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
+    UBL_STATE   us_state     = PACKET_SYNC0; 
+    uint8_t     u8_read_byte = 0U;
+    uint32_t   u32_i         = 0U; 
+    uint32_t   u32_ClassId   = 0U;
+    GPS_NAVIGATION_DATA      gnd_nav_data;
+    GPS_POSITION_DATA        gpd_gps_data;
+    GPS_RECEIVER_STATE       grs_nav_state;
       
-      GPS_POSITION_DATA        gpd_get_wp_data;
-      float fl_course   = 0.0f;
-      float fl_distance = 0.0f;
+    GPS_POSITION_DATA        gpd_get_wp_data;
       
+    uint8_t u8_flag   = 1U;
       
-      float fl_home_heading = 0.0f;
+    float fl_course   = 0.0f;
+    float fl_distance = 0.0f;
       
-      while(be_result == BOARD_ERR_OK )
-      {
-          /* Read byte from UARTx Rx buffer. Remember, after reading size--, tail++. */
-          be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
-          /* If read OK, try to decode byte from input buffer */
-          if(be_result == BOARD_ERR_OK)
-          {  
-              /* Decode next RX received byte */
-              be_result |= api_ublox_msg_byte_decode(u8_read_byte, u8_ubl_message); 
-              /* Check message decoding status */
-              be_result |= api_ublox_msg_get_message_state(&us_state);
-              /* If message decoding ready, try to parsing it. */
-              if(us_state == PACKET_RECEIVED)
-              {  
-                  be_result = api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
+    float fl_home_heading = 0.0f;
+    
+/* TODO: rewrite while with flag. */     
+/* while(be_result == BOARD_ERR_OK ) */
+    while( u8_flag == 1U )
+    {
+        /* Read byte from UARTx Rx buffer. Remember, after reading size--, tail++. */
+        be_result = be_board_r_buff_USARTx_RX_GET_byte(USARTx, &u8_read_byte);
+        /* If read OK, try to decode byte from input buffer */
+          
+        if(be_result != BOARD_ERR_OK)
+        {  
+            u8_flag = 0U;
+        }
+          
+        if(u8_flag == 1U)
+        {
+            /* Decode next RX received byte */
+            be_result |= api_ublox_msg_byte_decode(u8_read_byte, u8_ubl_message); 
+              
+            /* Check message decoding status */
+            be_result |= api_ublox_msg_get_message_state(&us_state);
+              
+            /* If message decoding ready, try to parsing it. */
+            if(us_state == PACKET_RECEIVED)
+            {  
+                be_result = api_ublox_msg_message_decode(u8_ubl_message, u32_message_length, &u32_ClassId);
                   
-                  /* Calculation of GPS influences */
-                  api_ublox_msg_get_nav_status(&grs_nav_state);
+                /* Calculation of GPS influences */
+                api_ublox_msg_get_nav_status(&grs_nav_state);
                   
-                  if(grs_nav_state.u8_gpsFix == 0x03U)
-                  {  
-                      /* If decoded packet with heading, start calculation of GPS influences */
-                      if(u32_ClassId == UBL_NAV_VELNED_ID) 
-                      {  
-                          /* read fresh navigation data */
-                          api_ublox_msg_get_navigation_data(&gnd_nav_data);
-                          /* convert UBL nav data to real word float value */
-                          api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
+                if(grs_nav_state.u8_gpsFix == 0x03U)
+                {  
+                    /* If decoded packet with heading, start calculation of GPS influences */
+                    if(u32_ClassId == UBL_NAV_VELNED_ID) 
+                    {  
+                        /* Read fresh navigation data. */
+                        api_ublox_msg_get_navigation_data(&gnd_nav_data);
                           
-                          /* Get target WP coordinate. */
-                          api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */ 
+                        /* Convert UBL nav data to real word float value. */
+                        api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data); 
                           
-                          /* Calculate heading and distance to target WP. */
-                          api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
-                          /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
-                          fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
-                          /* temporary, just for test */
-                          api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);  
+                        /* Get target WP coordinate. */
+                        api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */ 
                           
+                        /* Calculate heading and distance to target WP. */
+                        api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
                           
-                      }
-                  }    
-                  
-                  if(be_result != BOARD_ERR_OK)
-                  {
-                      u32_i++ ;
-                  }  
-                  
-              }
-          }
-          else
-          {
-              u32_i++ ;
-          }
-      }
-      return (be_result);
+                        /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
+                        fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
+                          
+                        /* temporary, just for test */
+                        api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);  
+                    }
+                }    
+                if(be_result != BOARD_ERR_OK)
+                {
+                    u32_i++ ;
+                }  
+            }
+        }
+    }
+    return (be_result);
 }
 
-/* Write input position like a home WP. */
+/* Write input position to home WP. */
 static BOARD_ERROR api_ublox_msg_set_home_wp(GPS_POSITION_DATA gpd_gps_data) 
 {
       static uint32_t u32_counter = 0U;

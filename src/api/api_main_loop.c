@@ -4,32 +4,37 @@
 
 static void v_api_main_loop_process(void)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;
     static uint8_t u8_calibration = 0U;
-    GPS_RECEIVER_STATE nav_state;
+    BOARD_DEV_STATE    bds_value;
 
     if(api_i2c_data.u8_ready == 1U)
     {
         /* Convertind data from raw data array to sensors raw data. */
         v_api_data_prepr_sensor_data_preprocessing();
 
-        if(bsc_board_baro_get_state() == CONVERSION_DONE)
-        {
-            /* Calculation of real pressure and real temperature.*/
-            v_board_baro_data_compensation();
+        /* Check if Baro device is ON. */
+        be_board_baro_get_baro_dev_state(&bds_value);
+        if(bds_value == BOARD_DEV_ON)
+        {  
+            /* Check if reading pressure is done. */
+            if(bsc_board_baro_get_state() == CONVERSION_DONE)
+            {
+                /* Calculation of real pressure and real temperature.*/
+                v_board_baro_data_compensation();
 
-            /* Pressure filtration and altitude calculation. */
+                /* Pressure filtration and altitude calculation. */
 
-            /* Filter pressure using MA filter*/
-            u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
+                /* Filter pressure using MA filter*/
+                u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
 
-            /* Altitude estimation and BaroPid output calculation. */
-            api_baro_altitude_estimation();
+                /* Altitude estimation and BaroPid output calculation. */
+                api_baro_altitude_estimation();
 
-            /* Set BARO state machine start state. */
-            be_board_baro_set_state(START_CONVERSION);
+                /* Set BARO state machine start state. */
+                be_board_baro_set_state(START_CONVERSION);
+            }
         }
-
+                
         /* Start data acquisition. */
         be_api_i2c_acquisition_start();
 
@@ -47,65 +52,19 @@ static void v_api_main_loop_process(void)
             /* Start control frame. */
             v_api_main_loop_control_loop();
         }
-
-        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
-        be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-
-        /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
-        be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
-
-        /* TODO: function name should be fixed. */
-        /* Read and decode packets from UART1 RX buffer.*/
-        api_cmd_reading_packet();
-    }
-    else
-    {
-        /* all code here is temporary, before IMU module will be connected. */
-
-        /* UART1 communication. */
-        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
-        be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-        /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
-        be_board_dma_DMA1_CH5_buffer_copy_to_UART1_buffer();
-        /* TODO: function name should be fixed. */
-        /* Read and decode packets from UART1 RX buffer.*/
-        api_cmd_reading_packet();
-      
-      
-      
-        /* GPS, UART3 communication. */
-        
-        GPIO_SetBits( GPIOA, GPIO_Pin_12);
-        gv_board_sys_tick_fast_delay(50U);
-        GPIO_ResetBits( GPIOA, GPIO_Pin_12);
-        /* This is for reading GPS test only. Should be removed. */
-        /* Copy received by UART3 data from DMA1_CH3 buffer to UART3_RX buffer. */
-        
-        /* Check if GPS support is ON. */
-        if(u32_flag_GPS_on)
-        {   
-            /* Copy received data to UART buffer */
-            be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer();
-            /* Decoding received data */
-            be_result = api_ublox_msg_input_decode(USART3); 
-            
-            api_ublox_msg_get_nav_status(&nav_state); 
-            
-            /* Indication of received error. */
-            if(be_result != BOARD_ERR_OK)
-            {  
-                be_result = api_led_flash_set_fast_period(400000U);
-            }
-            else
-            {
-                be_result = api_led_flash_set_fast_period(100000U);
-            }  
-        }        
     }
 
-
+    /* Command communication going through UART1. */
+    be_api_cmd_communication();
     
+    
+    
+
+    GPIO_SetBits( GPIOA, GPIO_Pin_12);
+    gv_board_sys_tick_fast_delay(50U);
+    GPIO_ResetBits( GPIOA, GPIO_Pin_12);
 }
+
 
 /* This function calculate control lool of all system.*/
 static void v_api_main_loop_control_loop(void)

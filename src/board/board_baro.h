@@ -28,4 +28,8 @@ void v_board_baro_data_compensation(void);
 uint32_t u32_board_baro_get_filtered_pressure(void);
 void u32_board_baro_set_filtered_pressure(uint32_t u32_filtered_pressure);
 
+static BOARD_ERROR be_board_baro_set_baro_dev_state(BOARD_DEV_STATE  bds_value);
+BOARD_ERROR be_board_baro_get_baro_dev_state(BOARD_DEV_STATE *bds_value);
+
+
 #endif

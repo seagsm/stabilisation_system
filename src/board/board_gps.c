@@ -1,17 +1,42 @@
 #include "board_gps.h"
 
-uint32_t u32_flag_GPS_on;
+static BOARD_DEV_STATE bds_flag_GPS_on = BOARD_DEV_OFF;
+
+/* Set GPS davice state. Use this function if you need set GPS state. */
+static BOARD_ERROR be_board_gps_set_gps_dev_state(BOARD_DEV_STATE bds_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    bds_flag_GPS_on = bds_value;
+    
+    return (be_result);
+}
+
+/* Get GPS davice state. Use this function if you need get GPS state. */
+BOARD_ERROR be_board_gps_get_gps_dev_state(BOARD_DEV_STATE *bds_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    *bds_value = bds_flag_GPS_on;
+    
+    return (be_result);
+}
 
 /* Init GPS module. */
 BOARD_ERROR be_board_gps_init(void)
 {
-    BOARD_ERROR be_result = BOARD_ERR_OK;
-    
-    /* set GPS flag to off */
-    u32_flag_GPS_on = 1U; 
+    BOARD_ERROR     be_result = BOARD_ERR_OK;
+    BOARD_DEV_STATE bds_value = BOARD_DEV_OFF;
     
     /* Start GPS UBLOX init function */
     be_result = be_board_UBLOX_gps_init();
+    
+    /* Set GPS device state. */
+    if(be_result == BOARD_ERR_OK)
+    {
+        bds_value = BOARD_DEV_ON;  
+    }  
+    be_board_gps_set_gps_dev_state(bds_value);
     
     return(be_result);
 }
@@ -60,7 +85,8 @@ static BOARD_ERROR be_board_UBLOX_gps_check(void)
             if( (c_value == 'A') || (c_value == 'V'))
             {  
                 /* Set flag to 0x01 if GPS module connected. */
-                u32_flag_GPS_on = 1U;
+                /* u32_flag_GPS_on = 1U; */
+                be_board_gps_set_gps_dev_state(BOARD_DEV_ON);
             }    
         }  
     }

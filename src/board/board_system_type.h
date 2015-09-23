@@ -74,8 +74,18 @@ typedef enum
     BOARD_ERR_ID        = 7U,
     BOARD_ERR_STATE     = 8U,
     BOARD_ERR_PACKET_OK = 9U,
-    BOARD_ERR_TIMEOUT   = 10U  
+    BOARD_ERR_TIMEOUT   = 10U,  
+    BOARD_ERR_OFF       = 11U    
 }   BOARD_ERROR; /* variable tag be_xxx */
+
+typedef enum
+{
+    BOARD_DEV_OFF       = 0U,
+    BOARD_DEV_ON        = 1U
+}   BOARD_DEV_STATE; /* device state */
+
+
+
 
 typedef struct
 {
@@ -89,6 +99,73 @@ typedef struct
     uint16_t u16_channel_8_value;
     uint16_t u16_channel_9_value;
 } BOARD_CHANNEL_VALUE;
+
+
+
+
+typedef struct
+{
+    float   fl_latitude;
+    float   fl_longitude;
+    float   fl_height;
+    float   fl_speed;
+    float   fl_heading;
+
+} GPS_POSITION_DATA;
+
+
+typedef struct
+{
+    int32_t     i32_longitude;
+    int32_t     i32_latitude;
+    int32_t     i32_height;
+    uint32_t    u32_speed;
+    int32_t     i32_heading;
+} GPS_NAVIGATION_DATA;
+
+typedef struct
+{
+    uint32_t    u32_ttff;
+    uint32_t    u32_msss;
+    uint8_t     u8_gpsFix;
+    uint8_t     u8_flags;
+    uint8_t     u8_fixStat;
+    uint8_t     u8_flags2;
+} GPS_RECEIVER_STATE;
+
+typedef struct
+{
+    float fl_p;
+    float fl_i;
+    float fl_d;
+    float fl_integrall;
+    float fl_integrall_min;
+    float fl_integrall_max;
+    float fl_old_value;
+    float fl_out;
+    float fl_out_min;
+    float fl_out_max;
+} GPS_PID;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #endif
