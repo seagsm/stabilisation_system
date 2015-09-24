@@ -10,6 +10,7 @@ int32_t i32_head_hold     = 0;
 #if API_END_DEVICE_TRICOPTER
 void api_end_device_update(void)
 {
+     BOARD_CHANNEL_VALUE bc_ch_value;
     /* Motors. */
     int32_t i32_motor[3];
     int32_t i32_throttle;
@@ -35,16 +36,19 @@ void api_end_device_update(void)
     i32_Roll    = pid_api_pid_data[Roll].i32_pid_output;
     i32_Yaw     = pid_api_pid_data[Yaw].i32_pid_output;
 
+    /* Get current frame of PPM channel values. */
+    be_board_ppm_get_channel_value(&bc_ch_value);
+    
     /*
         Threshold of THROTTLE.
         For some condition without it possible problems during start of motors.
     */
-    i32_throttle = (int32_t)bc_channel_value_structure.u16_channel_3_value;
+    i32_throttle = (int32_t)bc_ch_value.u16_channel_3_value;
     float_api_common_variables[0] = (float)i32_throttle;
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* Turn on BaroAltHold. BARO ON/OFF */
-    if( bc_channel_value_structure.u16_channel_5_value <= API_BARO_MODE_ON)
+    if( bc_ch_value.u16_channel_5_value <= API_BARO_MODE_ON)
     {
         if(u8_baro_mode == 0U)
         {
@@ -94,7 +98,7 @@ void api_end_device_update(void)
     }
 
     /* Get current RC YAW channel value. */
-    i32_rc_chanel_yaw_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
+    i32_rc_chanel_yaw_value = (int32_t)bc_ch_value.u16_channel_1_value;
 
     /* Calc aproximation value. */
     i32_rc_chanel_yaw_value = api_rx_channels_approximation(i32_rc_chanel_yaw_value, (int32_t)BOARD_PPM_ZERO_VALUE);
@@ -106,7 +110,7 @@ void api_end_device_update(void)
 #if API_END_DEVICE_HEAD_HOLDING
  /* HEAD HOLDING. */
     /* Check if headhold mode ON. */
-    if( bc_channel_value_structure.u16_channel_6_value <= (uint16_t)API_END_DEVICE_HEAD_HOLD_MODE_ON)
+    if( bc_ch_value.u16_channel_6_value <= (uint16_t)API_END_DEVICE_HEAD_HOLD_MODE_ON)
     {
       if(u8_head_hold_mode == 0U)
       {
@@ -164,6 +168,8 @@ void api_end_device_update(void)
 
 void api_end_device_update(void)
 {
+    BOARD_CHANNEL_VALUE bc_ch_value;
+  
     /* Motors. */
     int32_t i32_motor;
     int32_t i32_throttle;
@@ -199,16 +205,19 @@ void api_end_device_update(void)
     i32_Roll    = pid_api_pid_data[Roll].i32_pid_output;
     i32_Yaw     = pid_api_pid_data[Yaw].i32_pid_output;
 
+    /* Get current frame of PPM channel values. */
+    be_board_ppm_get_channel_value(&bc_ch_value);
+    
     /*
         Threshold of THROTTLE.
         For some condition without it possible problems during start of motors.
     */
-    i32_throttle = (int32_t)bc_channel_value_structure.u16_channel_3_value;
+    i32_throttle = (int32_t)bc_ch_value.u16_channel_3_value;
     float_api_common_variables[0] = (float)i32_throttle;
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* Turn on BaroAltHold. BARO ON/OFF */
-    if( bc_channel_value_structure.u16_channel_5_value <= API_BARO_MODE_ON)
+    if( bc_ch_value.u16_channel_5_value <= API_BARO_MODE_ON)
     {
         if(u8_baro_mode == 0U)
         {
@@ -244,7 +253,7 @@ void api_end_device_update(void)
     if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
     {
         /* Convert RC Pitch channel value to int32. */
-        i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_2_value;      /* value between 1000 - 2000  */
+        i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_2_value;      /* value between 1000 - 2000  */
         /* Get deviation from ZERO value. */
         i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
         /* Set value of Pitch servos. */
@@ -252,7 +261,7 @@ void api_end_device_update(void)
         i32_servo_backward  = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_value;
 
         /* Get current value of Roll RC channel. */
-        i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_4_value;
+        i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_4_value;
         i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
         /* Set value of Roll servos. */
         i32_servo_left      = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_value;
@@ -273,7 +282,7 @@ void api_end_device_update(void)
 
 
     /* Get current RC YAW channel value. */
-    i32_rc_chanel_yaw_value = (int32_t)bc_channel_value_structure.u16_channel_1_value;
+    i32_rc_chanel_yaw_value = (int32_t)bc_ch_value.u16_channel_1_value;
 
     /* Calc aproximation value. */
     i32_rc_chanel_yaw_value = api_rx_channels_approximation(i32_rc_chanel_yaw_value, (int32_t)BOARD_PPM_ZERO_VALUE);
@@ -285,7 +294,7 @@ void api_end_device_update(void)
 #if API_END_DEVICE_HEAD_HOLDING
  /* HEAD HOLDING. */
     /* Check if headhold mode ON. */
-    if( bc_channel_value_structure.u16_channel_6_value <= (uint16_t)API_END_DEVICE_HEAD_HOLD_MODE_ON)
+    if( bc_ch_value.u16_channel_6_value <= (uint16_t)API_END_DEVICE_HEAD_HOLD_MODE_ON)
     {
       if(u8_head_hold_mode == 0U)
       {

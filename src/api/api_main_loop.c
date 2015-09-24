@@ -57,8 +57,7 @@ static void v_api_main_loop_process(void)
     /* Command communication going through UART1. */
     be_api_cmd_communication();
     
-    
-    
+    api_gps_nav_processing();
 
     GPIO_SetBits( GPIOA, GPIO_Pin_12);
     gv_board_sys_tick_fast_delay(50U);
@@ -76,7 +75,7 @@ static void v_api_main_loop_control_loop(void)
 
     if(be_result == BOARD_ERR_OK)
     {
-        /* Call  calculation of next frame of PDF. It body angles. */
+        /* Call  calculation of next frame of PDF. That are body angles. */
         api_pid_update_frame();
 
         /* Call motor and servo control. It use data from previous step. */

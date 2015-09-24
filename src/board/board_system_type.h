@@ -104,7 +104,7 @@ typedef struct
     uint16_t u16_channel_9_value;
 } BOARD_CHANNEL_VALUE;
 
-
+#define MAX_CHANNEL_NUMBER      9U
 
 
 typedef struct
@@ -149,7 +149,7 @@ typedef struct
     float fl_out;
     float fl_out_min;
     float fl_out_max;
-} GPS_PID;
+} COURCE_PID;
 
 
 

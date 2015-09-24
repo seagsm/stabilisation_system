@@ -28,6 +28,9 @@ BOARD_ERROR be_board_gps_init(void)
     BOARD_ERROR     be_result = BOARD_ERR_OK;
     BOARD_DEV_STATE bds_value = BOARD_DEV_OFF;
     
+    /* Initialisation of navigation subsystem. */
+    be_result = api_gps_nav_initialisation();
+    
     /* Start GPS UBLOX init function */
     be_result = be_board_UBLOX_gps_init();
     

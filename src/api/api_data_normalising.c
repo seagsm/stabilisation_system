@@ -12,7 +12,6 @@ static BOARD_FLOAT_3X_DATA b_float3d_api_data_norm_magn_data;
 /* static float f_gyro_rate = ( 500.0 *((float)(BOARD_DRV_GYRO_RATE >> 4) - 11.0))/(65536.0); */
 static float f_gyro_rate = 0.00875f * (float)( 1U << ((BOARD_DRV_GYRO_RATE >> 4) - 12U));
 
-
 /* This function calculating a gyro data bias for all three axes.  */
 uint8_t v_api_data_normalising_gyro_calibration(void)
 {

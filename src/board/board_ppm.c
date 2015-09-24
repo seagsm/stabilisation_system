@@ -3,6 +3,24 @@
 
 BOARD_CHANNEL_VALUE bc_channel_value_structure;
 
+
+BOARD_ERROR be_board_ppm_get_channel_value(BOARD_CHANNEL_VALUE *bc_ch_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    
+    bc_ch_value->u16_channel_1_value = bc_channel_value_structure.u16_channel_1_value;
+    bc_ch_value->u16_channel_2_value = bc_channel_value_structure.u16_channel_2_value;
+    bc_ch_value->u16_channel_3_value = bc_channel_value_structure.u16_channel_3_value;
+    bc_ch_value->u16_channel_4_value = bc_channel_value_structure.u16_channel_4_value;
+    bc_ch_value->u16_channel_5_value = bc_channel_value_structure.u16_channel_5_value;
+    bc_ch_value->u16_channel_6_value = bc_channel_value_structure.u16_channel_6_value;
+    bc_ch_value->u16_channel_7_value = bc_channel_value_structure.u16_channel_7_value;
+    bc_ch_value->u16_channel_8_value = bc_channel_value_structure.u16_channel_8_value;
+    bc_ch_value->u16_channel_9_value = bc_channel_value_structure.u16_channel_9_value;
+
+    return(be_result);
+}
+
 /* This function initialise PPM capture module. */
 BOARD_ERROR be_board_ppm_init(void)
 {

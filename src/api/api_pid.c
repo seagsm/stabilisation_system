@@ -145,6 +145,7 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
 /* Function calculate PDF values for all three channels. */
 void api_pid_update_frame(void)
 {
+    BOARD_CHANNEL_VALUE bc_ch_value;
     int32_t i32_rc_chanel_value;
     int32_t i32_body_angle;
     float f_body_angle;
@@ -153,12 +154,16 @@ void api_pid_update_frame(void)
 
     /* Calculation of Pitch PDF frame. */
 
+    
+    /* Get channel value from PPM structure. */
+    be_board_ppm_get_channel_value(&bc_ch_value);
     /* Convert RC Pitch channel value to int32. */
-    i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_2_value;      /* value between 1000 - 2000  */
+    i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_2_value;      /* value between 1000 - 2000  */
 
     /* Get deviation from ZERO value. */
     i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
 
+    /* PITCH */
     /* Get body Pitch angle. Convert body inclination from degree to 0.1 degree. ( 10degree = 100(0.1degree)). */
     f_body_angle        = fl_api_body_angle_wind_angles[Pitch] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;        /* value between -1800 + 1800 */
@@ -170,9 +175,10 @@ void api_pid_update_frame(void)
     /* update Pitch frame. */
     api_pid_update_PDF( &pid_api_pid_data[Pitch], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed);
 
+    /* ROLL */
     /* Calculation of Roll PDF frame. */
     /* Get current value of Roll RC channel. */
-    i32_rc_chanel_value = (int32_t)bc_channel_value_structure.u16_channel_4_value;
+    i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_4_value;
     i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE);
 
     /* Get body Roll angle. */
@@ -186,8 +192,8 @@ void api_pid_update_frame(void)
     /* update Roll frame. */
     api_pid_update_PDF( &pid_api_pid_data[Roll], i32_rc_chanel_value, i32_body_angle, i32_body_angle_speed);
 
+    /* YAW */
     /* Calculation of Yaw PDF frame. */
-
     /* Get current body angle. */
     f_body_angle        = fl_api_body_angle_wind_angles[Yaw] * 10.0f;
     i32_body_angle      = (int32_t)f_body_angle;

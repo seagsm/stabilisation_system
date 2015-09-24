@@ -3,9 +3,17 @@
 
 static GPS_POSITION_DATA gpd_gps_WP_position[GPS_MAX_WP_VALUE];
 
-static GPS_PID gp_gps_dir_pid;
-static GPS_PID gp_gps_alt_pid;
+static COURCE_PID cp_gps_dir_pid;
+static COURCE_PID cp_gps_alt_pid;
 
+BOARD_ERROR api_gps_nav_initialisation(void)
+{
+    BOARD_ERROR         be_result = BOARD_ERR_OK;
+
+    be_result = api_gps_nav_COURCE_pid_initialisation();
+    
+    return(be_result);
+}
 
 BOARD_ERROR api_gps_nav_processing(void)
 {
@@ -15,7 +23,8 @@ BOARD_ERROR api_gps_nav_processing(void)
     GPS_POSITION_DATA   gpd_gps_data;
     GPS_POSITION_DATA   gpd_get_wp_data;
     BOARD_DATA_STATE    bds_gps_data_ready_flag;
-
+    COURCE_PID          cp_pid_value;
+    
     float fl_course     = 0.0f;
     float fl_distance   = 0.0f;
     
@@ -68,8 +77,12 @@ BOARD_ERROR api_gps_nav_processing(void)
             }  
 
             /* It is a place to call GPS PID controller with turn angle as input parameter. */
-
-            
+            /* Get COURCE PID value. */
+            api_gps_nav_get_COURCE_pid_parameters(&cp_pid_value);
+            /* Update PID frame. */
+            api_gps_nav_pid(fl_course, &cp_pid_value);
+            /* Set COURCE PID value. */  
+            api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
             
 
             /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
@@ -123,7 +136,7 @@ BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_n
 /*
     Function gett WP[x] from WP array.
 */
-BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number)
+static BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t u32_WP_number)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
@@ -172,7 +185,7 @@ BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, G
     float            *fl_course      - heading to destination.
     float            *fl_distance    - distance between two WPs.
 */
-BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, float *fl_course, float *fl_distance)
+static BOARD_ERROR api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_POSITION_DATA gpd_target_wp, float *fl_course, float *fl_distance)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
@@ -286,55 +299,105 @@ BOARD_ERROR  api_gps_nav_test(void)
     return(be_result);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-u(t) = P(t) + I(t) + D(t)
-P(t) = Cp * e(t)
-I(t) = I(t – T) + Ci * e(t)
-D(t) = Cd * ( e(t) – e(t-T) )
-Cp, Ci, Cd – coefficients of PID controller.
-T - period of PID controller.
-
+/*  
+    NAVIGATION PID CONTROLLER :
+    u(t) = P(t) + I(t) + D(t)
+    P(t) = Cp * e(t)
+    I(t) = I(t – T) + Ci * e(t)
+    D(t) = Cd * ( e(t) – e(t-T) )
+    Cp, Ci, Cd – coefficients of PID controller.
+    T - period of PID controller.
 */
+static BOARD_ERROR api_gps_nav_COURCE_pid_initialisation(void)
+{
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
+    
+    COURCE_PID cp_pid_value;
+    
+    /* Set start value for direction PID controller. */
+    /* P */
+    cp_pid_value.fl_p = 2.0f;
+    /* I */
+    cp_pid_value.fl_i = 0.001f;
+    cp_pid_value.fl_integrall = 0.0f;
+    cp_pid_value.fl_integrall_max =  10.0f;
+    cp_pid_value.fl_integrall_min = -10.0f;
+    
+    /* D */
+    cp_pid_value.fl_d = 0.5f;
+    cp_pid_value.fl_old_value = 0.0f;
 
+    /* Output. */
+    cp_pid_value.fl_out       =  0.0f; /* degree */
+    cp_pid_value.fl_out_max   =  30.0f; /* degree */
+    cp_pid_value.fl_out_min   = -30.0f; /* degree */
 
-BOARD_ERROR  api_gps_nav_pid_initialisation(void)
+    be_result = api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
+   
+    return (be_result);
+}
+
+/* Set COURCE PID controller parameters. */
+static BOARD_ERROR  api_gps_nav_set_COURCE_pid_parameters(COURCE_PID cp_value)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
-    /* Set start value for direction PID controller. */
-    gp_gps_dir_pid.fl_p = 2.0f;
-    gp_gps_dir_pid.fl_d = 0.5f;
-    gp_gps_dir_pid.fl_i = 0.001f;
+    /* Set new value to COURCE PID . */
+    /* P */
+    cp_gps_dir_pid.fl_p = cp_value.fl_p;
+    /* I */
+    cp_gps_dir_pid.fl_i = cp_value.fl_i;
+    cp_gps_dir_pid.fl_integrall     = cp_value.fl_integrall;
+    cp_gps_dir_pid.fl_integrall_max = cp_value.fl_integrall_max;
+    cp_gps_dir_pid.fl_integrall_min = cp_value.fl_integrall_min;
+    /* D */
+    cp_gps_dir_pid.fl_d = cp_value.fl_d;
+    cp_gps_dir_pid.fl_old_value = cp_value.fl_old_value;
 
-    gp_gps_dir_pid.fl_integrall = 0.0f;
-    gp_gps_dir_pid.fl_integrall_max =  10.0f;
-    gp_gps_dir_pid.fl_integrall_min = -10.0f;
-
-    gp_gps_dir_pid.fl_old_value = 0.0f;
-
-    gp_gps_dir_pid.fl_out_max   =  30.0f; /* degree */
-    gp_gps_dir_pid.fl_out_max   = -30.0f; /* degree */
+    /* Output. */
+    cp_gps_dir_pid.fl_out = cp_value.fl_out;
+    cp_gps_dir_pid.fl_out_max = cp_value.fl_out_max;
+    cp_gps_dir_pid.fl_out_min = cp_value.fl_out_min;
 
     return (be_result);
 }
 
+/* Get COURCE PID controller parameters. */
+static BOARD_ERROR api_gps_nav_get_COURCE_pid_parameters(COURCE_PID *cp_value)
+{
+    BOARD_ERROR be_result    = BOARD_ERR_OK;
 
-BOARD_ERROR  api_gps_nav_pid(float fl_err, GPS_PID *gp_gps_pid)
+    /* Get current value of GPS PID . */
+
+    /* P */
+    cp_value->fl_p = cp_gps_dir_pid.fl_p;
+    
+    /* I */
+    cp_value->fl_i = cp_gps_dir_pid.fl_i;
+    cp_value->fl_integrall     = cp_gps_dir_pid.fl_integrall;
+    cp_value->fl_integrall_max = cp_gps_dir_pid.fl_integrall_max;
+    cp_value->fl_integrall_min = cp_gps_dir_pid.fl_integrall_min;
+    
+    /* D */
+    cp_value->fl_d = cp_gps_dir_pid.fl_d;
+    cp_value->fl_old_value     = cp_gps_dir_pid.fl_old_value;
+
+    /* Output. */
+    cp_value->fl_out           = cp_gps_dir_pid.fl_out;
+    cp_value->fl_out_max       = cp_gps_dir_pid.fl_out_max;
+    cp_value->fl_out_min       = cp_gps_dir_pid.fl_out_min;
+    
+    return (be_result);
+}
+
+/* 
+    Update PID controller frame. It can be used for COURCE and for ALTITUDE.
+    Input:
+        float fl_err        - error angle in degree. 
+        GPS_PID *gp_gps_pid - pointer to PID controller structure.
+    Output is PID state saved to PID structure.
+*/
+static BOARD_ERROR api_gps_nav_pid(float fl_err, COURCE_PID *cp_gps_pid)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
@@ -342,22 +405,31 @@ BOARD_ERROR  api_gps_nav_pid(float fl_err, GPS_PID *gp_gps_pid)
     float fl_integrall    = 0.0f;
     float fl_differencial = 0.0f;
     /* P */
-    fl_proportional = gp_gps_pid->fl_p * fl_err;
+    fl_proportional = cp_gps_pid->fl_p * fl_err;
 
     /* I */
-    fl_integrall = gp_gps_pid->fl_integrall + gp_gps_pid->fl_i * fl_err;
-    fl_integrall = fl_constrain(fl_integrall, gp_gps_pid->fl_integrall_min, gp_gps_pid->fl_integrall_max);
-    gp_gps_pid->fl_integrall = fl_integrall;
+    /* Calculation of integrall. */
+    fl_integrall = cp_gps_pid->fl_integrall + cp_gps_pid->fl_i * fl_err;
+
+    /* Constrain integrall value. */
+    fl_integrall = fl_constrain(fl_integrall, cp_gps_pid->fl_integrall_min, cp_gps_pid->fl_integrall_max);
+
+    /* Save new integrall value to PID structure*/
+    cp_gps_pid->fl_integrall = fl_integrall;
 
     /* D */
-    fl_differencial = gp_gps_pid->fl_d * (fl_err - gp_gps_pid->fl_old_value);
-    gp_gps_pid->fl_old_value = fl_err;
+    /* Calculation of differential component. */
+    fl_differencial = cp_gps_pid->fl_d * (fl_err - cp_gps_pid->fl_old_value);
 
-    /* OUT */
-    gp_gps_pid->fl_out = fl_proportional + fl_integrall + fl_differencial;
+    /* Save current error angle value to PID structure. */
+    cp_gps_pid->fl_old_value = fl_err;
 
-    /* Constrain output. */
-    gp_gps_pid->fl_out = fl_constrain(gp_gps_pid->fl_out,gp_gps_pid->fl_out_min,gp_gps_pid->fl_out_max);
+    /* Output. */
+    /* Calculation of output. */
+    cp_gps_pid->fl_out = fl_proportional + fl_integrall + fl_differencial;
+
+    /* Constrain output value and save it to PID structure. */
+    cp_gps_pid->fl_out = fl_constrain(cp_gps_pid->fl_out, cp_gps_pid->fl_out_min, cp_gps_pid->fl_out_max);
 
     return (be_result);
 }
