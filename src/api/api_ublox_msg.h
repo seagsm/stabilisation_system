@@ -61,8 +61,8 @@ BOARD_ERROR api_ublox_msg_parcer_init(void);
        BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx);
 
        BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data);
-static BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data);
-       BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state);
+       BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data);
+static BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state);
        BOARD_ERROR api_ublox_msg_reset_nav_status(void);
 
 /* static BOARD_ERROR api_ublox_msg_decode(char c, uint8_t u8_message[]); */

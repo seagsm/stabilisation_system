@@ -9,11 +9,16 @@ static GPS_PID gp_gps_alt_pid;
 
 BOARD_ERROR api_gps_nav_processing(void)
 {
-    BOARD_ERROR        be_result = BOARD_ERR_OK;
-    BOARD_DEV_STATE    bds_value = BOARD_DEV_OFF;
-    GPS_RECEIVER_STATE nav_state;
-    BOARD_DATA_STATE   bds_gps_data_ready_flag;
+    BOARD_ERROR         be_result = BOARD_ERR_OK;
+    BOARD_DEV_STATE     bds_value = BOARD_DEV_OFF;
+    GPS_NAVIGATION_DATA gnd_nav_data;
+    GPS_POSITION_DATA   gpd_gps_data;
+    GPS_POSITION_DATA   gpd_get_wp_data;
+    BOARD_DATA_STATE    bds_gps_data_ready_flag;
 
+    float fl_course     = 0.0f;
+    float fl_distance   = 0.0f;
+    
     /*Get is GPS power ON status. */
     be_board_gps_get_gps_dev_state(&bds_value);
 

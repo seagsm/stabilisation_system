@@ -40,7 +40,7 @@ BOARD_ERROR api_ublox_msg_set_gps_data_status(BOARD_DATA_STATE bds_value)
 
 
 
-BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state)
+static BOARD_ERROR api_ublox_msg_get_nav_status(GPS_RECEIVER_STATE *nav_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -81,7 +81,7 @@ BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data)
     return (be_result);
 }
 
-static BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data)
+BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -608,16 +608,8 @@ BOARD_ERROR api_ublox_msg_input_decode(USART_TypeDef*  USARTx)
     uint8_t     u8_read_byte = 0U;
     uint32_t   u32_i         = 0U;
     uint32_t   u32_ClassId   = 0U;
-    GPS_NAVIGATION_DATA      gnd_nav_data;
-    GPS_POSITION_DATA        gpd_gps_data;
     GPS_RECEIVER_STATE       grs_nav_state;
-
-    GPS_POSITION_DATA        gpd_get_wp_data;
-
     uint8_t u8_flag   = 1U;
-
-    float fl_course   = 0.0f;
-    float fl_distance = 0.0f;
 
     /* Read buffer byte-by-byte. */
     while( u8_flag == 1U )
