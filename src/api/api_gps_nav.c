@@ -48,13 +48,29 @@ BOARD_ERROR api_gps_nav_processing(void)
             /* Get target WP coordinate. */
             api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */
 
-            /* Calculate heading and distance to target WP.
-               Here heading between current course and cource to WP.
+            /* 
+                Calculate cource and distance from current position to target WP.
             */
             api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
+            
+            /* 
+                Convert absolute cource to turn angle relatively heading cource. 
+                ( + is CW, - is CCW direction.)
+            */
+            fl_course = fl_course - gpd_gps_data.fl_heading;
+            if(fl_course < -180.0f)
+            {
+                fl_course = fl_course + 360.0f;
+            }  
+            if(fl_course > 180.0f)
+            {
+                fl_course = fl_course - 360.0f;
+            }  
 
-            /* It is a place to call GPS PID controller. */
+            /* It is a place to call GPS PID controller with turn angle as input parameter. */
 
+            
+            
 
             /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
             fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
@@ -79,11 +95,6 @@ BOARD_ERROR api_gps_nav_processing(void)
     }
     return(be_result);
 }
-
-
-
-
-
 
 /*
     Function set WP to WP array:
@@ -236,17 +247,20 @@ BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp, GPS_
     return(be_result);
 }
 
-
+/* 
+    This function using for testing HEADING calculation algorithm. 
+   
+*/
 BOARD_ERROR  api_gps_nav_test(void)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
     GPS_POSITION_DATA gpd_wp[5] =   {
-                                        {49.226844f, 16.557175f, 0.0f, 0.0f ,0.0f},
-                                        {49.230229f, 16.553991f, 0.0f, 0.0f ,0.0f},
-                                        {49.232621f, 16.560554f, 0.0f, 0.0f ,0.0f},
-                                        {49.237174f, 16.550213f, 0.0f, 0.0f ,0.0f},
-                                        {49.237821f, 16.558168f, 0.0f, 0.0f ,0.0f},
+                                        {49.226844f, 16.557175f, 0.0f, 0.0f ,0.0f}, /* WP0->WP1 328.4402°      442m  */
+                                        {49.230229f, 16.553991f, 0.0f, 0.0f ,0.0f}, /* WP1->WP2 60.8299°       547m  */
+                                        {49.232621f, 16.560554f, 0.0f, 0.0f ,0.0f}, /* WP2->WP3 303.9954°      908m  */
+                                        {49.237174f, 16.550213f, 0.0f, 0.0f ,0.0f}, /* WP3->WP4 82.8964°       584m  */
+                                        {49.237821f, 16.558168f, 0.0f, 0.0f ,0.0f}, /* WP4->WP0 183.3810°      1223m */
                                     };
     float fl_course   = 0.0f;
     float fl_distance = 0.0f;
