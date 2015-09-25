@@ -10,30 +10,31 @@
 #include "api_common.h"
 #include "api_baro.h"
 
-#define API_END_DEVICE_MIN_THROTTLE      1200   /* Minimum stabilisation throuttle value. */
-
-#define API_END_DEVICE_HEAD_HOLD_MODE_ON 1370   /* If CH value is less, HEAD_HOLD mode is ON. If CH is changed, value should be fitted. */
-
-#define API_END_DEVICE_HEAD_HOLD_P_PID     20   /* HEAD_HOLD P_GAIN value. */
-
-#define API_END_DEVICE_HEAD_HOLDING         1   /* On/Off head holding mode. */
-
+#include "api_end_tricopter.h"
+#include "api_end_saucer.h"
+#include "api_end_aero.h"
 
 #if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
     #define API_END_DEVICE_TRICOPTER            1   /* define TRICOPTER mode. */
     #define API_END_DEVICE_FLIGHT_SAURCER       0   /* define SAUCER mode. */
+    #define API_END_DEVICE_AERO_0               0   /* define AEROPLANE 0 mode. */
 #endif
 
 #if BOARD_SYSTEM_CONFIG_FLIGHT_SAURCER_MODE
     #define API_END_DEVICE_TRICOPTER            0  /* define TRICOPTER mode. */
     #define API_END_DEVICE_FLIGHT_SAURCER       1   /* define SAUCER mode. */
+    #define API_END_DEVICE_AERO_0               0   /* define AEROPLANE 0 mode. */
 #endif
 
-extern int32_t i32_head_hold;
+#if BOARD_SYSTEM_CONFIG_AERO_0_MODE
+    #define API_END_DEVICE_TRICOPTER            0  /* define TRICOPTER mode. */
+    #define API_END_DEVICE_FLIGHT_SAURCER       0   /* define SAUCER mode. */
+    #define API_END_DEVICE_AERO_0               1   /* define AEROPLANE 0 mode. */
+#endif
 
-void api_end_device_update(void);
 
-
+   void api_end_device_update(void);
+int32_t api_end_device_get_head_hold(void);
 
 
 

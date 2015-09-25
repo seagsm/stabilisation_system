@@ -63,7 +63,7 @@ BOARD_ERROR api_gps_nav_processing(void)
             api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
             
             /* 
-                Convert absolute cource to turn angle relatively heading cource. 
+                Convert absolute cource to turn-angle relatively heading cource. 
                 ( + is CW, - is CCW direction.)
             */
             fl_course = fl_course - gpd_gps_data.fl_heading;

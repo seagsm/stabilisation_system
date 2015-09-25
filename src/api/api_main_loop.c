@@ -73,6 +73,12 @@ static void v_api_main_loop_control_loop(void)
     /* Get body wind angle in degree. */
     be_result = be_api_body_angle_calculation();
 
+    /* Here should be added code for navigation. 
+    ...
+    */
+    
+    
+    
     if(be_result == BOARD_ERR_OK)
     {
         /* Call  calculation of next frame of PDF. That are body angles. */

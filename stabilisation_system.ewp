@@ -1964,10 +1964,28 @@
         <name>$PROJ_DIR$\src\api\api_data_preprocessing.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_end_aero.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_aero.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_end_device.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_end_device.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_saucer.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_saucer.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_tricopter.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_tricopter.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\api\api_filters.c</name>

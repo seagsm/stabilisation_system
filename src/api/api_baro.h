@@ -29,10 +29,8 @@ typedef struct
 
 extern BARO_PID  bp_baro_pid;
 
-void     api_baro_PID_init(void); 
-void     api_baro_altitude_estimation(void);
-int32_t  api_baro_get_altitude_estimation(void);
-void     api_baro_set_altitude_estimation(int32_t i32_value);
-
-
+       void  api_baro_PID_init(void); 
+       void  api_baro_altitude_estimation(void);
+    int32_t  api_baro_get_altitude_estimation(void);
+       void  api_baro_set_altitude_estimation(int32_t i32_value);
 #endif

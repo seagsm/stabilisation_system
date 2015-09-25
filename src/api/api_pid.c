@@ -151,6 +151,7 @@ void api_pid_update_frame(void)
     float f_body_angle;
     int32_t i32_body_angle_speed;
     float f_body_angle_speed;
+    int32_t i32_head_hold = 0;
 
     /* Calculation of Pitch PDF frame. */
 
@@ -204,5 +205,6 @@ void api_pid_update_frame(void)
 
     /* update Yaw frame. */
     /*  (i32_head_hold * 10) / 2 is set point. It is strange, but it is for compatibility. */
+    i32_head_hold = api_end_device_get_head_hold();
     api_pid_update_PDF( &pid_api_pid_data[Yaw], (i32_head_hold * 10) / 2, i32_body_angle, i32_body_angle_speed);
 }
