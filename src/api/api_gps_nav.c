@@ -85,11 +85,14 @@ BOARD_ERROR api_gps_nav_processing(void)
             api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
             
 
+#if 0 /* test only */            
             /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
             fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
 
             /* temporary, just for test */
             api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);
+#endif            
+            
         }
 
         /* Indication of received error. */
@@ -106,6 +109,37 @@ BOARD_ERROR api_gps_nav_processing(void)
     {
         be_result = BOARD_ERR_OFF;
     }
+    return(be_result);
+}
+
+/* It add PID output to Roll wing angle to provide airplane course changing. */
+BOARD_ERROR api_gps_nav_set_navigation_influence(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    COURCE_PID  cp_value;
+    float fl_value;
+    BOARD_DATA_STATE bds_gps_data_ready_flag;
+    
+    /* 
+        Get gps data ready flag. 
+    */
+    api_ublox_msg_get_gps_data_status(&bds_gps_data_ready_flag);
+
+    if(bds_gps_data_ready_flag == BOARD_DATA_READY)
+    {
+        /* Get current COURSE PID output */
+        api_gps_nav_get_COURCE_pid_parameters(&cp_value);
+    
+        /* Get current Roll value from body WING ANGLE. */
+        be_result |= be_api_body_get_angle_calculation(&fl_value, Roll);
+    
+        /* Add COURSE PID output error */
+        fl_value = fl_value + cp_value.fl_out; 
+    
+        /* Set Roll value to body WING ANGLE. */
+        be_result |= be_api_body_set_angle_calculation(fl_value, Roll);
+    }
+    
     return(be_result);
 }
 

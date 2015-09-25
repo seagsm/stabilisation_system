@@ -26,5 +26,6 @@ static BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_w
        BOARD_ERROR  api_gps_nav_test(void);
 
        BOARD_ERROR  api_gps_nav_processing(void);
+       BOARD_ERROR  api_gps_nav_set_navigation_influence(void);
 
 #endif

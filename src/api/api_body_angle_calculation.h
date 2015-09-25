@@ -13,7 +13,9 @@ extern  float fl_api_body_angle_quaternion[4];
 extern  float fl_api_body_angle_wind_angles[3];
 extern  float fl_api_body_angle_sample_period;
 
-BOARD_ERROR be_api_body_angle_calculation(void);
-static BOARD_ERROR be_api_body_angle_QuaternionToWindAngles(void);
+        BOARD_ERROR be_api_body_angle_calculation(void);
+        BOARD_ERROR be_api_body_get_angle_calculation(float *fl_angle, uint8_t u8_index);
+        BOARD_ERROR be_api_body_set_angle_calculation(float  fl_angle, uint8_t u8_index);
+static  BOARD_ERROR be_api_body_angle_QuaternionToWindAngles(void);
 
 #endif

@@ -69,16 +69,24 @@ static void v_api_main_loop_process(void)
 static void v_api_main_loop_control_loop(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-
+    BOARD_CHANNEL_VALUE bc_ch_value;
+    
     /* Get body wind angle in degree. */
     be_result = be_api_body_angle_calculation();
 
     /* Here should be added code for navigation. 
     ...
     */
+    /* Check ON/OFF channel.*/
+    be_board_ppm_get_channel_value(&bc_ch_value);
+    /* If navigation is ON, add navigation influence. */
+    if( bc_ch_value.u16_channel_5_value > API_BARO_MODE_ON)
+    {
+        api_gps_nav_set_navigation_influence();
+    }
     
-    
-    
+
+    /* Here calculating PIDs for compensating influences and update DEVICE. */    
     if(be_result == BOARD_ERR_OK)
     {
         /* Call  calculation of next frame of PDF. That are body angles. */

@@ -7,6 +7,40 @@
 
 static  float fl_api_body_angle_old_time;
 
+
+/* Function return current wing angle. */
+BOARD_ERROR be_api_body_get_angle_calculation(float *fl_angle, uint8_t u8_index)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    if(u8_index >= 3U)
+    {
+        be_result = BOARD_ERR_ERROR;
+        *fl_angle = 0.0f;
+    }
+    else
+    {
+        *fl_angle = fl_api_body_angle_wind_angles[u8_index];
+    }  
+    return(be_result);
+}
+
+/* Function set value of current wing angle. */
+BOARD_ERROR be_api_body_set_angle_calculation(float fl_angle, uint8_t u8_index)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    if(u8_index >= 3U)
+    {
+        be_result = BOARD_ERR_ERROR;
+    }
+    else
+    {
+        fl_api_body_angle_wind_angles[u8_index] = fl_angle;
+    }  
+    return(be_result);
+}
+
 /* This function calculate body quaternion. */
 BOARD_ERROR be_api_body_angle_calculation(void)
 {
@@ -82,20 +116,29 @@ static BOARD_ERROR be_api_body_angle_QuaternionToWindAngles(void)
     float q1 = fl_api_body_angle_quaternion[1];
     float q2 = fl_api_body_angle_quaternion[2];
     float q3 = fl_api_body_angle_quaternion[3];  /* short name local variable for readability. */
-    float fl_a, fl_b;
+    float fl_a     = 0.0f;
+    float fl_b     = 0.0f;
+    float fl_value = 0.0f;
 
     /* TODO: should be added dividing by zero controls. */
     /* Mu angle. */
     fl_a = 2.0f * (q2 * q3 + q0 * q1);
     fl_b = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3;
-    fl_api_body_angle_wind_angles[0] = rad2deg((float)atan2((double)fl_a,(double)fl_b));
+    /* fl_api_body_angle_wind_angles[0] = rad2deg((float)atan2((double)fl_a,(double)fl_b)); */
+    fl_value   = rad2deg((float)atan2((double)fl_a,(double)fl_b));
+    be_result |= be_api_body_set_angle_calculation(fl_value, 0U);
+    
     /* Gamma angle. */
     fl_a = -2.0f * (q1 * q3 - q0 * q2);
-    fl_api_body_angle_wind_angles[1] = rad2deg((float)asin((double)fl_a));
+    /* fl_api_body_angle_wind_angles[1] = rad2deg((float)asin((double)fl_a)); */
+    fl_value   = rad2deg((float)asin((double)fl_a));
+    be_result |= be_api_body_set_angle_calculation(fl_value, 1U);
+    
     /* Kzetta angle. */
     fl_a = 2.0f * (q1 * q2 + q0 * q3);
     fl_b = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
-    fl_api_body_angle_wind_angles[2] = rad2deg((float)atan2((double)fl_a,(double)fl_b));
-
+    /* fl_api_body_angle_wind_angles[2] = rad2deg((float)atan2((double)fl_a,(double)fl_b)); */
+    fl_value   = rad2deg((float)atan2((double)fl_a,(double)fl_b));
+    be_result |= be_api_body_set_angle_calculation(fl_value, 2U);
     return(be_result);
 }
