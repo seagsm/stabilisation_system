@@ -1,0 +1,15 @@
+These calibration parameters have been created with the software MagCal
+from the PLAN Group (http://plan.geomatics.ucalgary.ca/).
+It is based on the article titled 'Complete tri-axis magnetometer 
+calibration in the magnetic domain'.
+---------------------------------------------------------------------------------------
+
+The hard iron bias equals:
+
+  104.2804   35.6804  338.7701         
+         
+The combined matrix equals:         
+         
+    6.1223   -0.0505   -0.0721         
+   -0.0505    6.1163   -0.1209         
+   -0.0721   -0.1209    5.6381         
