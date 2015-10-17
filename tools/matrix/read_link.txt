@@ -1,0 +1,3 @@
+http://we.easyelectronics.ru/Theory/pereorientaciya-akselerometra-kompasa.html
+
+https://sites.google.com/site/poprobotics/home/magnetometer_calibration
