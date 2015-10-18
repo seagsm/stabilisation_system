@@ -90,7 +90,11 @@ static BOARD_ERROR api_ublox_gps_parameters_init(void)
 
     /* Wait for GPS_FIX_TIMEOUT for GPS satelite fix */
     api_led_on();
+#if GPS_EMULATION_OFF
     be_result |= api_ublox_msg_read_status();
+#else
+    be_result = api_ublox_msg_read_status();
+#endif
     api_led_off();
 
     return (be_result);

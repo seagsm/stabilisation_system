@@ -44,11 +44,15 @@ uint16_t gu16_api_CRC16_alg(uint16_t u16_start, uint16_t length)
 uint8_t gu8_api_CRC8(uint16_t u16_start, uint16_t length)
 {
     uint8_t u8_crc = 0U;
+    uint8_t u8_val = 0U;
     uint16_t u16_i = 0U;
+
 
     for (u16_i = u16_start; u16_i < length; u16_i++)
     {
-        u8_crc = u8_crc + u8_tx_UART1_data_packet[u16_i];
+        /*u8_crc = u8_crc + u8_tx_UART1_data_packet[u16_i]; */
+        be_board_dma_get_UARTx_packet(BOARD_UART1, &u8_val, u16_i);
+        u8_crc = u8_crc + u8_val;
     }
     u8_crc = 0xFFU - u8_crc;
     return(u8_crc);

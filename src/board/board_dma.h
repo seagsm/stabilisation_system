@@ -47,8 +47,9 @@ void DMA1_Channel5_IRQHandler(void);
 
 static uint16_t u16_board_dma_DMA1_CH3_byte_received(void);
 static uint16_t u16_board_dma_DMA1_CH5_byte_received(void);
-static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data);
-
+            void  v_board_dma_send_packet(uint16_t u16_size_of_tx_data);
+       BOARD_ERROR be_board_dma_get_UARTx_packet(BOARD_UART UARTx, uint8_t *u8_value, uint16_t u16_index);
+       BOARD_ERROR be_board_dma_set_UARTx_packet(BOARD_UART UARTx, uint8_t u8_value, uint16_t u16_index);
 void sv_board_dma_ch2_send_packet(uint16_t u16_size_of_tx_data);
 
 BOARD_ERROR be_board_dma_DMA1_CH3_buffer_copy_to_UART3_buffer(void);

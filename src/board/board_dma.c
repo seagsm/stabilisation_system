@@ -204,12 +204,92 @@ BOARD_ERROR be_board_dma1_ch5_init(void)
     return(be_result);
 }
 
+/* Function get value from packet buffer for UART. */
+BOARD_ERROR be_board_dma_get_UARTx_packet(BOARD_UART UARTx, uint8_t *u8_value, uint16_t u16_index)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    switch(UARTx)
+    {
+        case BOARD_UART1:
+            if(u16_index < USART1_TX_DATA_PACKET_SIZE)
+            {
+                *u8_value = u8_tx_UART1_data_packet[u16_index];
+            }
+            else
+            {
+                be_result = BOARD_ERR_RANGE;
+            }
+            break;
+
+        case BOARD_UART2:
+            be_result = BOARD_ERR_RANGE;
+            break;
+
+        case BOARD_UART3:
+            if(u16_index < USART3_TX_DATA_PACKET_SIZE)
+            {
+                *u8_value = u8_tx_UART3_data_packet[u16_index];
+            }
+            else
+            {
+                be_result = BOARD_ERR_RANGE;
+            }
+            break;
+        default:
+            be_result = BOARD_ERR_RANGE;
+            break;
+    }
+    return(be_result);
+}
+
+
+/* Function set value from packet buffer for UART. */
+BOARD_ERROR be_board_dma_set_UARTx_packet(BOARD_UART UARTx, uint8_t u8_value, uint16_t u16_index)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    switch(UARTx)
+    {
+        case BOARD_UART1:
+            if(u16_index < USART1_TX_DATA_PACKET_SIZE)
+            {
+                u8_tx_UART1_data_packet[u16_index] = u8_value;
+            }
+            else
+            {
+                be_result = BOARD_ERR_RANGE;
+            }
+            break;
+
+        case BOARD_UART2:
+            be_result = BOARD_ERR_RANGE;
+            break;
+
+        case BOARD_UART3:
+            if(u16_index < USART3_TX_DATA_PACKET_SIZE)
+            {
+                u8_tx_UART3_data_packet[u16_index] = u8_value;
+            }
+            else
+            {
+                be_result = BOARD_ERR_RANGE;
+            }
+            break;
+        default:
+            be_result = BOARD_ERR_RANGE;
+            break;
+    }
+    return(be_result);
+}
+
+
 /* Function copy tx data packet to DMA TX round buffer. */
 void sv_board_dma_ch2_send_packet(uint16_t u16_size_of_tx_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint16_t u16_byte_counter;
-    
+
     /* Disable DMA interrupt to avoid problem with dual access to round buffer. */
     NVIC_DisableIRQ(DMA1_Channel2_IRQn);
 
@@ -218,6 +298,7 @@ void sv_board_dma_ch2_send_packet(uint16_t u16_size_of_tx_data)
     while(u16_byte_counter < u16_size_of_tx_data)
     {
         be_result = be_board_r_buff_USARTx_TX_PUT_byte(USART3, u8_tx_UART3_data_packet[u16_byte_counter]);
+
         if(be_result == BOARD_ERR_FULL)
         {
             break;
@@ -232,10 +313,11 @@ void sv_board_dma_ch2_send_packet(uint16_t u16_size_of_tx_data)
 
 
 /* Function copy tx data packet to DMA TX round buffer. */
-static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data)
+void v_board_dma_send_packet(uint16_t u16_size_of_tx_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint16_t u16_byte_counter;
+    uint8_t   u8_value;
     /* Disable DMA interrupt to avoid problem with dual access to round buffer. */
     NVIC_DisableIRQ(DMA1_Channel4_IRQn);
 
@@ -243,7 +325,9 @@ static void sv_board_dma_send_packet(uint16_t u16_size_of_tx_data)
     u16_byte_counter = 0U;
     while(u16_byte_counter < u16_size_of_tx_data)
     {
-        be_result = be_board_r_buff_USART1_TX_Put_byte(u8_tx_UART1_data_packet[u16_byte_counter]);
+        /* be_result = be_board_r_buff_USART1_TX_Put_byte(u8_tx_UART1_data_packet[u16_byte_counter]); */
+        be_board_dma_get_UARTx_packet(BOARD_UART1, &u8_value, u16_byte_counter);
+        be_result = be_board_r_buff_USART1_TX_Put_byte(u8_value);
         if(be_result == BOARD_ERR_FULL)
         {
             break;
@@ -561,26 +645,29 @@ void board_dma_send_WRITE_OK(void)
     u16_i++;/* index of size */
 
 /* Add command ID. */
-    u8_tx_UART1_data_packet[u16_i] = WRITE_OK; /* write_ok */
+    /* u8_tx_UART1_data_packet[u16_i] = WRITE_OK;*/ /* write_ok */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, WRITE_OK, u16_i);
     u16_i++;/* index of next element */
 
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
     u8_CRC = gu8_api_CRC8(2U, u16_i);
 
 /* CRC. */
-    u8_tx_UART1_data_packet[u16_i] = u8_CRC; /* 1 bytes. */
+    /* u8_tx_UART1_data_packet[u16_i] = u8_CRC;*/ /* 1 bytes. */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, u8_CRC, u16_i);
     u16_i++;
 
 /* Add SIZE. */
     u8_size = (uint8_t)u16_i;
     u8_size = u8_size - 3U;/* header, size, crc  */
-    u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
+    /* u8_tx_UART1_data_packet[0x01U] = u8_size; */ /* 1 bytes. */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, u8_size, 0x01U);
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
-/* Function send WRITE_OK.*/
+/* Function send ERROR.*/
 void board_dma_send_ERROR(void)
 {
     uint8_t u8_CRC = 0U;
@@ -609,7 +696,7 @@ void board_dma_send_ERROR(void)
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 /* Function send answer float*/
@@ -646,7 +733,7 @@ void board_dma_send_answer_float(uint16_t u16_data_id, float float_data)
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data)
@@ -681,7 +768,7 @@ void board_dma_send_answer_int32(uint16_t u16_data_id, int32_t i32_data)
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 /* Function send u64 answer. */
@@ -717,7 +804,7 @@ void board_dma_send_answer_uint64(uint16_t u16_data_id, uint64_t u64_data)
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 void board_dma_send_answer_quaternion(uint16_t u16_data_id, BOARD_QUAT  bq_data)
@@ -756,7 +843,7 @@ void board_dma_send_answer_quaternion(uint16_t u16_data_id, BOARD_QUAT  bq_data)
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 void board_dma_send_answer_float_vector3d(uint16_t u16_data_id, BOARD_FLOAT_3X_DATA fv3d_data)
@@ -794,7 +881,7 @@ void board_dma_send_answer_float_vector3d(uint16_t u16_data_id, BOARD_FLOAT_3X_D
     u8_tx_UART1_data_packet[0x01U] = u8_size; /* 1 bytes. */
 
     /* Send packet. */
-    sv_board_dma_send_packet(u16_i);
+    v_board_dma_send_packet(u16_i);
 }
 
 
@@ -861,7 +948,9 @@ static void board_dma_add_head_of_tx_packet(uint16_t *pu16_i)
     *pu16_i = 0U;
     u16_index = *pu16_i;
     /* Create head structure. 0x73 is header. */
-    u8_tx_UART1_data_packet[u16_index] = 0x73U;
+    /* u8_tx_UART1_data_packet[u16_index] = 0x73U; */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, 0x73U, u16_index);
+
     u16_index++;
     *pu16_i = u16_index;
 }
@@ -891,3 +980,5 @@ static void board_dma_add_u64_to_packet(uint16_t *pu16_i, uint64_t u64_data)
     u16_index++;
     *pu16_i = u16_index;
 }
+
+

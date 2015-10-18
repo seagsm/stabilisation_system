@@ -6,6 +6,9 @@
 #include "api_ublox_msg.h"
 #include "api_led.h"
 
+
+
+
 BOARD_ERROR  api_ublox_gps_init(void);
 static BOARD_ERROR  api_ublox_gps_parameters_init(void);
 

@@ -91,6 +91,17 @@ typedef enum
 }   BOARD_DATA_STATE; /* device state */
 
 
+typedef enum
+{
+    BOARD_UART1    = 0U,
+    BOARD_UART2    = 1U,
+    BOARD_UART3    = 2U
+}   BOARD_UART; /* board Uart name. */
+
+
+
+
+
 typedef struct
 {
     uint16_t u16_channel_1_value;
@@ -152,7 +163,7 @@ typedef struct
 } COURCE_PID;
 
 
-
+#define GPS_EMULATION_OFF   0U
 
 
 
