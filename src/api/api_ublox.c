@@ -31,7 +31,7 @@ BOARD_ERROR api_ublox_gps_init(void)
 
     nav_data.i32_longitude   = 0;
     nav_data.i32_latitude    = 0;
-    nav_data.i32_height      = 0;
+    nav_data.i32_altitude    = 0;
     nav_data.u32_speed       = 0U;
     nav_data.i32_heading     = 0;
 

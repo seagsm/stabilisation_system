@@ -12,6 +12,8 @@
 #define READ64          0x40U
 #define READQUAT        0x50U
 #define READVECTOR3D    0x60U
+#define READFLNAVDATA   0x70U
+
 
 #define WRITE    0x01U
 #define WRITE8   0x11U

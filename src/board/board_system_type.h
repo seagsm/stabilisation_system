@@ -122,7 +122,7 @@ typedef struct
 {
     float   fl_latitude;
     float   fl_longitude;
-    float   fl_height;
+    float   fl_altitude;
     float   fl_speed;
     float   fl_heading;
 
@@ -133,8 +133,8 @@ typedef struct
 {
     int32_t     i32_longitude;
     int32_t     i32_latitude;
-    int32_t     i32_height;
-    uint32_t    u32_speed;
+    int32_t     i32_altitude;
+   uint32_t     u32_speed;
     int32_t     i32_heading;
 } GPS_NAVIGATION_DATA;
 

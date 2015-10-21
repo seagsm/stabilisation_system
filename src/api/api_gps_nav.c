@@ -11,7 +11,7 @@ BOARD_ERROR api_gps_nav_initialisation(void)
     BOARD_ERROR         be_result = BOARD_ERR_OK;
 
     be_result = api_gps_nav_COURCE_pid_initialisation();
-    
+
     return(be_result);
 }
 
@@ -24,10 +24,10 @@ BOARD_ERROR api_gps_nav_processing(void)
     GPS_POSITION_DATA   gpd_get_wp_data;
     BOARD_DATA_STATE    bds_gps_data_ready_flag;
     COURCE_PID          cp_pid_value;
-    
+
     float fl_course     = 0.0f;
     float fl_distance   = 0.0f;
-    
+
     /*Get is GPS power ON status. */
     be_board_gps_get_gps_dev_state(&bds_value);
 
@@ -57,42 +57,42 @@ BOARD_ERROR api_gps_nav_processing(void)
             /* Get target WP coordinate. */
             api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */
 
-            /* 
+            /*
                 Calculate cource and distance from current position to target WP.
             */
             api_gps_nav_course_to_target(gpd_gps_data, gpd_get_wp_data, &fl_course, &fl_distance);
-            
-            /* 
-                Convert absolute cource to turn-angle relatively heading cource. 
+
+            /*
+                Convert absolute cource to turn-angle relatively heading cource.
                 ( + is CW, - is CCW direction.)
             */
             fl_course = fl_course - gpd_gps_data.fl_heading;
             if(fl_course < -180.0f)
             {
                 fl_course = fl_course + 360.0f;
-            }  
+            }
             if(fl_course > 180.0f)
             {
                 fl_course = fl_course - 360.0f;
-            }  
+            }
 
             /* It is a place to call GPS PID controller with turn angle as input parameter. */
             /* Get COURCE PID value. */
             api_gps_nav_get_COURCE_pid_parameters(&cp_pid_value);
             /* Update PID frame. */
             api_gps_nav_pid(fl_course, &cp_pid_value);
-            /* Set COURCE PID value. */  
+            /* Set COURCE PID value. */
             api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
-            
 
-#if 0 /* test only */            
+
+#if 0 /* test only */
             /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
             fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
 
             /* temporary, just for test */
             api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);
-#endif            
-            
+#endif
+
         }
 
         /* Indication of received error. */
@@ -119,9 +119,9 @@ BOARD_ERROR api_gps_nav_set_navigation_influence(void)
     COURCE_PID  cp_value;
     float fl_value;
     BOARD_DATA_STATE bds_gps_data_ready_flag;
-    
-    /* 
-        Get gps data ready flag. 
+
+    /*
+        Get gps data ready flag.
     */
     api_ublox_msg_get_gps_data_status(&bds_gps_data_ready_flag);
 
@@ -129,17 +129,17 @@ BOARD_ERROR api_gps_nav_set_navigation_influence(void)
     {
         /* Get current COURSE PID output */
         api_gps_nav_get_COURCE_pid_parameters(&cp_value);
-    
+
         /* Get current Roll value from body WING ANGLE. */
         be_result |= be_api_body_get_angle_calculation(&fl_value, Roll);
-    
+
         /* Add COURSE PID output error */
-        fl_value = fl_value + cp_value.fl_out; 
-    
+        fl_value = fl_value + cp_value.fl_out;
+
         /* Set Roll value to body WING ANGLE. */
         be_result |= be_api_body_set_angle_calculation(fl_value, Roll);
     }
-    
+
     return(be_result);
 }
 
@@ -159,7 +159,7 @@ BOARD_ERROR api_gps_nav_set_wp(GPS_POSITION_DATA gpd_gps_data, uint32_t u32_WP_n
     else
     {
         gpd_gps_WP_position[u32_WP_number].fl_heading   = gpd_gps_data.fl_heading;
-        gpd_gps_WP_position[u32_WP_number].fl_height    = gpd_gps_data.fl_height;
+        gpd_gps_WP_position[u32_WP_number].fl_altitude  = gpd_gps_data.fl_altitude;
         gpd_gps_WP_position[u32_WP_number].fl_latitude  = gpd_gps_data.fl_latitude;
         gpd_gps_WP_position[u32_WP_number].fl_longitude = gpd_gps_data.fl_longitude;
         gpd_gps_WP_position[u32_WP_number].fl_speed     = gpd_gps_data.fl_speed;
@@ -181,7 +181,7 @@ static BOARD_ERROR api_gps_nav_get_wp(GPS_POSITION_DATA *gpd_gps_data, uint32_t 
     else
     {
         gpd_gps_data->fl_heading   = gpd_gps_WP_position[u32_WP_number].fl_heading;
-        gpd_gps_data->fl_height    = gpd_gps_WP_position[u32_WP_number].fl_height;
+        gpd_gps_data->fl_altitude  = gpd_gps_WP_position[u32_WP_number].fl_altitude;
         gpd_gps_data->fl_latitude  = gpd_gps_WP_position[u32_WP_number].fl_latitude;
         gpd_gps_data->fl_longitude = gpd_gps_WP_position[u32_WP_number].fl_longitude;
         gpd_gps_data->fl_speed     = gpd_gps_WP_position[u32_WP_number].fl_speed;
@@ -196,7 +196,7 @@ BOARD_ERROR api_gps_nav_ubl_float_converter(GPS_NAVIGATION_DATA *gnd_nav_data, G
     BOARD_ERROR be_result    = BOARD_ERR_OK;
 
     gpd_gps_data->fl_heading    = ((float)(gnd_nav_data->i32_heading))  / 100000.0f;   /* degree */
-    gpd_gps_data->fl_height     = ((float)(gnd_nav_data->i32_height))   / 1000.0f;     /* meters */
+    gpd_gps_data->fl_altitude   = ((float)(gnd_nav_data->i32_altitude)) / 1000.0f;     /* meters */
     gpd_gps_data->fl_latitude   = ((float)(gnd_nav_data->i32_latitude)) / 10000000.0f; /* degree.minutes */
     gpd_gps_data->fl_longitude  = ((float)(gnd_nav_data->i32_longitude))/ 10000000.0f; /* degree.minutes */
     gpd_gps_data->fl_speed      = ((float)(gnd_nav_data->u32_speed))    / 100.0f;      /* Speed in m/s */
@@ -294,9 +294,9 @@ static BOARD_ERROR api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_wp
     return(be_result);
 }
 
-/* 
-    This function using for testing HEADING calculation algorithm. 
-   
+/*
+    This function using for testing HEADING calculation algorithm.
+
 */
 BOARD_ERROR  api_gps_nav_test(void)
 {
@@ -333,7 +333,7 @@ BOARD_ERROR  api_gps_nav_test(void)
     return(be_result);
 }
 
-/*  
+/*
     NAVIGATION PID CONTROLLER :
     u(t) = P(t) + I(t) + D(t)
     P(t) = Cp * e(t)
@@ -345,9 +345,9 @@ BOARD_ERROR  api_gps_nav_test(void)
 static BOARD_ERROR api_gps_nav_COURCE_pid_initialisation(void)
 {
     BOARD_ERROR be_result    = BOARD_ERR_OK;
-    
+
     COURCE_PID cp_pid_value;
-    
+
     /* Set start value for direction PID controller. */
     /* P */
     cp_pid_value.fl_p = 2.0f;
@@ -356,7 +356,7 @@ static BOARD_ERROR api_gps_nav_COURCE_pid_initialisation(void)
     cp_pid_value.fl_integrall = 0.0f;
     cp_pid_value.fl_integrall_max =  10.0f;
     cp_pid_value.fl_integrall_min = -10.0f;
-    
+
     /* D */
     cp_pid_value.fl_d = 0.5f;
     cp_pid_value.fl_old_value = 0.0f;
@@ -367,7 +367,7 @@ static BOARD_ERROR api_gps_nav_COURCE_pid_initialisation(void)
     cp_pid_value.fl_out_min   = -30.0f; /* degree */
 
     be_result = api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
-   
+
     return (be_result);
 }
 
@@ -405,13 +405,13 @@ static BOARD_ERROR api_gps_nav_get_COURCE_pid_parameters(COURCE_PID *cp_value)
 
     /* P */
     cp_value->fl_p = cp_gps_dir_pid.fl_p;
-    
+
     /* I */
     cp_value->fl_i = cp_gps_dir_pid.fl_i;
     cp_value->fl_integrall     = cp_gps_dir_pid.fl_integrall;
     cp_value->fl_integrall_max = cp_gps_dir_pid.fl_integrall_max;
     cp_value->fl_integrall_min = cp_gps_dir_pid.fl_integrall_min;
-    
+
     /* D */
     cp_value->fl_d = cp_gps_dir_pid.fl_d;
     cp_value->fl_old_value     = cp_gps_dir_pid.fl_old_value;
@@ -420,14 +420,14 @@ static BOARD_ERROR api_gps_nav_get_COURCE_pid_parameters(COURCE_PID *cp_value)
     cp_value->fl_out           = cp_gps_dir_pid.fl_out;
     cp_value->fl_out_max       = cp_gps_dir_pid.fl_out_max;
     cp_value->fl_out_min       = cp_gps_dir_pid.fl_out_min;
-    
+
     return (be_result);
 }
 
-/* 
+/*
     Update PID controller frame. It can be used for COURCE and for ALTITUDE.
     Input:
-        float fl_err        - error angle in degree. 
+        float fl_err        - error angle in degree.
         GPS_PID *gp_gps_pid - pointer to PID controller structure.
     Output is PID state saved to PID structure.
 */

@@ -17,7 +17,7 @@ void board_packet_send_answ_int32(uint16_t u16_data_id, int32_t i32_data);
 void board_packet_send_answ_uint64(uint16_t u16_data_id, uint64_t u64_data);
 void board_packet_send_answ_quaternion(uint16_t u16_data_id, BOARD_QUAT  bq_data);
 void board_packet_send_answ_float_vector3d(uint16_t u16_data_id, BOARD_FLOAT_3X_DATA fv3d_data);
-
+void board_packet_send_answ_float_nav_data(uint16_t u16_data_id, GPS_POSITION_DATA gpd_gps_data);
 
 static void board_packet_add_u16_to_packet(uint16_t *pu16_i, uint16_t u16_value);
 static void board_packet_add_bi163x_to_packet(uint16_t *pu16_i, BOARD_I16_3X_DATA bi163x_value);

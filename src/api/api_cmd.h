@@ -23,6 +23,7 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id);
 static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id);
 static BOARD_ERROR be_api_CMD_data_answer_quaternion(uint16_t u16_data_id);
 static BOARD_ERROR be_api_CMD_data_answer_float_vector3d(uint16_t u16_data_id);
+static BOARD_ERROR be_api_CMD_data_answer_float_nav_data(uint16_t u16_data_id);
 static BOARD_ERROR be_api_CMD_data_write_i32(uint16_t u16_data_id, int32_t i32_data_load);
 static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length);
 

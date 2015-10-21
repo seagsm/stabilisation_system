@@ -73,7 +73,7 @@ BOARD_ERROR api_ublox_msg_set_navigation_data(GPS_NAVIGATION_DATA nav_data)
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     gps_data.i32_heading   = nav_data.i32_heading;
-    gps_data.i32_height    = nav_data.i32_height;
+    gps_data.i32_altitude  = nav_data.i32_altitude;
     gps_data.i32_latitude  = nav_data.i32_latitude;
     gps_data.i32_longitude = nav_data.i32_longitude;
     gps_data.u32_speed     = nav_data.u32_speed;
@@ -86,8 +86,7 @@ BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data)
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     nav_data->i32_heading   = gps_data.i32_heading;
-    nav_data->i32_height    = gps_data.i32_height;
-    nav_data->i32_latitude  = gps_data.i32_latitude;
+    nav_data->i32_altitude  = gps_data.i32_altitude;
     nav_data->i32_longitude = gps_data.i32_longitude;
     nav_data->u32_speed     = gps_data.u32_speed;
 
@@ -178,15 +177,15 @@ static BOARD_ERROR api_ublox_msg_message_decode(uint8_t u8_buff[], uint32_t u32_
                         20 U4 - hAcc mm Horizontal accuracy estimate   Unsigned Long
                         24 U4 - vAcc mm Vertical accuracy estimate     Unsigned Long
                     */
-                    u32_value           = (((uint32_t)(u8_buff[13])) << 24) + (((uint32_t)(u8_buff[12])) << 16) + (((uint32_t)(u8_buff[11])) << 8) + (uint32_t)u8_buff[10];
+                    u32_value              = (((uint32_t)(u8_buff[13])) << 24) + (((uint32_t)(u8_buff[12])) << 16) + (((uint32_t)(u8_buff[11])) << 8) + (uint32_t)u8_buff[10];
                     gps_data.i32_longitude = (int32_t)u32_value;
-                    u32_value           = (((uint32_t)(u8_buff[17])) << 24) + (((uint32_t)(u8_buff[16])) << 16) + (((uint32_t)(u8_buff[15])) << 8) + (uint32_t)u8_buff[14];
+                    u32_value              = (((uint32_t)(u8_buff[17])) << 24) + (((uint32_t)(u8_buff[16])) << 16) + (((uint32_t)(u8_buff[15])) << 8) + (uint32_t)u8_buff[14];
                     gps_data.i32_latitude  = (int32_t)u32_value;
-                    u32_value           = (((uint32_t)(u8_buff[21])) << 24) + (((uint32_t)(u8_buff[20])) << 16) + (((uint32_t)(u8_buff[19])) << 8) + (uint32_t)u8_buff[18];
-                    gps_data.i32_height = (int32_t)u32_value;
+                    u32_value              = (((uint32_t)(u8_buff[21])) << 24) + (((uint32_t)(u8_buff[20])) << 16) + (((uint32_t)(u8_buff[19])) << 8) + (uint32_t)u8_buff[18];
+                    gps_data.i32_altitude  = (int32_t)u32_value;
                     break;
                 case 0x0103: /* NAV-STATUS (0x01 0x03) */
-                    gps_state.u8_gpsFix = u8_buff[10];
+                    gps_state.u8_gpsFix  = u8_buff[10];
                     gps_state.u8_flags   = u8_buff[11];
                     gps_state.u8_fixStat = u8_buff[12];
                     gps_state.u8_flags2  = u8_buff[13];

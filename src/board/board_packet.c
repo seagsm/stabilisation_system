@@ -5,8 +5,6 @@ GPS data
  [0x0082]  GPS current Heading. (read only)
  [0x0083]  GPS current Speed. (read only)
  [0x0084]  GPS current Altitude (read only)
-
-
 */
 
 #include "board_packet.h"
@@ -292,6 +290,45 @@ void board_packet_send_answ_float_vector3d(uint16_t u16_data_id, BOARD_FLOAT_3X_
     v_board_dma_send_packet(u16_i);
 }
 
+/* Function send float navigation data. */
+void board_packet_send_answ_float_nav_data(uint16_t u16_data_id, GPS_POSITION_DATA gpd_gps_data)
+{
+    uint8_t u8_CRC = 0U;
+    uint8_t u8_size = 0U;
+    uint16_t u16_i;
+
+/* HEAD of TX packet. */
+    board_packet_add_head_of_tx_packet(&u16_i);/* 1 bytes. */
+/* Add index of SIZE position in of TX packet. */
+    u16_i++;/* index of size */
+
+/* Add command ID. */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, 0x02U, u16_i); /* answer */
+    u16_i++;/* index of next element */
+/* Add of ID of parameters. */
+    board_packet_add_u16_to_packet(&u16_i, u16_data_id);
+
+/* Add parameters value. */
+    board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_latitude);
+    board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_longitude);
+    board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_heading);
+    board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_altitude);
+    board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_speed);
+/* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
+    u8_CRC = gu8_api_CRC8(2U, u16_i);
+
+/* CRC. */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, u8_CRC, u16_i); /* 1 bytes. */
+    u16_i++;
+
+/* Add SIZE. */
+    u8_size = (uint8_t)u16_i;
+    u8_size = u8_size - 3U;/* header, size, crc  */
+    be_board_dma_set_UARTx_packet(BOARD_UART1, u8_size, 0x01U); /* 1 bytes */
+
+    /* Send packet. */
+    v_board_dma_send_packet(u16_i);
+}
 
 
 

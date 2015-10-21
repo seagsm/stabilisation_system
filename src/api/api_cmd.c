@@ -157,7 +157,7 @@ static BOARD_ERROR be_api_cmd_reading_packet(void)
                 break;
         }
     }
-    
+
     /* TODO: should be added right error code. */
     be_result = BOARD_ERR_OK;
     return (be_result);
@@ -193,6 +193,9 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
         case READVECTOR3D:
             be_result = be_api_CMD_data_answer_float_vector3d(u16_data_id);
             break;
+        case READFLNAVDATA:
+            be_result = be_api_CMD_data_answer_float_nav_data(u16_data_id);
+            break;
         case WRITE32:
             i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
             be_result = be_api_CMD_data_write_i32(u16_data_id, i32_data_load );
@@ -203,6 +206,32 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
     }
     return(be_result);
 }
+
+/* Function send navigation data structure in depend on ID. */
+static BOARD_ERROR be_api_CMD_data_answer_float_nav_data(uint16_t u16_data_id)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    GPS_NAVIGATION_DATA     gnd_nav_data;
+    GPS_POSITION_DATA       gpd_gps_data;
+
+    switch(u16_data_id)
+    {
+        /* Send current GPS data. */
+        case 0x0080U:
+            /* Get raw navigation data */
+            api_ublox_msg_get_navigation_data(&gnd_nav_data);
+            /* Convert it to float. */
+            api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data);
+            /* Send navigation data structure. */
+            board_packet_send_answ_float_nav_data(u16_data_id, gpd_gps_data);
+            break;
+        default:
+            be_result = BOARD_ERR_ID;
+            break;
+    }
+    return(be_result);
+}
+
 
 static BOARD_ERROR be_api_CMD_data_answer_float_vector3d(uint16_t u16_data_id)
 {
@@ -216,7 +245,8 @@ static BOARD_ERROR be_api_CMD_data_answer_float_vector3d(uint16_t u16_data_id)
             fv3d_data.fl_Y = fl_api_body_angle_wind_angles[1];
             fv3d_data.fl_Z = fl_api_body_angle_wind_angles[2];
 
-            board_dma_send_answer_float_vector3d(u16_data_id, fv3d_data);
+            /*board_dma_send_answer_float_vector3d(u16_data_id, fv3d_data);*/
+            board_packet_send_answ_float_vector3d(u16_data_id, fv3d_data);
             break;
         default:
             be_result = BOARD_ERR_ID;
@@ -238,7 +268,9 @@ static BOARD_ERROR be_api_CMD_data_answer_quaternion(uint16_t u16_data_id)
             bq_data.fl_q2 = fl_api_body_angle_quaternion[2];
             bq_data.fl_q3 = fl_api_body_angle_quaternion[3];
 
-            board_dma_send_answer_quaternion(u16_data_id, bq_data);
+            /* board_dma_send_answer_quaternion(u16_data_id, bq_data); */
+            board_packet_send_answ_quaternion(u16_data_id, bq_data);
+
             break;
         default:
             be_result = BOARD_ERR_ID;
@@ -255,7 +287,8 @@ static BOARD_ERROR be_api_CMD_data_answer_u64(uint16_t u16_data_id)
     {
             /* Get system time. */
         case 0x00FAU:
-            board_dma_send_answer_uint64(u16_data_id, gu64_read_system_time());
+            /* board_dma_send_answer_uint64(u16_data_id, gu64_read_system_time()); */
+            board_packet_send_answ_uint64(u16_data_id, gu64_read_system_time());
             break;
         default:
             be_result = BOARD_ERR_ID;
@@ -274,98 +307,98 @@ static BOARD_ERROR be_api_CMD_data_write_i32(uint16_t u16_data_id, int32_t i32_d
         /* Pitch. */
         case 0x0010U:
             pid_api_pid_data[Pitch].i32_p_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0011U:
             pid_api_pid_data[Pitch].i32_p_dyn_gain = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0012U:
             pid_api_pid_data[Pitch].i32_i_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0013U:
             pid_api_pid_data[Pitch].i32_d_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0014U:
             pid_api_pid_data[Pitch].i32_i_min      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0015U:
             pid_api_pid_data[Pitch].i32_i_max      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         /* Roll. */
         case 0x0020U:
             pid_api_pid_data[Roll].i32_p_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0021U:
             pid_api_pid_data[Roll].i32_p_dyn_gain = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0022U:
             pid_api_pid_data[Roll].i32_i_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0023U:
             pid_api_pid_data[Roll].i32_d_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0024U:
             pid_api_pid_data[Roll].i32_i_min      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0025U:
             pid_api_pid_data[Roll].i32_i_max      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         /* Yaw. */
         case 0x0030U:
             pid_api_pid_data[Yaw].i32_p_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0031U:
             pid_api_pid_data[Yaw].i32_p_dyn_gain = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0032U:
             pid_api_pid_data[Yaw].i32_i_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0033U:
             pid_api_pid_data[Yaw].i32_d_gain     = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0034U:
             pid_api_pid_data[Yaw].i32_i_min      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0035U:
             pid_api_pid_data[Yaw].i32_i_max      = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         /* BARO */
         case 0x0065U:
             bp_baro_pid.i32_p_gain              = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0066U:
             bp_baro_pid.i32_i_gain              = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0067U:
             bp_baro_pid.i32_i_max               = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0068U:
             bp_baro_pid.i32_i_min               = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         case 0x0069U:
             bp_baro_pid.i32_d_gain              = i32_data_load;
-            board_dma_send_WRITE_OK();
+            board_packet_send_WRITE_OK();
             break;
         default:
             be_result = BOARD_ERR_ID;
@@ -383,157 +416,157 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
     {
         /* pid_api_pid_data[Pitch] */
         case 0x0010U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_gain);
             break;
         case 0x0011U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_dyn_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_p_dyn_gain);
             break;
         case 0x0012U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_gain);
             break;
         case 0x0013U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_d_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_d_gain);
             break;
         case 0x0014U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_min);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_min);
             break;
         case 0x0015U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_max);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Pitch].i32_i_max);
             break;
 
         /* pid_api_pid_data[Roll] */
         case 0x0020U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_gain);
             break;
         case 0x0021U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_dyn_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_p_dyn_gain);
             break;
         case 0x0022U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_gain);
             break;
         case 0x0023U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_d_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_d_gain);
             break;
         case 0x0024U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_min);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_min);
             break;
         case 0x0025U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_max);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Roll].i32_i_max);
             break;
 
         /* pid_api_pid_data[Yaw] */
         case 0x0030U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_gain);
             break;
         case 0x0031U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_dyn_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_p_dyn_gain);
             break;
         case 0x0032U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_gain);
             break;
         case 0x0033U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_d_gain);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_d_gain);
             break;
         case 0x0034U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_min);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_min);
             break;
         case 0x0035U:
-            board_dma_send_answer_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_max);
+            board_packet_send_answ_int32(u16_data_id, pid_api_pid_data[Yaw].i32_i_max);
             break;
 
         /* Gyro sensor. */
         case 0x0043U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_X);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_X);
             break;
         case 0x0044U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Y);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Y);
             break;
         case 0x0045U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Z);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_out_gyro_raw_data.i16_Z);
             break;
         case 0x0046U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_X);
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_X);
             break;
         case 0x0047U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Y);
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Y);
             break;
         case 0x0048U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Z);
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_data_norm_gyro_data.fl_Z);
             break;
 
         /* Acceleration sensor. */
         case 0x0053U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_X);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_X);
             break;
         case 0x0054U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Y);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Y);
             break;
         case 0x0055U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Z);
+            board_packet_send_answ_int32(u16_data_id, (int32_t)bi163d_api_data_prepr_acce_raw_data.i16_Z);
             break;
         case 0x0056U:
-            /* board_dma_send_answer_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_X);*/
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_X);
+            /* board_packet_send_answ_float(u16_data_id, b_float3d_api_data_norm_acce_data.fl_X);*/
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_X);
             break;
         case 0x0057U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Y);
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Y);
             break;
         case 0x0058U:
-            board_dma_send_answer_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Z);
+            board_packet_send_answ_float(u16_data_id, b_float3d_api_common_out_acce_data.fl_Z);
             break;
 
         /* Baro sensor. */
         case 0x0060U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)i16_board_baro_get_temperature());
+            board_packet_send_answ_int32(u16_data_id, (int32_t)i16_board_baro_get_temperature());
             break;
         case 0x0061U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)u32_board_baro_get_pressure());
+            board_packet_send_answ_int32(u16_data_id, (int32_t)u32_board_baro_get_pressure());
             break;
         case 0x0062U:
-            board_dma_send_answer_int32(u16_data_id, i32_board_baro_get_altitude());
+            board_packet_send_answ_int32(u16_data_id, i32_board_baro_get_altitude());
             break;
         case 0x0063U:
-            board_dma_send_answer_int32(u16_data_id, (int32_t)u32_board_baro_get_filtered_pressure());
+            board_packet_send_answ_int32(u16_data_id, (int32_t)u32_board_baro_get_filtered_pressure());
             break;
         case 0x0064U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_EstAlt);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_EstAlt);
             break;
         case 0x0065U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_p_gain);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_p_gain);
             break;
         case 0x0066U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_gain);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_i_gain);
             break;
         case 0x0067U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_max);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_i_max);
             break;
         case 0x0068U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_i_min);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_i_min);
             break;
         case 0x0069U:
-            board_dma_send_answer_int32(u16_data_id, bp_baro_pid.i32_d_gain);
+            board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_d_gain);
             break;
 
 
             /* Motors output. */
         case 0x0161U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_motors[0]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_motors[0]);
             break;
         case 0x0162U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_motors[1]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_motors[1]);
             break;
         case 0x0163U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_motors[2]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_motors[2]);
             break;
         /* Test output. */
         case 0x0171U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_variables[0]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_variables[0]);
             break;
         case 0x0172U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_variables[1]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_variables[1]);
             break;
         case 0x0173U:
-            board_dma_send_answer_float(u16_data_id, float_api_common_variables[2]);
+            board_packet_send_answ_float(u16_data_id, float_api_common_variables[2]);
             break;
         default:
             be_result = BOARD_ERR_ID;
@@ -560,7 +593,7 @@ static uint8_t su8_api_CMD_CRC8(uint8_t u8_start, uint8_t u8_length)
 BOARD_ERROR be_api_cmd_communication(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    
+
     /* Command communication going through UART1. */
 
     /* Copy received by UART1 data from DMA1_CH5 buffer to UART1_RX buffer. */
