@@ -27,5 +27,12 @@ static BOARD_ERROR  api_gps_nav_course_to_target(GPS_POSITION_DATA gpd_current_w
 
        BOARD_ERROR  api_gps_nav_processing(void);
        BOARD_ERROR  api_gps_nav_set_navigation_influence(void);
+       BOARD_ERROR  api_gps_nav_get_max_point(uint32_t * pu32_value);
+
+
+       BOARD_ERROR  api_gps_nav_get_current_navigation_point_index(  uint32_t* pu32_value);
+       BOARD_ERROR  api_gps_nav_set_current_navigation_point_index(  uint32_t   u32_value);
+       BOARD_ERROR  api_gps_nav_get_full_ammount_of_navigation_point(uint32_t* pu32_value);
+       BOARD_ERROR  api_gps_nav_set_full_ammount_of_navigation_point(uint32_t   u32_value);
 
 #endif

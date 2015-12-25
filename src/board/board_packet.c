@@ -314,6 +314,7 @@ void board_packet_send_answ_float_nav_data(uint16_t u16_data_id, GPS_POSITION_DA
     board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_heading);
     board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_altitude);
     board_packet_add_float_to_packet(&u16_i, gpd_gps_data.fl_speed);
+
 /* CRC calculation of all array from 0+1 (size of head) to current u16_i.*/
     u8_CRC = gu8_api_CRC8(2U, u16_i);
 

@@ -20,12 +20,12 @@ int main( void)
     BOARD_ERROR         be_result = BOARD_ERR_OK;
 
     v_board_state_set_required_state(BOARD_SYSTEM_INIT);
-    
+
     /*TODO:
                     Should be done calibration of PPM input for current minimum
                     and maximum value for each channel.
      */
-    
+
     while(1U)
     {
         if(be_result == BOARD_ERR_ERROR)

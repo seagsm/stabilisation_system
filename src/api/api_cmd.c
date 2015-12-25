@@ -167,6 +167,9 @@ static BOARD_ERROR be_api_cmd_reading_packet(void)
 static BOARD_ERROR be_api_CMD_decoding_packet(void)
 {
     BOARD_ERROR be_result   = BOARD_ERR_OK;
+    GPS_POSITION_DATA gpd_input_data;
+    uint32_t u32_WP_number  = 0U;
+
     uint16_t u16_data_id    = 0U;
     uint16_t u16_a          = 0U;
     uint16_t u16_b          = 0U;
@@ -200,6 +203,28 @@ static BOARD_ERROR be_api_CMD_decoding_packet(void)
             i32_data_load = *(int32_t*)((void*)&u8_value_buffer[3]);
             be_result = be_api_CMD_data_write_i32(u16_data_id, i32_data_load );
             break;
+        case WRITE_FLOAT_NAVDATA:
+            /*
+          TODO: DOUBLE or FLOAT, it should be tested.
+                Format is DOUBLE. It is 64 bits (2 x 32bits. )
+          So:
+                Latitude    FLOAT //DOUBLE
+                Longitude   FLOAT //DOUBLE
+                Head        FLOAT
+                Speed       FLOAT
+                Altitude    FLOAT
+                Number      UINT32_T
+            */
+            gpd_input_data.fl_latitude  =   *(float*)((void*)&u8_value_buffer[API_CMD_FIRST_POSITION]);     /* latitude     */
+            gpd_input_data.fl_longitude =   *(float*)((void*)&u8_value_buffer[API_CMD_SECOND_POSITION]);    /* longitude    */
+            gpd_input_data.fl_heading   =   *(float*)((void*)&u8_value_buffer[API_CMD_THIRD_POSITION]);     /* heading      */
+            gpd_input_data.fl_speed     =   *(float*)((void*)&u8_value_buffer[API_CMD_FOURTH_POSITION]);    /* speed        */
+            gpd_input_data.fl_altitude  =   *(float*)((void*)&u8_value_buffer[API_CMD_FIFTH_POSITION]);     /* altitude     */
+            u32_WP_number               =   *(uint32_t*)((void*)&u8_value_buffer[API_CMD_SIXTH_POSITION]);  /* WP number    */
+
+            be_result = api_gps_nav_set_wp(gpd_input_data, u32_WP_number);
+            break;
+
         default:
             be_result = BOARD_ERR_ID;
             break;

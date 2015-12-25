@@ -14,7 +14,12 @@
 
 #define API_CMD_MAX_SIZE_OF_LINE_BUFFER 32U
 
-
+#define API_CMD_FIRST_POSITION      3
+#define API_CMD_SECOND_POSITION     7
+#define API_CMD_THIRD_POSITION      11
+#define API_CMD_FOURTH_POSITION     15
+#define API_CMD_FIFTH_POSITION      19
+#define API_CMD_SIXTH_POSITION      23
 
        BOARD_ERROR be_api_cmd_communication(void); /* Just start this function to make next loop of communication. */
 static BOARD_ERROR be_api_cmd_reading_packet(void);

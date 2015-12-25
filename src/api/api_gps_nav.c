@@ -6,6 +6,52 @@ static GPS_POSITION_DATA gpd_gps_WP_position[GPS_MAX_WP_VALUE];
 static COURCE_PID cp_gps_dir_pid;
 static COURCE_PID cp_gps_alt_pid;
 
+static uint32_t    u32_current_navigation_point_index;
+static uint32_t    u32_full_ammount_of_navigation_point;
+
+
+/* Function return maximum amount of navigation points. */
+BOARD_ERROR api_gps_nav_get_full_ammount_of_navigation_point(uint32_t * pu32_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    *pu32_value = u32_full_ammount_of_navigation_point;
+    return(be_result);
+}
+
+/* Function set maximum amount of navigation points. */
+BOARD_ERROR api_gps_nav_set_full_ammount_of_navigation_point(uint32_t u32_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    u32_full_ammount_of_navigation_point = u32_value;
+    return(be_result);
+}
+
+/* Function return current index of navigation points. */
+BOARD_ERROR api_gps_nav_get_current_navigation_point_index(uint32_t * pu32_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    *pu32_value = u32_current_navigation_point_index;
+    return(be_result);
+}
+
+/* Function set current index of navigation points. */
+BOARD_ERROR api_gps_nav_set_current_navigation_point_index(uint32_t u32_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    u32_current_navigation_point_index = u32_value;
+    return(be_result);
+}
+
+
+/* Function return maximum amount of navigation points. */
+BOARD_ERROR api_gps_nav_get_max_point(uint32_t * pu32_value)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    *pu32_value = GPS_MAX_WP_VALUE;
+    return(be_result);
+}
+
+/* Navigation initialisation function. */
 BOARD_ERROR api_gps_nav_initialisation(void)
 {
     BOARD_ERROR         be_result = BOARD_ERR_OK;
@@ -15,6 +61,7 @@ BOARD_ERROR api_gps_nav_initialisation(void)
     return(be_result);
 }
 
+/* Navigation call. */
 BOARD_ERROR api_gps_nav_processing(void)
 {
     BOARD_ERROR         be_result = BOARD_ERR_OK;
@@ -28,7 +75,7 @@ BOARD_ERROR api_gps_nav_processing(void)
     float fl_course     = 0.0f;
     float fl_distance   = 0.0f;
 
-    /*Get is GPS power ON status. */
+    /*Get isGPSpowerON status. */
     be_board_gps_get_gps_dev_state(&bds_value);
 
     /* If GPS is ON and work. */
@@ -55,6 +102,26 @@ BOARD_ERROR api_gps_nav_processing(void)
             api_gps_nav_ubl_float_converter(&gnd_nav_data, &gpd_gps_data);
 
             /* Get target WP coordinate. */
+/*
+ * Here probably is a best place to call navigation state machine.
+ * State machine should switch navigation points point-by-point
+ * in depend on current navigation position.
+ * State machine switch to next point if distance between current possition
+ * and current waypoint less than MINIMUM_APROACH_DISTANCE in meters.
+ *
+ * So, function can looks like
+ * BOARD_ERROR api_gps_nav_get_next_waypoint(GPS_POSITION_DATA gps_current_possition, GPS_POSITION_DATA gps_output_next_possition );
+ * there:   gps_current_possition       - is current navigation data,
+ *          gps_output_next_possition   - return next course waypoint.
+ *
+ *          During start, function should  keep same direction as at start before
+ *          flight altitude will be reached and minimum distance
+ *          from start point will be reached. After reaching flight altitude and MINIMUM_DISTANCE_FROM_START_POINT
+ *          function start return next waypoint coordinate.
+ *          Or should be realised some start sequence.
+ */
+
+            /* But now we just take home WP. */
             api_gps_nav_get_wp(&gpd_get_wp_data, 0U); /* 0 is home WP */
 
             /*
@@ -79,19 +146,12 @@ BOARD_ERROR api_gps_nav_processing(void)
             /* It is a place to call GPS PID controller with turn angle as input parameter. */
             /* Get COURCE PID value. */
             api_gps_nav_get_COURCE_pid_parameters(&cp_pid_value);
+
             /* Update PID frame. */
             api_gps_nav_pid(fl_course, &cp_pid_value);
+
             /* Set COURCE PID value. */
             api_gps_nav_set_COURCE_pid_parameters(cp_pid_value);
-
-
-#if 0 /* test only */
-            /* REMOVE IT TO RIGHT PLACE. It just send data to base station. */
-            fl_api_body_angle_wind_angles[2] = -fl_course + 360.0f;
-
-            /* temporary, just for test */
-            api_baro_set_altitude_estimation(gnd_nav_data.i32_height / 100);
-#endif
 
         }
 
