@@ -436,6 +436,7 @@ static BOARD_ERROR be_api_CMD_data_write_i32(uint16_t u16_data_id, int32_t i32_d
 static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint32_t u32_tmp = 0U;
 
     switch(u16_data_id)
     {
@@ -572,8 +573,24 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
             board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_d_gain);
             break;
 
+        /* Send Gps waypoint maximum. */
+        case 0x009AU:
+            be_result = api_gps_nav_get_max_point(&u32_tmp);
+            if(be_result == BOARD_ERR_OK)
+            {
+                board_packet_send_answ_int32(u16_data_id,(int32_t) u32_tmp);
+            }
+            break;
+        /* Send current amount of waypoints. */
+        case 0x009BU:
+            be_result = api_gps_nav_get_full_ammount_of_navigation_point(&u32_tmp);
+            if(be_result == BOARD_ERR_OK)
+            {
+                board_packet_send_answ_int32(u16_data_id,(int32_t) u32_tmp);
+            }
+            break;
 
-            /* Motors output. */
+        /* Motors output. */
         case 0x0161U:
             board_packet_send_answ_float(u16_data_id, float_api_common_motors[0]);
             break;

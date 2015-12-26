@@ -10,7 +10,7 @@ static uint32_t    u32_current_navigation_point_index;
 static uint32_t    u32_full_ammount_of_navigation_point;
 
 
-/* Function return maximum amount of navigation points. */
+/* Function return current amount of navigation points. */
 BOARD_ERROR api_gps_nav_get_full_ammount_of_navigation_point(uint32_t * pu32_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -18,7 +18,7 @@ BOARD_ERROR api_gps_nav_get_full_ammount_of_navigation_point(uint32_t * pu32_val
     return(be_result);
 }
 
-/* Function set maximum amount of navigation points. */
+/* Function set current amount of navigation points. */
 BOARD_ERROR api_gps_nav_set_full_ammount_of_navigation_point(uint32_t u32_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
