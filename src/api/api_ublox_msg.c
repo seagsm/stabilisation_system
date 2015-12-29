@@ -85,10 +85,11 @@ BOARD_ERROR api_ublox_msg_get_navigation_data(GPS_NAVIGATION_DATA *nav_data)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
-    nav_data->i32_heading   = gps_data.i32_heading;
-    nav_data->i32_altitude  = gps_data.i32_altitude;
+    nav_data->i32_latitude  = gps_data.i32_latitude;
     nav_data->i32_longitude = gps_data.i32_longitude;
+    nav_data->i32_heading   = gps_data.i32_heading;
     nav_data->u32_speed     = gps_data.u32_speed;
+    nav_data->i32_altitude  = gps_data.i32_altitude;
 
     return (be_result);
 }
