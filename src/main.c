@@ -33,6 +33,7 @@ int main( void)
             v_board_state_set_required_state(BOARD_SYSTEM_FAULT);
         }
         bss_state = bss_board_state_get_required_state();
+		
         switch (bss_state)
         {
             case BOARD_SYSTEM_INIT:
