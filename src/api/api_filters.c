@@ -493,6 +493,7 @@ float float_api_filters_iir_acc_z_1Hz(float float_new_sample)
 
 
 #define THROTTLE_ARRAY_SIZE 70U
+
 /* Middle average. */
 int32_t i32_api_filters_ma_rx_throttle(int32_t i32_new_sample)
 {

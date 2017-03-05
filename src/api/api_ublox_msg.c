@@ -517,7 +517,7 @@ BOARD_ERROR api_ublox_msg_send(uint8_t u8_message[], uint16_t u16_size)
 
 /*
     This function using during initialisation and wait before GPS locate satelites.
-    After GPS fixed position, function save current position to homw WP( WP[0])
+    After GPS fixed position, function save current position to houw WP( WP[0])
     If  during GPS_FIX_TIMEOUT timeout GPS can not fix position, function return ERROR.
 */
 BOARD_ERROR api_ublox_msg_read_status(void)

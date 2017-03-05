@@ -8,7 +8,7 @@ static int32_t i32_head_hold_saucer = 0;
 void api_end_saucer_update(void)
 {
     BOARD_CHANNEL_VALUE bc_ch_value;
-  
+
     /* Motors. */
     int32_t i32_motor;
     int32_t i32_throttle;
@@ -46,13 +46,13 @@ void api_end_saucer_update(void)
 
     /* Get current frame of PPM channel values. */
     be_board_ppm_get_channel_value(&bc_ch_value);
-    
+
     /*
         Threshold of THROTTLE.
         For some condition without it possible problems during start of motors.
     */
     i32_throttle = (int32_t)bc_ch_value.u16_channel_3_value;
-    float_api_common_variables[0] = (float)i32_throttle;
+    /* float_api_common_variables[0] = (float)i32_throttle; */
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* Turn on BaroAltHold. BARO ON/OFF */
@@ -85,7 +85,7 @@ void api_end_saucer_update(void)
         i32_throttle = bp_baro_pid.i32_ThrHold + bp_baro_pid.i32_BaroPID;
     }
 
-    float_api_common_variables[1] = (float)i32_throttle;
+    /* float_api_common_variables[1] = (float)i32_throttle; */
 
     i32_motor = i32_throttle;
    /* Saucer configuration. */

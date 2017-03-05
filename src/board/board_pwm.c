@@ -23,7 +23,20 @@ BOARD_ERROR be_board_pwm_init(void)
     be_TIMER2_PWM_channel_init(CHANEL_3,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
     be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
 #endif
-    /* Start TIMER2. */
+
+#if BOARD_SYSTEM_CONFIG_AERO_0_MODE
+    /* For aeroplane  CH 1,2,4 connected to flaps servos and should be init by midle value of PPM.
+    *  For aeroplane  CH 3 connected to engine and should be init by minimum value of PPM.
+    */
+    be_TIMER2_PWM_channel_init(CHANEL_1,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    be_TIMER2_PWM_channel_init(CHANEL_2,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    be_TIMER2_PWM_channel_init(CHANEL_3,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
+    be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+#endif
+
+    /* Start TIMER2.
+    * Now PWM shold start.
+    */
     TIM_Cmd(TIM2, ENABLE);
 
 #if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE

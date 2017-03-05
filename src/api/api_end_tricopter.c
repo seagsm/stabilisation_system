@@ -35,13 +35,12 @@ void api_end_tricopter_update(void)
 
     /* Get current frame of PPM channel values. */
     be_board_ppm_get_channel_value(&bc_ch_value);
-    
-    /*
-        Threshold of THROTTLE.
-        For some condition without it possible problems during start of motors.
-    */
+
+    /* Filtering of throtle noise: */
     i32_throttle = (int32_t)bc_ch_value.u16_channel_3_value;
-    float_api_common_variables[0] = (float)i32_throttle;
+    /* Turn it on if need to see on monitor. */
+    /* float_api_common_variables[0] = (float)i32_throttle; */
+
     i32_throttle = i32_api_filters_ma_rx_throttle(i32_throttle);
 
     /* Turn on BaroAltHold. BARO ON/OFF */
@@ -50,7 +49,7 @@ void api_end_tricopter_update(void)
         if(u8_baro_mode == 0U)
         {
             u8_baro_mode = 1U;
-            bp_baro_pid.i32_AltHold = bp_baro_pid.i32_EstAlt;
+            bp_baro_pid.i32_AltHold = api_baro_get_altitude_estimation();
             bp_baro_pid.i32_errorAltitudeI = 0;
             bp_baro_pid.i32_BaroPID = 0;
             bp_baro_pid.i32_ThrHold = i32_throttle;
@@ -74,9 +73,10 @@ void api_end_tricopter_update(void)
         i32_throttle = bp_baro_pid.i32_ThrHold + bp_baro_pid.i32_BaroPID;
     }
 
-    /* for test only*/
-    float_api_common_variables[1] = (float)i32_throttle;
-
+    /*
+        Threshold of THROTTLE.
+        For some condition without it possible problems during start of motors.
+    */
     if(i32_throttle <= API_END_DEVICE_MIN_THROTTLE)
     {
         i32_motor[0] = i32_throttle;
@@ -139,7 +139,7 @@ void api_end_tricopter_update(void)
             if(abs_t((int32_t)fl_api_body_angle_wind_angles[Pitch]) < 25)
             {
                 /* Calc compensation for Yaw value*/
-                i32_rc_chanel_yaw_value = i32_rc_chanel_yaw_value - i32_heading_error * API_END_DEVICE_HEAD_HOLD_P_PID/30;
+                i32_rc_chanel_yaw_value = i32_rc_chanel_yaw_value - (i32_heading_error * API_END_DEVICE_HEAD_HOLD_P_PID)/30;
             }
         }
     }

@@ -27,12 +27,12 @@ void api_baro_altitude_estimation(void)
     static int32_t BaroHigh = 0;
     static int32_t BaroLow  = 0;
     int32_t last;
-    int32_t temp32;
+    int32_t i32_temp32;
     uint8_t index;
     int32_t  BaroAlt = i32_board_baro_get_altitude();
 
-    /* 
-        Input filter. 
+    /*
+        Input filter.
     */
     last = BaroHistTab[BaroHistIdx];
 
@@ -64,35 +64,36 @@ void api_baro_altitude_estimation(void)
         BaroHistIdx = 0U;
     }
 
-    /* 
-        Estimation Altitude. 
+    /*
+        Estimation Altitude.
         It is MA of newest components of table multiplied by 10 to return to same factor.
     */
-    bp_baro_pid.i32_EstAlt = BaroHigh * 10 / ((int32_t)BARO_TAB_SIZE / 2);
-    
-    
+    /* bp_baro_pid.i32_EstAlt = BaroHigh * 10 / ((int32_t)BARO_TAB_SIZE / 2); */
+    i32_temp32 = BaroHigh * 10 / ((int32_t)BARO_TAB_SIZE / 2);
+    api_baro_set_altitude_estimation(i32_temp32);
+
     /* Pid controller. */
     bp_baro_pid.i32_BaroPID = 0;
-    
+
     /* D */
     /* Calculation of differences between MA of newest and oldest elements of table. */
-    temp32 = (BaroHigh / (int)BARO_TAB_SIZE) - (BaroLow / (int)BARO_TAB_SIZE);
-    
-    /* Calculation of D components. */
-    temp32 = bp_baro_pid.i32_d_gain * temp32;
+    i32_temp32 = (BaroHigh / (int)BARO_TAB_SIZE) - (BaroLow / (int)BARO_TAB_SIZE);
 
-    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID - temp32;
-    
+    /* Calculation of D components. */
+    i32_temp32 = bp_baro_pid.i32_d_gain * i32_temp32;
+
+    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID - i32_temp32;
+
     /* Calculation of altitude error. */
-    temp32 = bp_baro_pid.i32_AltHold - bp_baro_pid.i32_EstAlt;
-    
+    i32_temp32 = bp_baro_pid.i32_AltHold - bp_baro_pid.i32_EstAlt;
+
     /*
-        Remove small D parametr to reduce noise near zero position. 
+        Remove small D parametr to reduce noise near zero position.
         10 is magic number, depend on factors.
     */
-    if (abs_t(temp32) < 10)
+    if (abs_t(i32_temp32) < 10)
     {
-        
+
         if(abs_t(bp_baro_pid.i32_BaroPID) < 10)
         {
             bp_baro_pid.i32_BaroPID = 0;
@@ -100,17 +101,17 @@ void api_baro_altitude_estimation(void)
     }
 
     /* P */
-    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID +  bp_baro_pid.i32_p_gain * constrain_i32(temp32,(-2) * bp_baro_pid.i32_p_gain, 2 * bp_baro_pid.i32_p_gain) / 100;
+    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID +  bp_baro_pid.i32_p_gain * constrain_i32(i32_temp32,(-2) * bp_baro_pid.i32_p_gain, 2 * bp_baro_pid.i32_p_gain) / 100;
 
     /* Summa of P and D should be in range 150. */
     bp_baro_pid.i32_BaroPID = constrain_i32(bp_baro_pid.i32_BaroPID, -150, +150);
 
    /* I */
-    bp_baro_pid.i32_errorAltitudeI = bp_baro_pid.i32_errorAltitudeI + temp32 * bp_baro_pid.i32_i_gain / 50;
+    bp_baro_pid.i32_errorAltitudeI = bp_baro_pid.i32_errorAltitudeI + i32_temp32 * bp_baro_pid.i32_i_gain / 50;
     bp_baro_pid.i32_errorAltitudeI = constrain_i32(bp_baro_pid.i32_errorAltitudeI, -30000, 30000);
     /* I in range +/-60 */
-    temp32 = bp_baro_pid.i32_errorAltitudeI / 500; /* I in range +/-60 */
-    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID + temp32;
+    i32_temp32 = bp_baro_pid.i32_errorAltitudeI / 500; /* I in range +/-60 */
+    bp_baro_pid.i32_BaroPID = bp_baro_pid.i32_BaroPID + i32_temp32;
 }
 
 int32_t api_baro_get_altitude_estimation(void)
@@ -118,7 +119,7 @@ int32_t api_baro_get_altitude_estimation(void)
      return (bp_baro_pid.i32_EstAlt);
 }
 
-void api_baro_set_altitude_estimation(int32_t i32_value)
+static void api_baro_set_altitude_estimation(int32_t i32_value)
 {
     bp_baro_pid.i32_EstAlt = i32_value;
 }

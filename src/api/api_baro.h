@@ -20,17 +20,17 @@ typedef struct
     int32_t i32_errorAltitudeI;
     /* D */
     int32_t i32_d_gain;         /* derivative gain to keep angle level. */
-    /* Results */  
+    /* Results */
     int32_t  i32_BaroPID;       /* Filter output. */
-    int32_t  i32_EstAlt;        /* Estimated Altitude, output. */  
+    int32_t  i32_EstAlt;        /* Estimated Altitude, output. */
     int32_t  i32_AltHold;       /* Hold Altitude, input. */
     int32_t  i32_ThrHold;       /* Hold Throttle, input. */
 } BARO_PID;
 
 extern BARO_PID  bp_baro_pid;
 
-       void  api_baro_PID_init(void); 
+       void  api_baro_PID_init(void);
        void  api_baro_altitude_estimation(void);
     int32_t  api_baro_get_altitude_estimation(void);
-       void  api_baro_set_altitude_estimation(int32_t i32_value);
+static void  api_baro_set_altitude_estimation(int32_t i32_value);
 #endif
