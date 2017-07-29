@@ -2,7 +2,7 @@
 
 static BOARD_DEV_STATE bds_flag_GPS_on = BOARD_DEV_OFF;
 
-/* Set GPS davice state. Use this function if you need set GPS state. */
+/* Set GPS device state. Use this function if you need set GPS state. */
 static BOARD_ERROR be_board_gps_set_gps_dev_state(BOARD_DEV_STATE bds_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;

@@ -7,6 +7,8 @@ BOARD_ERROR be_board_pwm_init(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
+    /* TIMER2 PWM configuration. */
+
 #if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
     /* For tricopter CH 1,2,3 connected to motors and should be init by minimal value of PPM. */
     be_TIMER2_PWM_channel_init(CHANEL_1,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
@@ -34,11 +36,22 @@ BOARD_ERROR be_board_pwm_init(void)
     be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
 #endif
 
-    /* Start TIMER2.
-    * Now PWM shold start.
-    */
+#if BOARD_SYSTEM_CONFIG_AIR_HOVER_MODE
+    /* For tricopter CH 1,2 connected to motors and should be init by minimal value of PPM. */
+    /* Left motor */
+    be_TIMER2_PWM_channel_init(CHANEL_1,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
+    /* Right motor */
+    be_TIMER2_PWM_channel_init(CHANEL_2,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL);
+    /* CH3 connected to right servo and should be init by midle PPM value. */
+    be_TIMER2_PWM_channel_init(CHANEL_3,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+    /* CH4 connected to right servo and should be init by midle PPM value. */
+    be_TIMER2_PWM_channel_init(CHANEL_4,PWM_PERIOD_ANALOG,PWM_DUTY_INITIAL_MIDDLE);
+#endif
+
+    /* Start TIMER2. Now PWM should start. */
     TIM_Cmd(TIM2, ENABLE);
 
+    /* TIMER3 PWM configuration. */
 #if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
     /* In tricopter mode it is not using. */
     be_TIMER3_PWM_channel_init(CHANEL_1,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
@@ -60,6 +73,17 @@ BOARD_ERROR be_board_pwm_init(void)
     /* PB1 */
     /*  be_TIMER3_PWM_channel_init(4,PWM_PERIOD_TIMER2,PWM_DUTY_INITIAL_TIMER2); // Pin connected to led.*/
 #endif
+
+#if BOARD_SYSTEM_CONFIG_AIR_HOVER_MODE
+    /* In tricopter mode it is not using. */
+    be_TIMER3_PWM_channel_init(CHANEL_1,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
+    be_TIMER3_PWM_channel_init(CHANEL_2,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
+    /* PB0 */
+    be_TIMER3_PWM_channel_init(CHANEL_3,PWM_PERIOD_DIGITAL,PWM_DUTY_INITIAL);
+    /* PB1 */
+    /*  be_TIMER3_PWM_channel_init(4,PWM_PERIOD_TIMER2,PWM_DUTY_INITIAL_TIMER2); // Pin connected to led.*/
+#endif
+
     /* Start TIMER3. */
     TIM_Cmd(TIM3, ENABLE);
 

@@ -6,7 +6,7 @@ static int32_t i32_head_hold_device = 0;
 
 /*This function calculate value of PPM (PWM) for all end device. (Motors, servos for tricopter configuration.) */
 
- 
+
 void api_end_device_update(void)
 {
 
@@ -23,7 +23,13 @@ void api_end_device_update(void)
 #if API_END_DEVICE_AERO_0
     api_end_aero_update();
     i32_head_hold_device = api_end_aero_get_head_hold();
-#endif    
+#endif
+
+#if BOARD_SYSTEM_CONFIG_AIR_HOVER_MODE
+    api_end_air_hover_update();
+    i32_head_hold_device = api_end_air_hover_get_head_hold();
+#endif
+
 }
 
 int32_t api_end_device_get_head_hold(void)
