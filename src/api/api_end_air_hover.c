@@ -90,15 +90,15 @@ void api_end_air_hover_update(void)
     {
         i32_motor[0] = i32_throttle;
         i32_motor[1] = i32_throttle;
-        i32_motor[2] = i32_throttle;
+        /* i32_motor[2] = i32_throttle; */
     }
     else
     {   /* Tricopter configuration. */
         /* i32_motor[0] = i32_throttle + i32_Roll - (i32_Pitch * 2) / 3; */
         /* i32_motor[1] = i32_throttle - i32_Roll - (i32_Pitch * 2) / 3; */
         /* i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3; */
-        i32_motor[0] = i32_throttle - i32_Roll;
-        i32_motor[1] = i32_throttle + i32_Roll;
+        i32_motor[0] = i32_throttle + i32_Roll;
+        i32_motor[1] = i32_throttle - i32_Roll;
         /* i32_motor[2] = i32_throttle + (i32_Pitch * 4)/3; */
 
 
@@ -171,13 +171,13 @@ void api_end_air_hover_update(void)
     /* Drive of end devices. */
 
     /* Value to left motor. */
-    timer2_PWM_duty_CH1((uint16_t)i32_motor[0]);
+    timer2_PWM_duty_CH4((uint16_t)i32_motor[0]);/* CH1 */
     /* Value to right motor. */
-    timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);
+    timer2_PWM_duty_CH2((uint16_t)i32_motor[1]);/* CH2 */
     /* Value to left motor servo. */
-    timer2_PWM_duty_CH3((uint16_t)i32_servo_l);
+    timer2_PWM_duty_CH3((uint16_t)i32_servo_l); /* CH3 */
     /* Value to right motor servo. */
-    timer2_PWM_duty_CH4((uint16_t)i32_servo_r);
+    timer2_PWM_duty_CH1((uint16_t)i32_servo_r); /* CH4 */
 }
 
 int32_t api_end_air_hover_get_head_hold(void)
