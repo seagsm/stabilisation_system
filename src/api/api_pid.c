@@ -4,6 +4,8 @@
 #include "api_pid.h"
 #include "api_flash.h"
 
+#define    TURN_RADIO_OFF 0
+
 PID_element pid_api_pid_data[3];
 
 /* Call it to initialize PID structures. */
@@ -155,9 +157,30 @@ void api_pid_update_frame(void)
 
     /* Calculation of Pitch PDF frame. */
 
-    
+
     /* Get channel value from PPM structure. */
     be_board_ppm_get_channel_value(&bc_ch_value);
+
+    /* Send Ch 1,2,3 to telemetry: */
+    float_api_common_variables[0] = (float)bc_ch_value.u16_channel_1_value;
+    float_api_common_variables[1] = (float)bc_ch_value.u16_channel_2_value;
+    float_api_common_variables[2] = (float)bc_ch_value.u16_channel_3_value;
+
+#if TURN_RADIO_OFF
+
+    bc_ch_value.u16_channel_1_value = 1500U;
+    bc_ch_value.u16_channel_2_value = 1500U;
+    bc_ch_value.u16_channel_3_value = 1100U;
+    bc_ch_value.u16_channel_4_value = 1500U;
+    bc_ch_value.u16_channel_5_value = 1500U;
+    bc_ch_value.u16_channel_6_value = 1500U;
+    bc_ch_value.u16_channel_7_value = 0U;
+    bc_ch_value.u16_channel_8_value = 0U;
+    bc_ch_value.u16_channel_9_value = 0U;
+
+#endif
+
+
     /* Convert RC Pitch channel value to int32. */
     i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_2_value;      /* value between 1000 - 2000  */
 

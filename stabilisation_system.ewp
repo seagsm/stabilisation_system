@@ -1970,6 +1970,12 @@
         <name>$PROJ_DIR$\src\api\api_end_aero.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\src\api\api_end_air_hover.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\api\api_end_air_hover.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\src\api\api_end_device.c</name>
       </file>
       <file>
