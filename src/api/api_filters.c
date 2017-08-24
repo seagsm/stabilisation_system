@@ -539,6 +539,31 @@ int32_t i32_api_filters_ma_rx_yaw(int32_t i32_new_sample)
 }
 
 
+#define PITCH_ARRAY_SIZE 70U
+/* Middle average. */
+int32_t i32_api_filters_ma_rx_pitch(int32_t i32_new_sample)
+{
+    /* Input samples.  */
+    const uint16_t u16_samples = PITCH_ARRAY_SIZE;
+    static int32_t i32_x[PITCH_ARRAY_SIZE];
+    static int32_t i32_summ = 0;
+    static uint16_t   u16_n = 0U;
+    int32_t i32_y;
+
+    i32_summ = i32_summ - i32_x[u16_n] + i32_new_sample;
+    i32_x[u16_n] = i32_new_sample;
+    u16_n = u16_n + 1U;
+    if(u16_n >= PITCH_ARRAY_SIZE)
+    {
+        u16_n = 0U;
+    }
+    i32_y = i32_summ / ((int32_t)u16_samples);
+    return (i32_y);
+}
+
+
+
+
 
 
 

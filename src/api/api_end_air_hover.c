@@ -24,6 +24,7 @@ void api_end_air_hover_update(void)
     int32_t i32_servo_l;
     int32_t i32_servo_r;
     int32_t i32_rc_chanel_yaw_value;
+    int32_t i32_rc_chanel_pitch_value;
 
     /* Angles. */
     int32_t i32_Pitch;
@@ -109,13 +110,17 @@ void api_end_air_hover_update(void)
 
     /* Get current RC YAW channel value. */
     i32_rc_chanel_yaw_value = (int32_t)bc_ch_value.u16_channel_1_value;
+    /* Get current RC PITCH channel value. */
+    i32_rc_chanel_pitch_value = (int32_t)bc_ch_value.u16_channel_2_value;
 
     /* Calc aproximation value. */
     i32_rc_chanel_yaw_value = api_rx_channels_approximation(i32_rc_chanel_yaw_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+    i32_rc_chanel_pitch_value = api_rx_channels_approximation(i32_rc_chanel_pitch_value, (int32_t)BOARD_PPM_ZERO_VALUE);
+
 
     /* Get MA filtered value. It give some small delay. */
     i32_rc_chanel_yaw_value = i32_api_filters_ma_rx_yaw(i32_rc_chanel_yaw_value);
-
+    i32_rc_chanel_pitch_value = i32_api_filters_ma_rx_pitch(i32_rc_chanel_pitch_value);
 
 #if API_END_DEVICE_HEAD_HOLDING
  /* HEAD HOLDING. */
@@ -163,8 +168,8 @@ void api_end_air_hover_update(void)
 #endif
 
     /* Calculate compensation of RC YAW with PDF filter.*/
-    i32_servo_l = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw + i32_Pitch;
-    i32_servo_r = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw - i32_Pitch;
+    i32_servo_l = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_rc_chanel_pitch_value + i32_Yaw + i32_Pitch;
+    i32_servo_r = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value - i32_rc_chanel_pitch_value + i32_Yaw - i32_Pitch;
     i32_servo_l = constrain_i32(i32_servo_l,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
     i32_servo_r = constrain_i32(i32_servo_r,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
 
