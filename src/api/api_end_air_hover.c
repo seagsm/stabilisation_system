@@ -168,8 +168,11 @@ void api_end_air_hover_update(void)
 #endif
 
     /* Calculate compensation of RC YAW with PDF filter.*/
-    i32_servo_l = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_rc_chanel_pitch_value + i32_Yaw + i32_Pitch;
-    i32_servo_r = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value - i32_rc_chanel_pitch_value + i32_Yaw - i32_Pitch;
+    /* i32_servo_l = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_rc_chanel_pitch_value + i32_Yaw + i32_Pitch;*/
+    /* i32_servo_r = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value - i32_rc_chanel_pitch_value + i32_Yaw;  - i32_Pitch;*/
+
+    i32_servo_l = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw + i32_Pitch;
+    i32_servo_r = (int32_t)BOARD_PPM_ZERO_VALUE - i32_rc_chanel_yaw_value + i32_Yaw - i32_Pitch;
     i32_servo_l = constrain_i32(i32_servo_l,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
     i32_servo_r = constrain_i32(i32_servo_r,BOARD_PPM_MIN_VALUE,BOARD_PPM_MAX_VALUE);
 

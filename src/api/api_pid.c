@@ -97,7 +97,7 @@ static void api_pid_update_PDF(PID_element *current_pid, int32_t i32_set_point, 
     */
 
     /* Level error calculation. */
-    i32_position_error = constrain_i32(2 * i32_set_point - i32_angle_position, -MAX_ANGLE_INCLINATION, MAX_ANGLE_INCLINATION); /* -450 to +450 () in 0.1 degree. */
+    i32_position_error = constrain_i32(2 * i32_set_point - i32_angle_position, -MAX_ANGLE_INCLINATION, MAX_ANGLE_INCLINATION); /* -6000 to +6000 () in 0.1 degree. */
 
    /* Level proportional stabilisation. */
     i32_p_term = (current_pid->i32_p_gain * i32_position_error) /100;  /* -450 +450  * (p_gain = 125 )  / 100 =  +- 562 */
@@ -184,8 +184,10 @@ void api_pid_update_frame(void)
     /* Convert RC Pitch channel value to int32. */
     i32_rc_chanel_value = (int32_t)bc_ch_value.u16_channel_2_value;      /* value between 1000 - 2000  */
 
+
     /* Get deviation from ZERO value. */
-    i32_rc_chanel_value = api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
+    i32_rc_chanel_value = 4 * api_rx_channels_approximation(i32_rc_chanel_value, (int32_t)BOARD_PPM_ZERO_VALUE); /* value between -500 + 500. */
+    i32_rc_chanel_value = i32_api_filters_ma_rx_pitch(i32_rc_chanel_value);
 
     /* PITCH */
     /* Get body Pitch angle. Convert body inclination from degree to 0.1 degree. ( 10degree = 100(0.1degree)). */

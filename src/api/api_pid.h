@@ -10,7 +10,7 @@
 #include "api_end_device.h"
 
 /* in 0.1 degree , 1000 = 100degree, 450 = 45 degree. */
-#define MAX_ANGLE_INCLINATION 450
+#define MAX_ANGLE_INCLINATION 6000
 
 #if BOARD_SYSTEM_CONFIG_TRICOPTER_MODE
 /* Pitch */
@@ -108,7 +108,7 @@
 #if BOARD_SYSTEM_CONFIG_AIR_HOVER_MODE
 
 /* Pitch */
-#define PITCH_P_GAIN        30
+#define PITCH_P_GAIN        35
 #define PITCH_P_GAIN_DYN    300
 #define PITCH_I_GAIN        0
 #define PITCH_I_GAIN_DYN    0
