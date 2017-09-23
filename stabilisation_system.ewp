@@ -2090,10 +2090,16 @@
         <name>$PROJ_DIR$\src\board\board_adc.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\src\board\board_baro.c</name>
+        <name>$PROJ_DIR$\src\board\board_baro_bmp085.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\src\board\board_baro.h</name>
+        <name>$PROJ_DIR$\src\board\board_baro_bmp085.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_baro_ms5611.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\src\board\board_baro_ms5651.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\src\board\board_dma.c</name>

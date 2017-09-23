@@ -3,7 +3,7 @@
 
 #include "stm32f10x.h"
 #include "board_system_type.h"
-#include "board_baro.h"
+#include "board_baro_bmp085.h"
 #include "api_common.h"
 
 #define BARO_TAB_SIZE   40U

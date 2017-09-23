@@ -1,77 +1,77 @@
 
 
-#include "board_baro.h"
+#include "board_baro_bmp085.h"
 
 static BOARD_DEV_STATE bds_baro_on = BOARD_DEV_OFF;
 
 
-/* Set Baro davice state. Use this function if you need set Baro state. */
-static BOARD_ERROR be_board_baro_set_baro_dev_state(BOARD_DEV_STATE bds_value)
+/* Set Baro device state. Use this function if you need set Baro state. */
+static BOARD_ERROR be_board_baro_bmp085_set_baro_dev_state(BOARD_DEV_STATE bds_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     bds_baro_on = bds_value;
-    
+
     return (be_result);
 }
 
 /* Get Baro davice state. Use this function if you need get Baro state. */
-BOARD_ERROR be_board_baro_get_baro_dev_state(BOARD_DEV_STATE *bds_value)
+BOARD_ERROR be_board_baro_bmp085_get_baro_dev_state(BOARD_DEV_STATE *bds_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
     *bds_value = bds_baro_on;
-    
+
     return (be_result);
 }
 
 /* Function init baro modyle. */
-BOARD_ERROR be_board_baro_init(void)
+BOARD_ERROR be_board_baro_bmp085_init(void)
 {
     BOARD_ERROR     be_result = BOARD_ERR_OK;
     BOARD_DEV_STATE bds_value = BOARD_DEV_OFF;
-    
+
     be_result = be_board_drv_bmp085_init();
-    
+
     if(be_result == BOARD_ERR_OK)
     {
         bds_value = BOARD_DEV_ON;
     }
-    be_board_baro_set_baro_dev_state(bds_value);
+    be_board_baro_bmp085_set_baro_dev_state(bds_value);
     return (be_result);
 }
 
 /* Function get correct temperature value from baro module. */
-int16_t i16_board_baro_get_temperature(void)
+int16_t i16_board_baro_bmp085_get_temperature(void)
 {
     return(i16_board_drv_bmp085_get_temperature());
 }
 
 /* Function get correct pressure value from baro module. */
-uint32_t u32_board_baro_get_pressure(void)
+uint32_t u32_board_baro_bmp085_get_pressure(void)
 {
     return(u32_board_drv_bmp085_get_pressure());
 }
 
 /* Function get filtered pressure value from baro module. */
-uint32_t u32_board_baro_get_filtered_pressure(void)
+uint32_t u32_board_baro_bmp085_get_filtered_pressure(void)
 {
     return(u32_board_drv_bmp085_get_filtered_pressure());
 }
 
 /* Function set filtered pressure value. */
-void u32_board_baro_set_filtered_pressure(uint32_t u32_filtered_pressure)
+void u32_board_baro_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure)
 {
     v_board_drv_bmp085_set_filtered_pressure(u32_filtered_pressure);
 }
 
 /* Function calculate altitude from pressure. */
-int32_t i32_board_baro_get_altitude(void)
+int32_t i32_board_baro_bmp085_get_altitude(void)
 {
     float float_altitude;
     uint32_t u32_pressure;
 
-    u32_pressure =  u32_board_baro_get_pressure();
+    u32_pressure =  u32_board_baro_bmp085_get_pressure();
 
     /* altitude in centimeters*/
     float_altitude = (1.0f - (float)pow((float)u32_pressure/101325.0, 0.190295)) * 4433000.0f;
@@ -80,7 +80,7 @@ int32_t i32_board_baro_get_altitude(void)
 
 
 
-BOARD_ERROR be_board_baro_set_state(BARO_STATE_CONDITION bsc_state)
+BOARD_ERROR be_board_baro_bmp085_set_state(BARO_STATE_CONDITION bsc_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
 
@@ -100,7 +100,7 @@ BOARD_ERROR be_board_baro_set_state(BARO_STATE_CONDITION bsc_state)
 }
 
 
-BARO_STATE_CONDITION bsc_board_baro_get_state(void)
+BARO_STATE_CONDITION bsc_board_baro_bmp085_get_state(void)
 {
     BARO_STATE_CONDITION bsc_state = UNDEFINED_STATE;
     switch (b85sc_board_drv_bmp085_get_state())
@@ -126,7 +126,7 @@ BARO_STATE_CONDITION bsc_board_baro_get_state(void)
     return (bsc_state);
 }
 
-void v_board_baro_data_compensation(void)
+void v_board_baro_bmp085_data_compensation(void)
 {
     be_board_drv_bmp085_real_data_calculation();
 }

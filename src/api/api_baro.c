@@ -29,7 +29,7 @@ void api_baro_altitude_estimation(void)
     int32_t last;
     int32_t i32_temp32;
     uint8_t index;
-    int32_t  BaroAlt = i32_board_baro_get_altitude();
+    int32_t  BaroAlt = i32_board_baro_bmp085_get_altitude();
 
     /*
         Input filter.

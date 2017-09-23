@@ -13,28 +13,28 @@ static void v_api_main_loop_process(void)
         v_api_data_prepr_sensor_data_preprocessing();
 
         /* Check if Baro device is ON. */
-        be_board_baro_get_baro_dev_state(&bds_value);
+        be_board_baro_bmp085_get_baro_dev_state(&bds_value);
         if(bds_value == BOARD_DEV_ON)
-        {  
+        {
             /* Check if reading pressure is done. */
-            if(bsc_board_baro_get_state() == CONVERSION_DONE)
+            if(bsc_board_baro_bmp085_get_state() == CONVERSION_DONE)
             {
                 /* Calculation of real pressure and real temperature.*/
-                v_board_baro_data_compensation();
+                v_board_baro_bmp085_data_compensation();
 
                 /* Pressure filtration and altitude calculation. */
 
                 /* Filter pressure using MA filter*/
-                u32_board_baro_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_get_pressure()));
+                u32_board_baro_bmp085_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_bmp085_get_pressure()));
 
                 /* Altitude estimation and BaroPid output calculation. */
                 api_baro_altitude_estimation();
 
                 /* Set BARO state machine start state. */
-                be_board_baro_set_state(START_CONVERSION);
+                be_board_baro_bmp085_set_state(START_CONVERSION);
             }
         }
-                
+
         /* Start data acquisition. */
         be_api_i2c_acquisition_start();
 
@@ -56,7 +56,7 @@ static void v_api_main_loop_process(void)
 
     /* Command communication going through UART1. */
     be_api_cmd_communication();
-    
+
     api_gps_nav_processing();
 
     GPIO_SetBits( GPIOA, GPIO_Pin_12);
@@ -70,11 +70,11 @@ static void v_api_main_loop_control_loop(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     BOARD_CHANNEL_VALUE bc_ch_value;
-    
+
     /* Get body wind angle in degree. */
     be_result = be_api_body_angle_calculation();
 
-    /* Here should be added code for navigation. 
+    /* Here should be added code for navigation.
     ...
     */
     /* Check ON/OFF channel.*/
@@ -84,9 +84,9 @@ static void v_api_main_loop_control_loop(void)
     {
         api_gps_nav_set_navigation_influence();
     }
-    
 
-    /* Here calculating PIDs for compensating influences and update DEVICE. */    
+
+    /* Here calculating PIDs for compensating influences and update DEVICE. */
     if(be_result == BOARD_ERR_OK)
     {
         /* Call  calculation of next frame of PDF. That are body angles. */

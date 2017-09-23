@@ -30,6 +30,7 @@
 #define CMD_PROM_RD             0xA0U /* Prom read command       */
 #define PROM_NB                 8U
 
+typedef BOARD_ERROR (* baroOpFuncBrdErrPtr)(void);
 typedef void (* baroOpFuncPtr)(void);                                           /* baro start operation */
 typedef void (* baroCalculateFuncPtr)(int32_t *pressure, int32_t *temperature); /* baro calculation (filled params are */
 
@@ -37,15 +38,15 @@ typedef struct Baro_t
 {
     uint16_t ut_delay;
     uint16_t up_delay;
-    baroOpFuncPtr start_ut;
-    baroOpFuncPtr get_ut;
-    baroOpFuncPtr start_up;
-    baroOpFuncPtr get_up;
+    baroOpFuncBrdErrPtr start_ut;
+    baroOpFuncBrdErrPtr get_ut;
+    baroOpFuncBrdErrPtr start_up;
+    baroOpFuncBrdErrPtr get_up;
     baroCalculateFuncPtr calculate;
 } baro_t;
 
 
-
+BOARD_ERROR board_drv_get_baro(baro_t **pb_baro);
 BOARD_ERROR ms5611Detect(baro_t *baro);
 BOARD_ERROR ms5611_reset(void);
 

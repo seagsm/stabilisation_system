@@ -4,7 +4,7 @@
 #include "stm32f10x.h"
 #include "board_system_type.h"
 #include "board_i2c.h"
-#include "board_baro.h"
+#include "board_baro_bmp085.h"
 #include "board_drv_hmc5883.h"
 #include "board_drv_l3g4200d.h"
 #include "board_drv_adxl345.h"
