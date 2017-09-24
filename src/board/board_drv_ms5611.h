@@ -9,8 +9,10 @@
 
 
 
-/* MS5611, Standard address 0x77 */
-#define MS5611_ADDR                          0xECU   /* 111011Cx , C = 0 */
+/* MS5611, Standard address 0xEE, but it is address of BMP085. */
+
+#define MS5611_ADDR                          0xECU  /* 111011Cx , C = 0 */
+
 
 /*  Autodetect: turn off BMP085 while initializing ms5611 and check PROM crc to confirm device */
 #define BMP085_OFF                  digitalLo(BARO_GPIO, BARO_PIN);
@@ -47,8 +49,8 @@ typedef struct Baro_t
 
 
 BOARD_ERROR board_drv_get_baro(baro_t **pb_baro);
-BOARD_ERROR ms5611Detect(baro_t *baro);
-BOARD_ERROR ms5611_reset(void);
+BOARD_ERROR board_drv_ms5611Detect(baro_t *baro);
+BOARD_ERROR board_drv_ms5611_reset(void);
 
 
 

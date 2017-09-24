@@ -71,6 +71,7 @@ int32_t i32_board_baro_bmp085_get_altitude(void)
     float float_altitude;
     uint32_t u32_pressure;
 
+    /* Pressure in pascals: */
     u32_pressure =  u32_board_baro_bmp085_get_pressure();
 
     /* altitude in centimeters*/

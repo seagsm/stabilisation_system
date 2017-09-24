@@ -30,26 +30,54 @@ BOARD_ERROR be_board_baro_ms5611_init(void)
 {
     BOARD_ERROR     be_result = BOARD_ERR_OK;
     BOARD_DEV_STATE bds_value = BOARD_DEV_OFF;
-
     baro_t *pb_baro;
 
-    be_result = ms5611_reset();
- /*   be_result = be_board_drv_ms5611_init(); */
+/* test */
+    int32_t baroPressure;
+    int32_t baroTemperature;
+    uint32_t u32_counter = 0U;
+static    float float_altitude;
+/**/
+
+    be_result = board_drv_ms5611_reset();
     be_result = board_drv_get_baro(&pb_baro);
-    be_result |= ms5611Detect(pb_baro);
+    be_result |= board_drv_ms5611Detect(pb_baro);
 
     if(be_result == BOARD_ERR_OK)
     {
         bds_value = BOARD_DEV_ON;
     }
     be_board_baro_ms5611_set_baro_dev_state(bds_value);
+
+/* test */
+    while(u32_counter < 10000U)
+    {
+        be_result = pb_baro->start_ut();
+        gv_board_sys_tick_delay(10U);
+        be_result = pb_baro->get_ut();
+        gv_board_sys_tick_delay(10U);
+        be_result = pb_baro->start_up();
+        gv_board_sys_tick_delay(10U);
+        be_result = pb_baro->get_up();
+        pb_baro->calculate(&baroPressure, &baroTemperature);
+
+        /* Pressure in pascals, 1mBar = 100 pascals, here 288m /sea-level: */
+        /* altitude in centimeters*/
+        float_altitude = (1.0f - (float)pow((float)baroPressure/101325.0, 0.190295)) * 4433000.0f;
+
+        gv_board_sys_tick_delay(1000U);
+        u32_counter++;
+    }
+/**/
+
     return (be_result);
 }
 
 /* Function get correct temperature value from baro module. */
 int16_t i16_board_baro_ms5611_get_temperature(void)
 {
-  /*  return(i16_board_drv_ms5611_get_temperature());*/
+    /* return(i16_board_drv_ms5611_get_temperature()); */
+
     return (0);
 }
 

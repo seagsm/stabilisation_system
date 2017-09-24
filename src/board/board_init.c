@@ -43,19 +43,17 @@ BOARD_ERROR be_board_init_main_init(void)
                 be_result |= be_board_i2c_init();    /* Init I2C1 chanels. */
                 break;
             case (6U):
-               /* be_result |= be_board_gyro_init(); */  /* Init gyro module. */
+                be_result |= be_board_gyro_init();   /* Init gyro module. */
                 break;
             case (7U):
-               /* be_result |= be_board_acc_init(); */   /* Init accelerometer module. */
+               /* be_result |= be_board_acc_init(); */    /* Init accelerometer module. */
                 break;
             case (8U):
-               /* be_result |= be_board_mag_init(); */   /* Init magnetometer module. */
+               /* be_result |= be_board_mag_init(); */    /* Init magnetometer module. */
                 break;
             case (9U):
-                /* be_result |= be_board_baro_bmp085_init(); */   /* Init baro module. */
-                be_result |= be_board_baro_ms5611_init();
-                gv_board_sys_tick_delay(28000U);
-
+                be_result |= be_board_baro_bmp085_init();     /* Init baro module. */
+                /* be_result |= be_board_baro_ms5611_init(); */ /* under development */
                 break;
             case (10U):
                 be_result |= be_api_i2c_acquisition_init(); /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */

@@ -68,7 +68,24 @@ BOARD_ERROR be_board_i2c_read_start(uint8_t* pu8_buffer, uint16_t u16_number_byt
 }
 
 
+/* This function write to I2C device. */
+BOARD_ERROR board_i2c_write_byte(
+                                uint8_t u8_device_address,
+                                uint8_t u8_write_data
+                           )
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint8_t u8_write_buffer[2U]= { 0U, 0U};
 
+    u8_write_buffer[0U] = u8_write_data; /* Write command. */
+
+    /* Use one time read ISR. */
+    u8_one_time_rw = 1U;
+    be_result = be_board_i2c_DMA_master_buffer_write(u8_write_buffer, 1U, u8_device_address);
+    while(vu8_master_transition_complete == 0U)
+    {}
+    return(be_result);
+}
 
 /* This function write to I2C device. */
 BOARD_ERROR board_i2c_write(
@@ -90,6 +107,22 @@ BOARD_ERROR board_i2c_write(
     {}
     return(be_result);
 }
+
+BOARD_ERROR board_i2c_read_from_address(
+                            uint8_t  u8_device_address,
+                            uint8_t* pu8_pointer_to_buffer,  /* pointer to bytes */
+                            uint16_t u16_number_byte_to_read
+                          )
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+
+    u8_one_time_rw = 1U;
+    be_result |= be_board_i2c_master_buffer_DMA_read (pu8_pointer_to_buffer, u16_number_byte_to_read, u8_device_address);
+    while(vu8_master_reception_complete == 0U)
+    {}
+    return(be_result);
+}
+
 
 /* This function read data from slave device using DMA read function + interrupt. */
 BOARD_ERROR board_i2c_read(

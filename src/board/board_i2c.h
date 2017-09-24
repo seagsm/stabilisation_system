@@ -152,6 +152,12 @@ BOARD_ERROR be_board_i2c_init(void);
 static void board_i2c_unstick(void);
 static void board_i2c_lowlevel_init(void);
 
+BOARD_ERROR board_i2c_read_from_address(
+                            uint8_t  u8_device_address,
+                            uint8_t* pu8_pointer_to_buffer,  /* pointer to bytes */
+                            uint16_t u16_number_byte_to_read
+                          );
+
 BOARD_ERROR board_i2c_read(
                             uint8_t  u8_device_address,
                             uint8_t  u8_start_read_address,
@@ -159,6 +165,7 @@ BOARD_ERROR board_i2c_read(
                             uint8_t* pu8_pointer_to_buffer  /* pointer to bytes */
                           );
 
+BOARD_ERROR board_i2c_write_byte(uint8_t u8_device_address, uint8_t u8_write_data);
 BOARD_ERROR board_i2c_write(uint8_t u8_device_address, uint8_t u8_write_address, uint8_t u8_write_data);
 
 static BOARD_ERROR be_board_i2c_master_buffer_DMA_read(uint8_t* pBuffer,  uint16_t NumByteToRead, uint8_t SlaveAddress);

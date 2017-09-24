@@ -31,7 +31,7 @@ BOARD_ERROR board_drv_get_baro(baro_t **pb_baro)
     return(be_result);
 }
 
-BOARD_ERROR ms5611Detect(baro_t *baro)
+BOARD_ERROR board_drv_ms5611Detect(baro_t *baro)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     uint8_t u8_sig;
@@ -40,13 +40,12 @@ BOARD_ERROR ms5611Detect(baro_t *baro)
 
     gv_board_sys_tick_delay(10U); /* No idea how long the chip takes to power-up, but let's make it 10 mS */
 
-    /* BMP085 is disabled. If we have a MS5611, it will reply. if no reply, means either */
-    /* we have BMP085 or no baro at all. */
-    be_result = board_i2c_read( MS5611_ADDR, CMD_PROM_RD, 1U, &u8_sig);
+    be_result = board_i2c_read( MS5611_ADDR, CMD_PROM_RD, 2U, &u8_sig);
+
 
     if (be_result == BOARD_ERR_OK)
     {
-        ms5611_reset();
+        /*ms5611_reset();*/
         /* read all coefficients */
         for (u8_i = 0U; u8_i < PROM_NB; u8_i++)
         {
@@ -69,10 +68,10 @@ BOARD_ERROR ms5611Detect(baro_t *baro)
     return(be_result);
 }
 
-BOARD_ERROR ms5611_reset(void)
+BOARD_ERROR board_drv_ms5611_reset(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    be_result = board_i2c_write(MS5611_ADDR, CMD_RESET, 1U);
+    be_result = board_i2c_write_byte(MS5611_ADDR, CMD_RESET);
     gv_board_sys_tick_delay(2800U);
     return (be_result);
 }
@@ -186,11 +185,11 @@ static BOARD_ERROR ms5611_read_adc(uint32_t *pu32_value)
     return (be_result);
 }
 
+/* D2 (temperature) conversion start! */
 static BOARD_ERROR ms5611_start_ut(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    /* i2cWrite(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1);  D2 (temperature) conversion start! */
-    be_result = board_i2c_write(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1U);
+    be_result = board_i2c_write_byte(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr);
     return (be_result);
 }
 
@@ -202,11 +201,11 @@ static BOARD_ERROR ms5611_get_ut(void)
     return(be_result);
 }
 
+/* D1 (pressure) conversion start! */
 static BOARD_ERROR ms5611_start_up(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    /* i2cWrite(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr, 1);  D1 (pressure) conversion start! */
-    be_result = board_i2c_write(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr, 1U);
+    be_result = board_i2c_write_byte(MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr);
     return(be_result);
 }
 
@@ -238,8 +237,8 @@ static void ms5611_calculate(int32_t *pressure, int32_t *temperature)
     /* i64_off = ((int64_t)ms5611_c[2] << 16) + (((int64_t)ms5611_c[4] * i32_dT) >> 7); */
     u64_tmp0 = (uint64_t)ms5611_c[2];
     u64_tmp0 = u64_tmp0 << 16;
-    i64_tmp1 = ((int64_t)ms5611_c[4] * i64_dT);
-    i64_off = ((int64_t)u64_tmp0 + i64_tmp1)/128 ;
+    i64_tmp1 = ((int64_t)ms5611_c[4] * i64_dT) / 128;
+    i64_off = (int64_t)u64_tmp0 + i64_tmp1 ;
 
     /* i64_sens = ((int64_t)ms5611_c[1] << 15) + (((int64_t)ms5611_c[3] * i32_dT) >> 8); */
     i64_sens = ((int64_t)ms5611_c[1] * 32768) + (((int64_t)ms5611_c[3] * i64_dT) / 256);
@@ -276,10 +275,10 @@ static void ms5611_calculate(int32_t *pressure, int32_t *temperature)
 
     if (pressure)
     {
-        *pressure = (int32_t)u32_press;
+        *pressure = (int32_t)u32_press; /* return pressure in Pascals. */
     }
     if (temperature)
     {
-        *temperature = (int32_t)i64_temp;
+        *temperature = (int32_t)i64_temp; /* return Temperature in 0.01 Celsium degree. */
     }
 }
