@@ -13,6 +13,7 @@ static void v_api_main_loop_process(void)
         v_api_data_prepr_sensor_data_preprocessing();
 
         /* Check if Baro device is ON. */
+#if BOARD_BARO_BMP085
         be_board_baro_bmp085_get_baro_dev_state(&bds_value);
         if(bds_value == BOARD_DEV_ON)
         {
@@ -34,6 +35,14 @@ static void v_api_main_loop_process(void)
                 be_board_baro_bmp085_set_state(START_CONVERSION);
             }
         }
+#elif BOARD_BARO_MS5611
+        be_board_baro_ms5611_get_baro_dev_state(&bds_value);
+        if(bds_value == BOARD_DEV_ON)
+        {
+
+
+        }
+#endif
 
         /* Start data acquisition. */
         be_api_i2c_acquisition_start();

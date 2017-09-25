@@ -52,8 +52,11 @@ BOARD_ERROR be_board_init_main_init(void)
                /* be_result |= be_board_mag_init(); */    /* Init magnetometer module. */
                 break;
             case (9U):
-                be_result |= be_board_baro_bmp085_init();     /* Init baro module. */
-                /* be_result |= be_board_baro_ms5611_init(); */ /* under development */
+#if BOARD_BARO_BMP085
+                be_result |= be_board_baro_bmp085_init(); /* Init baro module. */
+#elif BOARD_BARO_MS5611
+                be_result |= be_board_baro_ms5611_init(); /* under development */
+#endif
                 break;
             case (10U):
                 be_result |= be_api_i2c_acquisition_init(); /* Init data acquisition process. It read chain of Gyro-Acc-Mag. */

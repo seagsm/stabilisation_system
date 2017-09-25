@@ -8,14 +8,6 @@
 #include "board_i2c.h"
 #include "board_drv_bmp085.h"
 
-typedef enum
-{
-    START_CONVERSION            = 0U,
-    CONVERSION_IN_PROGRESS      = 1U,
-    CONVERSION_DONE             = 2U,
-    UNDEFINED_STATE             = 3U
-} BARO_STATE_CONDITION;
-
 BOARD_ERROR be_board_baro_bmp085_init(void);
 int16_t i16_board_baro_bmp085_get_temperature(void);
 uint32_t u32_board_baro_bmp085_get_pressure(void);

@@ -10,6 +10,7 @@
 #include "api_data_normalising.h"
 #include "api_cmd.h"
 #include "board_baro_bmp085.h"
+#include "board_baro_ms5611.h"
 
 #include "MadgwickAHRS.h"
 #include "api_end_device.h"

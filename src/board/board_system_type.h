@@ -5,6 +5,16 @@
 
 #include "stm32f10x.h"
 
+
+#define BOARD_BARO_BMP085   0
+
+#if BOARD_BARO_BMP085
+#define    BOARD_BARO_MS5611 0
+#else
+#define    BOARD_BARO_MS5611 1
+#endif
+
+
 #define _M_PI 3.141592653589793
 
 typedef struct
@@ -52,6 +62,13 @@ typedef struct
     uint8_t   u8_w_data;
 } BOARD_DEVICE_PARAMETERS;
 
+typedef enum
+{
+    START_CONVERSION            = 0U,
+    CONVERSION_IN_PROGRESS      = 1U,
+    CONVERSION_DONE             = 2U,
+    UNDEFINED_STATE             = 3U
+} BARO_STATE_CONDITION;
 
 typedef enum
 {

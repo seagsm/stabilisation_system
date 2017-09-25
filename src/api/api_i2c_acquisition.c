@@ -32,8 +32,12 @@ BOARD_ERROR be_api_i2c_acquisition_init(void)
     bdp_i2c_devices[2].u16_r_sizeof     = MAGNETOMETER_READ_SIZE;
 
     /* Set BARO state machine start state. */
+#if BOARD_BARO_BMP085
+    be_result = be_board_baro_bmp085_set_state(START_CONVERSION);
+#elif BOARD_BARO_MS5611
     be_result = be_board_baro_bmp085_set_state(START_CONVERSION);
 
+#endif
 
 
     return(be_result);
