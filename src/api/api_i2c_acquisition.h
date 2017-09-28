@@ -5,6 +5,7 @@
 #include "board_system_type.h"
 #include "board_i2c.h"
 #include "board_baro_bmp085.h"
+#include "board_baro_ms5611.h"
 #include "board_drv_hmc5883.h"
 #include "board_drv_l3g4200d.h"
 #include "board_drv_adxl345.h"
@@ -17,7 +18,7 @@
 	0 - Gyro.
 	1 - Accelerometer.
 	2 - Magnetometer.
-        3 - Barometer.
+    3 - Barometer.
  */
 
 #define MAX_DEV_NUM 4U

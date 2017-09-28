@@ -35,10 +35,8 @@ BOARD_ERROR be_api_i2c_acquisition_init(void)
 #if BOARD_BARO_BMP085
     be_result = be_board_baro_bmp085_set_state(START_CONVERSION);
 #elif BOARD_BARO_MS5611
-    be_result = be_board_baro_bmp085_set_state(START_CONVERSION);
-
+    be_result = be_board_baro_ms5611_set_conversion_state(START_CONVERSION);
 #endif
-
 
     return(be_result);
 }
@@ -93,8 +91,13 @@ BOARD_ERROR be_api_i2c_write_process_start(void)
     }
     else if(api_i2c_data.u8_device >= 3U ) /* Call baro state machine. */
     {
+#if BOARD_BARO_BMP085
         /* Call baro state machine. */
         be_result = be_board_drv_bmp085_state_machine();
+#elif BOARD_BARO_MS5611
+        /* Call baro state machine. */
+        be_result = be_board_drv_ms5611_state_machine();
+#endif
     }
     else
     {

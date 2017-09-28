@@ -114,55 +114,52 @@ int32_t i32_board_baro_ms5611_get_altitude(void)
     return((int32_t)float_altitude);
 }
 
-
-
-BOARD_ERROR be_board_baro_ms5611_set_state(BARO_STATE_CONDITION bsc_state)
+BOARD_ERROR be_board_baro_ms5611_set_conversion_state(BARO_STATE_CONDITION bsc_state)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-#if 0
     switch (bsc_state)
     {
         case START_CONVERSION:
-            v_board_drv_ms5611_set_state(START_TEMP_CONVERSION);
+            be_board_drv_ms5611_set_conversion_state(MS5611_START_PRESS_CONVERSION);
             break;
         case CONVERSION_DONE:
-            v_board_drv_ms5611_set_state(CALCULATION);
+            be_board_drv_ms5611_set_conversion_state(MS5611_CALCULATION);
             break;
         default:
             be_result = BOARD_ERR_STATE;
         break;
     }
-#endif
     return (be_result);
 }
 
-BARO_STATE_CONDITION bsc_board_baro_ms5611_get_state(void)
+BOARD_ERROR be_board_baro_ms5611_get_conversion_state(BARO_STATE_CONDITION *pbsc_state)
 {
-    BARO_STATE_CONDITION bsc_state = UNDEFINED_STATE;
-#if 0
-    switch (b85sc_board_drv_ms5611_get_state())
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    MS5611_STATE_CONDITION msc_state;
+
+    be_board_drv_ms5611_get_conversion_state(&msc_state);
+    switch (msc_state)
     {
-        case START_TEMP_CONVERSION:
-            bsc_state = START_CONVERSION;
+        case MS5611_START_TEMP_CONVERSION:
+            *pbsc_state = START_CONVERSION;
             break;
-        case START_READING_UNCOMPENSATED_TEMP:
-        case READ_UNCOMPENSATED_TEMP:
-        case WAIT_FOR_TEMP_DATA_READY:
-        case START_PRESS_CONVERSION:
-        case START_READING_UNCOMPENSATED_PRESS:
-        case READ_UNCOMPENSATED_PRESS:
-        case WAIT_FOR_PRESS_DATA_READY:
-            bsc_state = CONVERSION_IN_PROGRESS;
+        case MS5611_START_READ_UNCOMP_TEMP:
+        case MS5611_READ_UNCOMPENSATED_TEMP:
+        case MS5611_WAIT_FOR_TEMP_DATA_READY:
+        case MS5611_START_PRESS_CONVERSION:
+        case MS5611_START_READ_UNCOMP_PRESS:
+        case MS5611_READ_UNCOMPENSATED_PRESS:
+        case MS5611_WAIT_FOR_PRESS_DATA_READY:
+            *pbsc_state = CONVERSION_IN_PROGRESS;
             break;
-        case CALCULATION:
-            bsc_state = CONVERSION_DONE;
+        case MS5611_CALCULATION:
+            *pbsc_state = CONVERSION_DONE;
             break;
         default:
-           break;
+            *pbsc_state = UNDEFINED_STATE;
+            break;
     }
-#endif
-
-    return (bsc_state);
+    return (be_result);
 }
 
 void v_board_baro_ms5611_data_compensation(void)

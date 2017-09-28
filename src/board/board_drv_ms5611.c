@@ -23,6 +23,135 @@ static uint8_t ms5611_osr = CMD_ADC_4096;
 
 static baro_t local_baro;
 
+static MS5611_STATE_CONDITION local_msc_state;
+
+static uint8_t u8_data[3] = {0U};
+
+
+
+BOARD_ERROR be_board_drv_ms5611_set_conversion_state(MS5611_STATE_CONDITION msc_state)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    local_msc_state = msc_state;
+    return(be_result);
+}
+
+BOARD_ERROR be_board_drv_ms5611_get_conversion_state(MS5611_STATE_CONDITION *msc_state)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    *msc_state = local_msc_state;
+    return(be_result);
+}
+
+
+
+BOARD_ERROR be_board_drv_ms5611_state_machine(void)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    baro_t *pb_baro;
+    MS5611_STATE_CONDITION msc_state;
+    uint32_t u32_value[2];
+
+
+    be_result = board_drv_get_baro(&pb_baro);
+    be_result = be_board_drv_ms5611_get_conversion_state(&msc_state);
+
+    switch(msc_state)
+    {
+        case MS5611_START_PRESS_CONVERSION :
+            pb_baro->up_delay = gu64_read_system_time() + MS5611_CONVERSION_TIME;
+            /* Start pressure conversation: */
+            u8_data[0] = CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr;
+            be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_START_READ_UNCOMP_PRESS);
+            break;
+        case MS5611_START_READ_UNCOMP_PRESS:
+            if(pb_baro->up_delay <= gu64_read_system_time())
+            {
+                u8_data[0] = CMD_ADC_READ;
+                /* Set read ADC command: */
+                be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
+                be_result = be_board_drv_ms5611_set_conversion_state(MS5611_READ_UNCOMPENSATED_PRESS);
+                /* i2cRead(MS5611_ADDR, CMD_ADC_READ, 3, rxbuf);  read ADC */
+            }
+            else
+            {
+                /* Set IMU data ready flag. Baro will be done at next frame. */
+                api_i2c_data.u8_ready = 1U;
+            }
+            break;
+        case MS5611_READ_UNCOMPENSATED_PRESS:
+/*rd*/      be_result = be_board_i2c_read_start(u8_data, 3U, MS5611_ADDR);
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_WAIT_FOR_PRESS_DATA_READY);
+            break;
+
+        case MS5611_WAIT_FOR_PRESS_DATA_READY:
+            /* Raw pressure */
+            board_drv_get_raw_value(&ms5611_up);
+            /* Set IMU data ready flag. Baro will be done at next frame. */
+            api_i2c_data.u8_ready = 1U;
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_START_TEMP_CONVERSION);
+            break;
+
+        case MS5611_START_TEMP_CONVERSION:
+            pb_baro->ut_delay = gu64_read_system_time() + MS5611_CONVERSION_TIME;
+            /* Start pressure conversation: */
+            u8_data[0] = CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr;
+            be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_START_READ_UNCOMP_TEMP);
+            break;
+
+        case MS5611_START_READ_UNCOMP_TEMP:
+            if(pb_baro->ut_delay <= gu64_read_system_time())
+            {
+                u8_data[0] = CMD_ADC_READ;
+                /* Set read ADC command: */
+                be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
+                be_result = be_board_drv_ms5611_set_conversion_state(MS5611_READ_UNCOMPENSATED_TEMP);
+            }
+            else
+            {
+                /* Set IMU data ready flag. Baro will be done at next frame. */
+                api_i2c_data.u8_ready = 1U;
+            }
+            break;
+
+        case MS5611_READ_UNCOMPENSATED_TEMP:
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_WAIT_FOR_TEMP_DATA_READY);
+            break;
+
+        case MS5611_WAIT_FOR_TEMP_DATA_READY:
+            /* Raw temperature: */
+            board_drv_get_raw_value(&ms5611_ut);
+            /* Set IMU data ready flag. Baro will be done at next frame. */
+            api_i2c_data.u8_ready = 1U;
+            be_result = be_board_drv_ms5611_set_conversion_state(MS5611_CALCULATION);
+            break;
+
+        default:
+            be_result = BOARD_ERR_STATE;
+            break;
+    }
+    return(be_result);
+}
+
+static BOARD_ERROR board_drv_get_raw_value(uint32_t *pu32_variable)
+{
+    BOARD_ERROR be_result = BOARD_ERR_OK;
+    uint32_t u32_value[2];
+
+    u32_value[0] = (uint32_t)u8_data[0];
+    u32_value[0] = u32_value[0] << 16U;
+    u32_value[1] = (uint32_t)u8_data[1];
+    u32_value[1] = u32_value[1] << 8U;
+    u32_value[0] = u32_value[0] | u32_value[1];
+    u32_value[1] = (uint32_t)u8_data[2];
+    u32_value[0] = u32_value[0] | u32_value[1];
+    /* Raw temperature: */
+    *pu32_variable = u32_value[0];
+    return(be_result);
+}
+
 
 BOARD_ERROR board_drv_get_baro(baro_t **pb_baro)
 {
@@ -81,13 +210,9 @@ static uint16_t ms5611_prom(uint8_t u8_coef_num)
     uint16_t u16_value = 0U;
     uint8_t u8_rxbuf[2] = { 0, 0 };
 
-    /* i2cRead(MS5611_ADDR, CMD_PROM_RD + i8_coef_num * 2, 2, u8_rxbuf);  send PROM READ command */
-
-    board_i2c_read( MS5611_ADDR, CMD_PROM_RD + u8_coef_num * 2U, 2U, u8_rxbuf);
-
-    /* u16_value = ((u8_rxbuf[0] << 8 )| u8_rxbuf[1]); */
-     u16_value = (uint16_t)(u8_rxbuf[0]) << 8 ;
-     u16_value = u16_value | ((uint16_t)(u8_rxbuf[1]));
+    board_i2c_read( MS5611_ADDR, CMD_PROM_RD + u8_coef_num * 2U, 2U, u8_rxbuf); /* send PROM READ command */
+    u16_value = (uint16_t)(u8_rxbuf[0]) << 8 ;
+    u16_value = u16_value | ((uint16_t)(u8_rxbuf[1]));
 
     return (u16_value);
 }
@@ -160,7 +285,6 @@ static BOARD_ERROR ms5611_crc(uint16_t u16_prom[])
     return be_result;
 }
 
-
 static BOARD_ERROR ms5611_read_adc(uint32_t *pu32_value)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
@@ -196,7 +320,6 @@ static BOARD_ERROR ms5611_start_ut(void)
 static BOARD_ERROR ms5611_get_ut(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    /* ms5611_ut = ms5611_read_adc(); */
     be_result = ms5611_read_adc(&ms5611_ut);
     return(be_result);
 }
@@ -213,7 +336,6 @@ static BOARD_ERROR ms5611_start_up(void)
 static BOARD_ERROR ms5611_get_up(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
-    /*ms5611_up = ms5611_read_adc();*/
     be_result = ms5611_read_adc(&ms5611_up);
     return(be_result);
 }

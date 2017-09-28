@@ -32,6 +32,9 @@
 #define CMD_PROM_RD             0xA0U /* Prom read command       */
 #define PROM_NB                 8U
 
+
+#define MS5611_CONVERSION_TIME  10U
+
 typedef BOARD_ERROR (* baroOpFuncBrdErrPtr)(void);
 typedef void (* baroOpFuncPtr)(void);                                           /* baro start operation */
 typedef void (* baroCalculateFuncPtr)(int32_t *pressure, int32_t *temperature); /* baro calculation (filled params are */
@@ -47,14 +50,30 @@ typedef struct Baro_t
     baroCalculateFuncPtr calculate;
 } baro_t;
 
+typedef enum
+{
+    MS5611_START_TEMP_CONVERSION               = 0U, /* Write start temperature command to control register. */
+    MS5611_START_READ_UNCOMP_TEMP              = 1U, /* Write read address. */
+    MS5611_READ_UNCOMPENSATED_TEMP             = 2U, /* Read data from setted address. */
+    MS5611_WAIT_FOR_TEMP_DATA_READY            = 3U, /* Wait for temperature data read done. */
+    MS5611_START_PRESS_CONVERSION              = 4U, /* Write start pressure command to control register. */
+    MS5611_START_READ_UNCOMP_PRESS             = 5U, /* Write read address. */
+    MS5611_READ_UNCOMPENSATED_PRESS            = 6U, /* Write read address. */
+    MS5611_WAIT_FOR_PRESS_DATA_READY           = 7U, /* Wait for pressure data read done. */
+    MS5611_CALCULATION                         = 8U
+} MS5611_STATE_CONDITION;
+
+
+static BOARD_ERROR board_drv_get_raw_value(uint32_t *pu32_variable);
 
 BOARD_ERROR board_drv_get_baro(baro_t **pb_baro);
 BOARD_ERROR board_drv_ms5611Detect(baro_t *baro);
 BOARD_ERROR board_drv_ms5611_reset(void);
 
 
-
-
+BOARD_ERROR be_board_drv_ms5611_set_conversion_state(MS5611_STATE_CONDITION msc_state);
+BOARD_ERROR be_board_drv_ms5611_get_conversion_state(MS5611_STATE_CONDITION *msc_state);
+BOARD_ERROR be_board_drv_ms5611_state_machine(void);
 
 
 #endif
