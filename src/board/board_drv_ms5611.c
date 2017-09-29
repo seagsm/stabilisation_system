@@ -28,6 +28,26 @@ static MS5611_STATE_CONDITION local_msc_state;
 static uint8_t u8_data[3] = {0U};
 
 
+uint32_t u32_board_drv_ms5611_get_filtered_pressure(void)
+{
+    return(local_baro.u32_filtered_pressure);
+}
+void v_board_drv_ms5611_set_filtered_pressure(uint32_t u32_filtered_pressure)
+{
+    local_baro.u32_filtered_pressure = u32_filtered_pressure;
+}
+
+/* Function get correct temperature value from baro module. */
+int32_t i32_board_drv_ms5611_get_temperature(void)
+{
+    return( local_baro.i32_temperature);
+}
+
+/* Function get correct pressure value from baro module. */
+int32_t i32_board_drv_ms5611_get_pressure(void)
+{
+    return((int32_t) local_baro.i32_pressure);
+}
 
 BOARD_ERROR be_board_drv_ms5611_set_conversion_state(MS5611_STATE_CONDITION msc_state)
 {
@@ -43,28 +63,30 @@ BOARD_ERROR be_board_drv_ms5611_get_conversion_state(MS5611_STATE_CONDITION *msc
     return(be_result);
 }
 
-
-
 BOARD_ERROR be_board_drv_ms5611_state_machine(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     baro_t *pb_baro;
     MS5611_STATE_CONDITION msc_state;
-    uint32_t u32_value[2];
+    /* uint32_t u32_value[2]; */
 
 
     be_result = board_drv_get_baro(&pb_baro);
     be_result = be_board_drv_ms5611_get_conversion_state(&msc_state);
 
     switch(msc_state)
-    {
+    {   /* Send "start pressure conversion" command:*/
         case MS5611_START_PRESS_CONVERSION :
+            /* Send "start time" point: */
             pb_baro->up_delay = gu64_read_system_time() + MS5611_CONVERSION_TIME;
-            /* Start pressure conversation: */
+            /* Set "pressure conversion" command value: */
             u8_data[0] = CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr;
+            /* Write "pressure conversation" command: */
             be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
+            /* Change state to next state "MS5611_START_READ_UNCOMP_PRESS": */
             be_result = be_board_drv_ms5611_set_conversion_state(MS5611_START_READ_UNCOMP_PRESS);
             break;
+        /* Start read pressure raw value, first of all we must write read command: */
         case MS5611_START_READ_UNCOMP_PRESS:
             if(pb_baro->up_delay <= gu64_read_system_time())
             {
@@ -72,7 +94,6 @@ BOARD_ERROR be_board_drv_ms5611_state_machine(void)
                 /* Set read ADC command: */
                 be_result = be_board_i2c_write_start(u8_data, 1U, MS5611_ADDR);
                 be_result = be_board_drv_ms5611_set_conversion_state(MS5611_READ_UNCOMPENSATED_PRESS);
-                /* i2cRead(MS5611_ADDR, CMD_ADC_READ, 3, rxbuf);  read ADC */
             }
             else
             {
@@ -80,8 +101,11 @@ BOARD_ERROR be_board_drv_ms5611_state_machine(void)
                 api_i2c_data.u8_ready = 1U;
             }
             break;
+        /* Read pressure value: */
         case MS5611_READ_UNCOMPENSATED_PRESS:
+            /* Initialisation of read interrupt and DMA */
 /*rd*/      be_result = be_board_i2c_read_start(u8_data, 3U, MS5611_ADDR);
+            /* Change state to next state "MS5611_WAIT_FOR_PRESS_DATA_READY": */
             be_result = be_board_drv_ms5611_set_conversion_state(MS5611_WAIT_FOR_PRESS_DATA_READY);
             break;
 
@@ -117,6 +141,8 @@ BOARD_ERROR be_board_drv_ms5611_state_machine(void)
             break;
 
         case MS5611_READ_UNCOMPENSATED_TEMP:
+            /* Initialisation of read interrupt and DMA */
+/*rd*/      be_result = be_board_i2c_read_start(u8_data, 3U, MS5611_ADDR);
             be_result = be_board_drv_ms5611_set_conversion_state(MS5611_WAIT_FOR_TEMP_DATA_READY);
             break;
 
@@ -126,6 +152,7 @@ BOARD_ERROR be_board_drv_ms5611_state_machine(void)
             /* Set IMU data ready flag. Baro will be done at next frame. */
             api_i2c_data.u8_ready = 1U;
             be_result = be_board_drv_ms5611_set_conversion_state(MS5611_CALCULATION);
+            pb_baro->calculate(&(pb_baro->i32_pressure),&(pb_baro->i32_temperature));
             break;
 
         default:
@@ -151,7 +178,6 @@ static BOARD_ERROR board_drv_get_raw_value(uint32_t *pu32_variable)
     *pu32_variable = u32_value[0];
     return(be_result);
 }
-
 
 BOARD_ERROR board_drv_get_baro(baro_t **pb_baro)
 {
@@ -332,14 +358,12 @@ static BOARD_ERROR ms5611_start_up(void)
     return(be_result);
 }
 
-
 static BOARD_ERROR ms5611_get_up(void)
 {
     BOARD_ERROR be_result = BOARD_ERR_OK;
     be_result = ms5611_read_adc(&ms5611_up);
     return(be_result);
 }
-
 
 static void ms5611_calculate(int32_t *pressure, int32_t *temperature)
 {

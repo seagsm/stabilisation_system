@@ -8,6 +8,7 @@
 #include "api_CRC.h"
 #include "api_pid.h"
 #include "board_baro_bmp085.h"
+#include "board_baro_ms5611.h"
 #include "api_baro.h"
 #include "board_packet.h"
 

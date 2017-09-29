@@ -542,6 +542,7 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
             break;
 
         /* Baro sensor. */
+#if BOARD_BARO_BMP085
         case 0x0060U:
             board_packet_send_answ_int32(u16_data_id, (int32_t)i16_board_baro_bmp085_get_temperature());
             break;
@@ -554,6 +555,20 @@ static BOARD_ERROR be_api_CMD_data_answer_i32(uint16_t u16_data_id)
         case 0x0063U:
             board_packet_send_answ_int32(u16_data_id, (int32_t)u32_board_baro_bmp085_get_filtered_pressure());
             break;
+#elif BOARD_BARO_MS5611
+        case 0x0060U:
+            board_packet_send_answ_int32(u16_data_id, (int32_t)i16_board_baro_ms5611_get_temperature());
+            break;
+        case 0x0061U:
+            board_packet_send_answ_int32(u16_data_id, (int32_t)u32_board_baro_ms5611_get_pressure());
+            break;
+        case 0x0062U:
+            board_packet_send_answ_int32(u16_data_id, i32_board_baro_ms5611_get_altitude());
+            break;
+        case 0x0063U:
+            board_packet_send_answ_int32(u16_data_id, (int32_t)u32_board_baro_ms5611_get_filtered_pressure());
+            break;
+#endif
         case 0x0064U:
             board_packet_send_answ_int32(u16_data_id, bp_baro_pid.i32_EstAlt);
             break;

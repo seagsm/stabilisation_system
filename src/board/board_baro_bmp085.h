@@ -18,7 +18,7 @@ BARO_STATE_CONDITION bsc_board_baro_bmp085_get_state(void);
 void v_board_baro_bmp085_data_compensation(void);
 
 uint32_t u32_board_baro_bmp085_get_filtered_pressure(void);
-void u32_board_baro_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure);
+void v_board_baro_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure);
 
 static BOARD_ERROR be_board_baro_bmp085_set_baro_dev_state(BOARD_DEV_STATE  bds_value);
 BOARD_ERROR be_board_baro_bmp085_get_baro_dev_state(BOARD_DEV_STATE *bds_value);

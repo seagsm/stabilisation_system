@@ -49,6 +49,7 @@ static    float float_altitude;
     }
     be_board_baro_ms5611_set_baro_dev_state(bds_value);
 
+#if 0
 /* test */
     while(u32_counter < 10000U)
     {
@@ -69,6 +70,7 @@ static    float float_altitude;
         u32_counter++;
     }
 /**/
+#endif
 
     return (be_result);
 }
@@ -76,29 +78,27 @@ static    float float_altitude;
 /* Function get correct temperature value from baro module. */
 int16_t i16_board_baro_ms5611_get_temperature(void)
 {
+     return ((int16_t)i32_board_drv_ms5611_get_temperature());
     /* return(i16_board_drv_ms5611_get_temperature()); */
-
-    return (0);
 }
 
 /* Function get correct pressure value from baro module. */
 uint32_t u32_board_baro_ms5611_get_pressure(void)
 {
     /* return(u32_board_drv_ms5611_get_pressure()); */
-    return (0U);
+    return((uint32_t) i32_board_drv_ms5611_get_pressure());
 }
 
 /* Function get filtered pressure value from baro module. */
 uint32_t u32_board_baro_ms5611_get_filtered_pressure(void)
 {
-    /* return(u32_board_drv_ms5611_get_filtered_pressure()); */
-    return (0U);
+    return(u32_board_drv_ms5611_get_filtered_pressure());
 }
 
 /* Function set filtered pressure value. */
-void u32_board_baro_ms5611_set_filtered_pressure(uint32_t u32_filtered_pressure)
+void v_board_baro_ms5611_set_filtered_pressure(uint32_t u32_filtered_pressure)
 {
-    /* v_board_drv_ms5611_set_filtered_pressure(u32_filtered_pressure); */
+    v_board_drv_ms5611_set_filtered_pressure(u32_filtered_pressure);
 }
 
 /* Function calculate altitude from pressure. */
@@ -161,13 +161,4 @@ BOARD_ERROR be_board_baro_ms5611_get_conversion_state(BARO_STATE_CONDITION *pbsc
     }
     return (be_result);
 }
-
-void v_board_baro_ms5611_data_compensation(void)
-{
-    /* be_board_drv_ms5611_real_data_calculation(); */
-}
-
-
-
-
 

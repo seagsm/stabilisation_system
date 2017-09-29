@@ -60,7 +60,7 @@ uint32_t u32_board_baro_bmp085_get_filtered_pressure(void)
 }
 
 /* Function set filtered pressure value. */
-void u32_board_baro_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure)
+void v_board_baro_bmp085_set_filtered_pressure(uint32_t u32_filtered_pressure)
 {
     v_board_drv_bmp085_set_filtered_pressure(u32_filtered_pressure);
 }

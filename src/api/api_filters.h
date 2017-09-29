@@ -26,6 +26,6 @@ int32_t i32_api_filters_ma_rx_yaw(int32_t i32_new_sample);
 int32_t i32_api_filters_ma_rx_pitch(int32_t i32_new_sample);
 
 /* Pressure MA*/
-uint32_t ui32_api_filters_ma_pressure(uint32_t u32_new_sample);
-
+uint32_t ui32_api_filters_ma_bmp085_pressure(uint32_t u32_new_sample);
+uint32_t ui32_api_filters_ma_ms5611_pressure(uint32_t u32_new_sample);
 #endif

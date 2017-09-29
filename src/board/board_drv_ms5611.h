@@ -48,6 +48,9 @@ typedef struct Baro_t
     baroOpFuncBrdErrPtr start_up;
     baroOpFuncBrdErrPtr get_up;
     baroCalculateFuncPtr calculate;
+    int32_t i32_pressure;
+    int32_t i32_temperature;
+    uint32_t u32_filtered_pressure;
 } baro_t;
 
 typedef enum
@@ -74,6 +77,12 @@ BOARD_ERROR board_drv_ms5611_reset(void);
 BOARD_ERROR be_board_drv_ms5611_set_conversion_state(MS5611_STATE_CONDITION msc_state);
 BOARD_ERROR be_board_drv_ms5611_get_conversion_state(MS5611_STATE_CONDITION *msc_state);
 BOARD_ERROR be_board_drv_ms5611_state_machine(void);
+
+int32_t i32_board_drv_ms5611_get_temperature(void);
+int32_t i32_board_drv_ms5611_get_pressure(void);
+
+uint32_t u32_board_drv_ms5611_get_filtered_pressure(void);
+void       v_board_drv_ms5611_set_filtered_pressure(uint32_t u32_filtered_pressure);
 
 
 #endif

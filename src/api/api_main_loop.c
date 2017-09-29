@@ -7,6 +7,10 @@ static void v_api_main_loop_process(void)
     static uint8_t u8_calibration = 0U;
     BOARD_DEV_STATE    bds_value;
 
+#if BOARD_BARO_MS5611
+    BARO_STATE_CONDITION bsc_state;
+#endif
+
     if(api_i2c_data.u8_ready == 1U)
     {
         /* Convertind data from raw data array to sensors raw data. */
@@ -26,7 +30,7 @@ static void v_api_main_loop_process(void)
                 /* Pressure filtration and altitude calculation. */
 
                 /* Filter pressure using MA filter*/
-                u32_board_baro_bmp085_set_filtered_pressure(ui32_api_filters_ma_pressure(u32_board_baro_bmp085_get_pressure()));
+                v_board_baro_bmp085_set_filtered_pressure(ui32_api_filters_ma_BMP085_pressure(u32_board_baro_bmp085_get_pressure()));
 
                 /* Altitude estimation and BaroPid output calculation. */
                 api_baro_altitude_estimation();
@@ -39,8 +43,26 @@ static void v_api_main_loop_process(void)
         be_board_baro_ms5611_get_baro_dev_state(&bds_value);
         if(bds_value == BOARD_DEV_ON)
         {
+            /* Check if reading pressure is done. */
+            be_board_baro_ms5611_get_conversion_state(&bsc_state);
+            if(bsc_state == CONVERSION_DONE)
+            {
+                /* Calculation of real pressure and real temperature.*/
+                /* v_board_baro_bmp085_data_compensation(); */
 
+                /* Pressure filtration and altitude calculation. */
+                /* Filter pressure using MA filter*/
 
+                /* Filter pressure using MA filter*/
+                v_board_baro_ms5611_set_filtered_pressure(ui32_api_filters_ma_ms5611_pressure(u32_board_baro_ms5611_get_pressure()));
+
+                /* Altitude estimation and BaroPid output calculation. */
+                api_baro_altitude_estimation();
+
+                /* Set BARO state machine start state. */
+                bsc_state = START_CONVERSION;
+                be_board_baro_ms5611_set_conversion_state(bsc_state);
+            }
         }
 #endif
 
