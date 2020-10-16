@@ -1,6 +1,6 @@
-stabilisation_system
+stabilisation_system, done by Vadym Volokitin.
 ====================
-Done by Vadym Volokitin.
+
 Software structure:
 http://www.gliffy.com/go/publish/5397367
 
