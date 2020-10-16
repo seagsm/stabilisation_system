@@ -1,5 +1,6 @@
 stabilisation_system
 ====================
+Done by Vadym Volokitin.
 Software structure:
 http://www.gliffy.com/go/publish/5397367
 
